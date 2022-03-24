@@ -1,0 +1,44 @@
+#spotify-home .container {
+  width: 75vw;
+  padding: 0;
+  height: 100vh;
+}
+#spotify-home .container .greeting {
+  font-size: var(--header-font);
+  font-weight: 900;
+  padding-left: 1rem;
+}
+
+#spotify-home .container .new .header {
+  margin-top: 0.75rem;
+  font-size: 2rem;
+  padding-left: 1rem;
+}
+
+#spotify-home .container .new .card-list {
+  display: flex;
+  flex-direction: row;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  margin-top: 1rem;
+  scroll-snap-align: start;
+}
+
+#spotify-home .container .new .card-list::-webkit-scrollbar {
+  position: absolute;
+  bottom: -20px;
+  height: 8px !important;
+  background-color: var(--card-bg);
+}
+
+#spotify-home .container .new .card-list::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  background-color: var(--accent);
+  cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+  #spotify-home .container .greeting {
+    font-size: var(--body-font);
+  }
+}

@@ -1,0 +1,141 @@
+#genrePicker {
+  width: 100vw;
+  height: 90vh;
+  position: relative;
+  overflow: hidden;
+}
+
+#genrePicker .container {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#genrePicker .container .title {
+  height: 100px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+#genrePicker .container .title h1 {
+  font-size: var(--header-font);
+  letter-spacing: 10px;
+  text-transform: uppercase;
+  font-weight: 900;
+}
+
+#genrePicker .container .bubble {
+  width: 75%;
+  max-height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: scroll;
+  gap: 1rem;
+  margin: 0.75rem;
+  margin-bottom: 0;
+  padding: 10px;
+  padding-bottom: 20px;
+}
+
+#genrePicker .container .bubble::-webkit-scrollbar {
+  display: none;
+}
+
+#genrePicker .container .bubbles {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.2s ease-in-out;
+}
+
+#genrePicker .container .bubbles:hover {
+  background-color: var(--card-hover);
+  transform: scale(1.02);
+}
+
+#genrePicker .container .bubbles.selected {
+  background-color: var(--accent);
+  box-shadow: 5px 5px 20px 0 var(--card-hover);
+}
+
+.continue {
+  position: absolute;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100px;
+  width: max-content;
+  color: var(--text-color);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  animation: floatUp 100ms ease-in forwards;
+}
+
+.continue span {
+  background-color: var(--accent);
+  border-radius: 6px;
+  width: 300px;
+  padding: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background-color 0.1s ease-in;
+  text-align: center;
+}
+
+.continue span:hover {
+  background-color: var(--accent-hover);
+}
+
+.err {
+  position: absolute;
+  right: 20px;
+  top: 100px;
+  width: 300px;
+  height: 50px;
+  opacity: 0;
+  background-color: var(--error);
+  color: var(--text-color);
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  animation: fadeIn 0.2s ease-in forwards;
+  transition: all 0.2s ease-in;
+}
+
+.fadeOut {
+  animation: fadeOut 0.2s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes floatUp {
+  100% {
+    bottom: 0;
+  }
+}

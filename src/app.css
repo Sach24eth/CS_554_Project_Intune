@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800;900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+::-moz-selection {
+  color: var(--text-color);
+  background: var(--accent);
+}
+
+::selection {
+  color: var(--text-color);
+  background: var(--accent);
+}
+:root {
+  --bg-color: #121212;
+  --text-color: #fff;
+  --card-bg: #222;
+  --card-hover: #333;
+  --accent: #1db954;
+  --accent-hover: #179643;
+  --error: #ed4245;
+  --header-font: 2rem;
+  --body-font: 1.5rem;
+  --link-font: 1rem;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: var(--link-font, 1rem);
+}
+
+input:focus {
+  outline: none;
+}
+
+.bottom-player {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+}

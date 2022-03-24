@@ -1,0 +1,19 @@
+.bubbles {
+  background-color: #222;
+  color: white;
+  border-radius: 6px;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  bottom: -20px;
+  opacity: 0;
+  animation: fadeIn 50ms ease-in-out forwards;
+  user-select: none;
+}
+
+@keyframes fadeIn {
+  100% {
+    opacity: 1;
+    bottom: 0;
+  }
+}
