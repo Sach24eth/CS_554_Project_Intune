@@ -28,6 +28,10 @@
   margin-right: 1rem;
 }
 
+.chat-info-card .chat-icon .icon {
+  color: var(--text-color);
+}
+
 .chat-info-card .chat-title {
   font-size: calc(var(--body-font) - 3px) !important;
   font-weight: 500;

@@ -7,7 +7,7 @@ import axios from "axios";
 const User = () => {
   const [user, setUser] = useState({});
   const [isLoggedInWithSpotify, setIsLoggedInWithSpotify] = useState(undefined);
-  window.history.pushState(null, document.title, "/user/1");
+  window.history.pushState(null, document.title, "/me");
   useEffect(() => {
     let access_token = window.localStorage.getItem("access_token");
     let userLS = window.localStorage.getItem("user");

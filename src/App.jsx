@@ -8,6 +8,7 @@ import Home from "./Components/Home";
 import Library from "./Components/Library";
 import User from "./Components/User/User";
 import Callback from "./Components/CallbackHandler/Callback";
+import PlaylistPage from "./Pages/Playlist";
 
 const App = () => {
   useEffect(() => {
@@ -36,8 +37,9 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/genres" element={<GenrePicker />} />
           <Route path="/library" element={<Library />} />
-          <Route path="/user/:id" element={<User />} />
+          <Route path="/me" element={<User />} />
           <Route path="/callback" element={<Callback />} />
+          <Route path="/album" element={<PlaylistPage />} />
         </Routes>
       </Router>
     </>

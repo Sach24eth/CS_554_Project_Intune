@@ -128,6 +128,10 @@ class Dashboard extends Component {
       .catch((e) => console.log(e.response));
   }
 
+  redirToAlbum = (e) => {
+    const albumId = e.target.parentNode.parentNode.id;
+    window.location.href = "/album?id=" + albumId.split(":")[2];
+  };
   render() {
     return (
       <>
@@ -135,7 +139,9 @@ class Dashboard extends Component {
           {this.props.greeting}, {this.props.username}!
         </div>
         <div className="new">
-          <h1 className="header">New Releases</h1>
+          <div className="header">
+            <h1>New Releases</h1>
+          </div>
           <div className="card-list" id="albums">
             {this.state.albums &&
               this.state.albums.map((album) => {
@@ -153,7 +159,9 @@ class Dashboard extends Component {
         </div>
         {this.state.user_access_token ? (
           <div className="new">
-            <h1 className="header">Playlist</h1>
+            <div className="header">
+              <h1>Playlist</h1>
+            </div>
             <div className="card-list" id="playlist">
               {this.state.playlist &&
                 this.state.playlist.map((playlist) => {
@@ -165,6 +173,8 @@ class Dashboard extends Component {
                       image={playlist.images[0].url}
                       clickHandler={this.props.onPlaySong}
                       uri={playlist.uri}
+                      albumId={playlist.id}
+                      albumRedir={this.redirToAlbum}
                     />
                   );
                 })}
@@ -175,7 +185,9 @@ class Dashboard extends Component {
         )}
         {this.state.user_access_token ? (
           <div className="new">
-            <h1 className="header">Top 20 Most Played</h1>
+            <div className="header">
+              <h1>Top 20 Most Played</h1>
+            </div>
             <div className="card-list" id="categories">
               {this.state.songs &&
                 this.state.songs.map((songs) => {
@@ -197,7 +209,9 @@ class Dashboard extends Component {
         )}
         {this.state.user_access_token ? (
           <div className="new">
-            <h1 className="header">Following</h1>
+            <div className="header">
+              <h1>Following</h1>
+            </div>
             <div className="card-list" id="categories">
               {this.state.followings &&
                 this.state.followings.map((follow) => {
@@ -218,7 +232,9 @@ class Dashboard extends Component {
           ""
         )}
         <div className="new">
-          <h1 className="header">Categories</h1>
+          <div className="header">
+            <h1>Categories</h1>
+          </div>
           <div className="card-list" id="categories">
             {this.state.categories &&
               this.state.categories.map((category) => {

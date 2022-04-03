@@ -28,7 +28,7 @@ const Messages = () => {
         <label>
           <input
             type={"text"}
-            placeholder="Search chat..."
+            placeholder="Search chatroom..."
             name="search-chat"
           />
         </label>

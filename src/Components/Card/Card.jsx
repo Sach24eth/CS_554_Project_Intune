@@ -1,8 +1,12 @@
 import React from "react";
 import "./card.css";
-const Card = ({ heading, image, id, clickHandler, uri }) => {
+const Card = ({ heading, image, clickHandler, uri, albumId, albumRedir }) => {
   return (
-    <div id={uri} className="card" onClick={clickHandler}>
+    <div
+      id={uri}
+      className="card"
+      onClick={albumId ? albumRedir : clickHandler}
+    >
       <div className="img">
         <img src={image} alt={heading} />
       </div>

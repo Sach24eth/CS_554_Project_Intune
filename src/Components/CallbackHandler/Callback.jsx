@@ -23,7 +23,7 @@ const Callback = () => {
             accessTokenCreatedTime
           );
 
-          history(`/user/1`);
+          history(`/me`);
         })
         .catch((err) => console.log(err.response));
     }

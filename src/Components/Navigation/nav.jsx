@@ -25,9 +25,10 @@ const Navbar = ({ auth, username }) => {
           ) : (
             <>
               <NavLink to="/">Home</NavLink>
+              <NavLink to="/search">Search</NavLink>
               <NavLink to="/library">Library</NavLink>
               <NavLink to="/playlists">Playlists</NavLink>
-              <NavLink to="/user/1">{username}</NavLink>
+              <NavLink to="/me">{username}</NavLink>
             </>
           )}
         </div>
