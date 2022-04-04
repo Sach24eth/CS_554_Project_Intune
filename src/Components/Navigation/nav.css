@@ -1,0 +1,57 @@
+header {
+  width: 100vw;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  user-select: none;
+}
+
+header nav {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center !important;
+  padding: 0 2rem;
+}
+
+header nav .brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header nav .brand span {
+  margin: 0 1rem;
+  font-family: "Prompt", sans-serif;
+  font-weight: 900;
+  font-size: var(--body-font);
+}
+
+header nav .links a:not(a:last-child) {
+  margin-right: 2rem;
+}
+
+header nav .links a {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.2s ease-in-out;
+}
+
+header nav .links .login {
+  background-color: var(--text-color);
+  color: black;
+  border-radius: 500px;
+  padding: 8px 34px;
+}
+
+header nav .links a:hover {
+  transform: scale(1.2) !important;
+}
+
+.active {
+  color: var(--accent) !important;
+}
