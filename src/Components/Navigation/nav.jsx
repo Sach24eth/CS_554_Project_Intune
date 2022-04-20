@@ -17,10 +17,10 @@ const Navbar = ({ auth, username }) => {
         <div className="links">
           {!auth ? (
             <>
-              <NavLink to="/signup">Sign Up</NavLink>
-              <a href={loginUrl} className="login">
+              <NavLink to="/auth/signup">Sign Up</NavLink>
+              <NavLink to="/auth/login" className="login">
                 Log In
-              </a>
+              </NavLink>
             </>
           ) : (
             <>
