@@ -70,3 +70,29 @@
   transform: scale(1.05);
   background-color: var(--accent-hover);
 }
+
+.link {
+  text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+  #auth .container form .btn {
+    width: 35%;
+  }
+}
+
+@media (max-width: 500px) {
+  #auth .container form {
+    width: 75%;
+  }
+  #auth .container form label {
+    width: 100%;
+  }
+
+  #auth .container form label input {
+    width: 100%;
+  }
+  #auth .container form .btn {
+    width: 75%;
+  }
+}

@@ -10,7 +10,7 @@ const Landing = () => {
           <h1 className="title">Listening is everything.</h1>
         </div>
         <div className="para">
-          Listen to millions of music, without interruptions.
+          Listen to millions of songs, without interruptions.
         </div>
         <NavLink to={"/auth/signup"} className="signup">
           Sign up today

@@ -41,7 +41,10 @@ const Auth = (props) => {
 
           <div className="btn">{type}</div>
         </form>
-        <NavLink to={`/auth/${type === "Login" ? "signup" : "login"}`}>
+        <NavLink
+          className="link"
+          to={`/auth/${type === "Login" ? "signup" : "login"}`}
+        >
           {type === "Login"
             ? "Don't have an account? Sign Up."
             : "Already have an account? Login."}
