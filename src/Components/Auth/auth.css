@@ -15,11 +15,67 @@
   justify-content: center;
   align-items: center;
 }
+
+#auth .container .dividers {
+  width: 35%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+#auth .container .dividers .text {
+  font-family: "Prompt", sans-serif;
+  color: rgba(211, 211, 211, 0.5);
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+#auth .container .dividers .divider {
+  width: 45%;
+  height: 3px;
+  background-color: rgba(211, 211, 211, 0.13);
+  border-radius: 500px;
+}
+
 #auth .container .auth-form-title {
-  font-size: 2rem;
-  text-transform: uppercase;
+  font-size: 16px;
+  text-transform: capitalize;
   letter-spacing: 1.2px;
-  font-weight: 900;
+  font-weight: bold;
+}
+#auth .container .auth-form-title h1 {
+  font-family: "Prompt", sans-serif !important;
+}
+
+#auth .container .socials {
+  cursor: pointer;
+  width: 25%;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+  border: 1px solid white;
+  border-radius: 500px;
+  padding: 0.5rem;
+  transition: transform 100ms ease-in;
+}
+#auth .container .socials:hover {
+  transform: scale(1.05);
+  background-color: rgba(211, 211, 211, 0.13);
+}
+
+#auth .container .socials .google {
+  width: 70%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#auth .container .socials .google .text {
+  font-size: 16px;
+  font-family: "Prompt", sans-serif !important;
 }
 
 #auth .container form {
@@ -79,9 +135,15 @@
   #auth .container form .btn {
     width: 35%;
   }
+  #auth .container .socials {
+    width: 50%;
+  }
 }
 
 @media (max-width: 500px) {
+  #auth .container .socials {
+    width: 75%;
+  }
   #auth .container form {
     width: 75%;
   }

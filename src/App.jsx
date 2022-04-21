@@ -35,7 +35,7 @@ const App = () => {
   return (
     <>
       <Router>
-        <Navbar auth={false} username={"Tejas"} />
+        <Navbar auth={false} username={"Dummy"} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth/:authType" element={<Auth />} />

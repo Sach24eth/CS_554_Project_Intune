@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   FaBackward,
   FaPlay,
   FaForward,
   FaVolumeUp,
   FaHeart,
-  FaMicrophone,
   FaExpand,
   FaEllipsisV,
 } from "react-icons/fa";
 import { BsBroadcast } from "react-icons/bs";
 
 const Player = () => {
+  const [seek, setSeek] = useState(0);
+  const onSeek = (e) => {
+    setSeek((prev) => e.target.value);
+  };
   return (
     <>
       <div className="bottom-player">
@@ -37,14 +40,21 @@ const Player = () => {
           <div className="slider">
             <p className="time-playing font-sm">0:54</p>
             <p className="slider-control">
-              <span className="slider-actual-pointer"></span>
+              <input
+                type={"range"}
+                width={"100%"}
+                className="slider-actual-pointer"
+                max={4 * 60000}
+                value={seek}
+                onChange={onSeek}
+              />
+              {/* <span className="slider-actual-pointer"></span> */}
             </p>
             <p className="time-total font-sm">4:00</p>
           </div>
         </div>
         <div className="volume">
           <FaVolumeUp className="icon" />
-          <FaMicrophone className="icon" />
           <FaExpand className="icon" />
           <FaEllipsisV className="icon" />
           <BsBroadcast className="icon" />
