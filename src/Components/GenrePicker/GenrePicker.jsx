@@ -4,6 +4,7 @@ import axios from "axios";
 import Picker from "./Picker";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+const Firestore = require("../../Firebase/Firestore");
 const GenrePicker = () => {
   const [genres, setGenres] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -66,6 +67,10 @@ const GenrePicker = () => {
     setMaxGenreErr(false);
   };
 
+  const submitGenre = () => {
+    Firestore.updateGenre(selected);
+  }
+
   return (
     <section id="genrePicker">
       <div className="container">
@@ -94,7 +99,7 @@ const GenrePicker = () => {
         )}
       </div>
       {selected.length > 0 ? (
-        <div className="continue">
+        <div className="continue" onClick={()=>submitGenre()}>
           <span>Continue</span>
         </div>
       ) : (

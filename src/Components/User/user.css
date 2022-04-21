@@ -104,3 +104,13 @@
 #user .container .details .user .details-container img {
   border-radius: 50%;
 }
+
+@media (max-width: 768px) {
+  #user .container .spotify-btn {
+    width: 50%;
+  }
+
+  #user .container .details {
+    max-width: 100%;
+  }
+}

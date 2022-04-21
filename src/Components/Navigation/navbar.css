@@ -1,0 +1,111 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-color);
+  color: var(--text);
+}
+
+.brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.5rem;
+}
+
+.brand span {
+  margin: 0 1rem;
+  font-family: "Prompt", sans-serif;
+  font-weight: 900;
+  font-size: var(--body-font);
+}
+
+.navbar-links {
+  transition: all 100ms ease-in;
+}
+.navbar-links ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.navbar-links li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-links li a {
+  margin: 0 1rem;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.2s ease-in-out;
+  font-weight: bold;
+  display: block;
+  text-align: center;
+}
+
+.navbar-links li a.active {
+  color: var(--accent);
+}
+
+.login {
+  background-color: var(--text-color);
+  color: black;
+  border-radius: 500px;
+  padding: 8px 34px;
+}
+
+.toggle-button {
+  position: absolute;
+  top: 1.5rem;
+  right: 1rem;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  cursor: pointer;
+}
+
+.toggle-button .bar {
+  height: 3px;
+  width: 100%;
+  background-color: var(--text-color);
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .toggle-button {
+    display: flex;
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .navbar-links {
+    display: none;
+    width: 100%;
+  }
+
+  .navbar-links.active {
+    display: flex;
+  }
+
+  .navbar-links ul {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .navbar-links ul li {
+    margin: 0.5rem 0;
+  }
+
+  .navbar-links li a {
+    font-size: 14px;
+  }
+}

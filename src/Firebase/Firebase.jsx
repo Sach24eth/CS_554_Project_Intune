@@ -1,9 +1,12 @@
 
 import {initializeApp} from 'firebase/app'
 import {getAuth, signInWithCustomToken, updateEmail, updateProfile, signOut, 
-    createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from 'firebase/auth'
+    createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup
+,onAuthStateChanged,
+browserLocalPersistence} from 'firebase/auth'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+const Firestore = require("./Firestore");
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -13,11 +16,12 @@ const firebaseConfig = {
     messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.REACT_APP_FIREBASE_APP_ID,
     measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
-
 }
 
 const app = initializeApp(firebaseConfig)
-const auth = getAuth(app)
+const auth = getAuth(app, {
+    persistence: browserLocalPersistence
+})
 function SpotifyFbLogin(data) {
     
     signInWithCustomToken(auth, data.firebaseToken).then((userCredential) => {
@@ -50,9 +54,8 @@ function AppUserCreation(data){
     createUserWithEmailAndPassword(auth, data.email, data.password, data.displayName).then((userCredential) => {
         userCredential.user.displayName = data.displayName
         toast.success('Account Created Successfully')
-        setTimeout(() => {
-            window.location.href='/genre'
-        }, 700);
+        Firestore.createUsersInFirestore(userCredential.user.uid, userCredential.user.displayName, 
+            userCredential.user.email, userCredential.user.photoURL)
         
     }).catch((error) => {
         console.log('error', error)
@@ -60,16 +63,13 @@ function AppUserCreation(data){
     }
     )
 }
-
 function AppUserLogin(data){
     signInWithEmailAndPassword(auth, data.email, data.password).then((userCredential) => {
         
         console.log('userCredential', userCredential);
         toast.success('Login Successful')
-        setTimeout(() => {
-            window.location.href='/home'
-        }, 700);
-        
+        Firestore.createUsersInFirestore(userCredential.user.uid, userCredential.user.displayName,
+            userCredential.user.email, userCredential.user.photoURL)
     }
     ).catch((error) => {
         console.log('error', error)
@@ -77,7 +77,6 @@ function AppUserLogin(data){
     }
     )
 }
-
 function AppSignOut(){
     signOut(auth).then(() => {
         toast.success('Logged Out Successfully')
@@ -97,11 +96,10 @@ function GoogleLogin(){
     signInWithPopup(auth, provider).then((result) => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
-
+        console.log('res', result)
         toast.success('Login Successful')
-        setTimeout(() => {
-            window.location.href='/home'
-        }, 700);
+        Firestore.createUsersInFirestore(result.user.uid, result.user.displayName,
+            result.user.email, result.user.photoURL)
     }
     ).catch((error) => {
         console.log('error', error)
@@ -111,4 +109,8 @@ function GoogleLogin(){
     )
 
 }
-export {SpotifyFbLogin, firebaseConfig, AppUserCreation, AppUserLogin, AppSignOut, GoogleLogin}
+function CurrentUser(){
+    console.log("auth", auth)
+    return auth.currentUser
+}
+export {SpotifyFbLogin, firebaseConfig, AppUserCreation, AppUserLogin, AppSignOut, GoogleLogin, CurrentUser}

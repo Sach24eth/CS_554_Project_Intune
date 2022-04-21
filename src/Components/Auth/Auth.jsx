@@ -4,13 +4,13 @@ import "./auth.css";
 import { NavLink } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FcGoogle } from "react-icons/fc";
 const Firebase = require("../../Firebase/Firebase")
 const Auth = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeat, setRepeat] = useState("");
   const [displayName, setName] = useState("");
-  const type = props.type;
 
   const onEmailChange = (e) => {
     setEmail(e.target.value);
@@ -48,23 +48,27 @@ const Auth = (props) => {
       }
     }
   }
-
   const googleLogin = () => {
     Firebase.GoogleLogin()
   }
+  const type = props.type;
 
   return (
     <section id="auth">
       <div className="container">
-       {type === "Login" ? (
-        <h1>To continue, log in</h1>
-        ) : (
-        <h1>Sign Up to get started</h1>
-        )}
-        <div className="google-btn" onClick={()=>googleLogin()}>
-          {type} with Google</div>
-        <div>
-         or
+        <div className="socials">
+          <div className="google" onClick={()=>googleLogin()}>
+            <FcGoogle size={20} />
+            <span className="text">{props.type} with Google</span>
+          </div>
+        </div>
+        <div className="dividers">
+          <span className="divider"></span>
+          <span className="text">or</span>
+          <span className="divider"></span>
+        </div>
+        <div className="auth-form-title">
+          <h1>{props.type} with email</h1>
         </div>
         {/* <h1>{props.type}</h1> */}
         
@@ -100,7 +104,6 @@ const Auth = (props) => {
           )}
 
           <div className="btn" onClick={()=>submitBtn(type)}>{type}</div>
-         
         <ToastContainer />
         </form>
         <NavLink
