@@ -20,6 +20,7 @@
   text-transform: uppercase;
   letter-spacing: 1.2px;
   font-weight: 900;
+  
 }
 
 #auth .container form {
@@ -66,6 +67,29 @@
   transition: all 100ms ease-in-out;
 }
 
+.google-btn {
+  width: 25%;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  
+  margin-top: 2vh;
+  text-align: center;
+  font-weight: bolder;
+  background-color: white;
+  color: gray;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 100ms ease-in-out;
+  margin-bottom: 2vh;
+}
+.google-btn:hover {
+  transform: scale(1.05);
+  background-color: white;
+}
+
 #auth .container form .btn:hover {
   transform: scale(1.05);
   background-color: var(--accent-hover);
@@ -76,7 +100,7 @@
 }
 
 @media (max-width: 1024px) {
-  #auth .container form .btn {
+  #auth .container form .btn, .google-btn {
     width: 35%;
   }
 }
@@ -92,7 +116,7 @@
   #auth .container form label input {
     width: 100%;
   }
-  #auth .container form .btn {
+  #auth .container form .btn, .google-btn {
     width: 75%;
   }
 }

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./gpicker.css";
 import axios from "axios";
 import Picker from "./Picker";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const GenrePicker = () => {
   const [genres, setGenres] = useState([]);
   const [selected, setSelected] = useState([]);
@@ -106,6 +107,7 @@ const GenrePicker = () => {
       ) : (
         ""
       )}
+     
     </section>
   );
 };

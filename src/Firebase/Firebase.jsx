@@ -1,23 +1,25 @@
 
 import {initializeApp} from 'firebase/app'
-import {getDatabase} from 'firebase/database'
-import {getAuth, signInWithCustomToken, updateEmail, updateProfile} from 'firebase/auth'
+import {getAuth, signInWithCustomToken, updateEmail, updateProfile, signOut, 
+    createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from 'firebase/auth'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+const firebaseConfig = {
+    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+    databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_FIREBASE_APP_ID,
+    measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 
-export default function Firebase(data) {
-    const firebaseConfig = {
-        apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-        authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-        databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
-        projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-        storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-        messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-        appId: process.env.REACT_APP_FIREBASE_APP_ID,
-        measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+}
+
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+function SpotifyFbLogin(data) {
     
-    }
-    const app = initializeApp(firebaseConfig)
-    const database = getDatabase(app)
-    const auth = getAuth(app)
     signInWithCustomToken(auth, data.firebaseToken).then((userCredential) => {
         updateEmail(auth.currentUser, data.userInfo.body.email).then(() => {
             console.log('email updated')
@@ -40,4 +42,73 @@ export default function Firebase(data) {
     }).catch((error) => {
         console.log("error", error)
     })
+    return "hahah";
 }
+
+function AppUserCreation(data){
+    console.log("data", data)
+    createUserWithEmailAndPassword(auth, data.email, data.password, data.displayName).then((userCredential) => {
+        userCredential.user.displayName = data.displayName
+        toast.success('Account Created Successfully')
+        setTimeout(() => {
+            window.location.href='/genre'
+        }, 700);
+        
+    }).catch((error) => {
+        console.log('error', error)
+        toast.error(error.message)
+    }
+    )
+}
+
+function AppUserLogin(data){
+    signInWithEmailAndPassword(auth, data.email, data.password).then((userCredential) => {
+        
+        console.log('userCredential', userCredential);
+        toast.success('Login Successful')
+        setTimeout(() => {
+            window.location.href='/home'
+        }, 700);
+        
+    }
+    ).catch((error) => {
+        console.log('error', error)
+        toast.error(error.message)
+    }
+    )
+}
+
+function AppSignOut(){
+    signOut(auth).then(() => {
+        toast.success('Logged Out Successfully')
+        setTimeout(() => {
+            window.location.href='/'
+        }, 700);
+    }
+    ).catch((error) => {
+        console.log('error', error)
+        toast.error(error.message)
+    }
+    )
+}
+
+function GoogleLogin(){
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider).then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+
+        toast.success('Login Successful')
+        setTimeout(() => {
+            window.location.href='/home'
+        }, 700);
+    }
+    ).catch((error) => {
+        console.log('error', error)
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        toast.error(error.message)
+    }
+    )
+
+}
+export {SpotifyFbLogin, firebaseConfig, AppUserCreation, AppUserLogin, AppSignOut, GoogleLogin}
