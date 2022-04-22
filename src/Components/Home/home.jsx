@@ -4,14 +4,14 @@ import Messages from "../Messages";
 import SpotifyHome from "../SpotifyHome";
 import axios from "axios";
 import Player from "../Player";
-
+const Firebase = require("../../Firebase/Firebase");
 const Home = () => {
   const [greeting, setGreeting] = useState(undefined);
   const [username, setUsername] = useState(undefined);
 
   const refreshToken = window.localStorage.getItem("refresh_token") || null;
   const expiresIn = window.localStorage.getItem("expires_in") || null;
-
+  
   let date = new Date();
   let currentTS = date.getTime();
   let accessTokenCreatedTime = window.localStorage.getItem(
@@ -54,9 +54,9 @@ const Home = () => {
     } else {
       setGreeting("Good Evening");
     }
-
     //Temp store username
-    setUsername("Tejas");
+   
+    setUsername("User")
   }, []);
 
   return (

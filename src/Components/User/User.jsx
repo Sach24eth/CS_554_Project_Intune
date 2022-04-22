@@ -3,6 +3,7 @@ import { loginUrl } from "../../Services/spotify";
 import Spotify from "../../images/Spotify_White.png";
 import "./user.css";
 import axios from "axios";
+const Firestore = require("../../Firebase/Firestore");
 
 const User = () => {
   const [user, setUser] = useState({});
@@ -22,8 +23,9 @@ const User = () => {
       axios
         .post(`${process.env.REACT_APP_API_URL}/me`, { access_token })
         .then((res) => {
-          console.log(res.data);
+          console.log("hah",res.data);
           setUser(res.data);
+          Firestore.createUsersInFirestore(res.data.id, res.data.displayName, res.data.email, res.data.photoURL)
           window.localStorage.setItem("user", JSON.stringify(res.data));
         })
         .catch((err) => console.log(err.response));
