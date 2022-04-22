@@ -56,7 +56,7 @@ function AppUserCreation(data){
         toast.success('Account Created Successfully')
         Firestore.createUsersInFirestore(userCredential.user.uid, userCredential.user.displayName, 
             userCredential.user.email, userCredential.user.photoURL)
-        
+            window.localStorage.setItem("userDetails", JSON.stringify(auth.currentUser));
     }).catch((error) => {
         console.log('error', error)
         toast.error(error.message)
@@ -70,6 +70,7 @@ function AppUserLogin(data){
         toast.success('Login Successful')
         Firestore.createUsersInFirestore(userCredential.user.uid, userCredential.user.displayName,
             userCredential.user.email, userCredential.user.photoURL)
+            window.localStorage.setItem("userDetails", JSON.stringify(auth.currentUser));
     }
     ).catch((error) => {
         console.log('error', error)
@@ -100,6 +101,8 @@ function GoogleLogin(){
         toast.success('Login Successful')
         Firestore.createUsersInFirestore(result.user.uid, result.user.displayName,
             result.user.email, result.user.photoURL)
+
+            window.localStorage.setItem("userDetails", JSON.stringify(auth.currentUser));
     }
     ).catch((error) => {
         console.log('error', error)

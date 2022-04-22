@@ -55,8 +55,8 @@ const Home = () => {
       setGreeting("Good Evening");
     }
     //Temp store username
-   
-    setUsername("User")
+    let userDetails = JSON.parse(window.localStorage.getItem("userDetails"))
+    setUsername(userDetails.displayName || "User")
   }, []);
 
   return (
