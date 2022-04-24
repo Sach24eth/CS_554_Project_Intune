@@ -26,16 +26,18 @@ const App = () => {
       window.localStorage.setItem("tokenSetTime", dTime);
     }
     if (
-      currentTime - creationTime > Number(3600 * 1000) - 1000 ||
+      Number(currentTime) - Number(creationTime) > Number(3600 * 1000) - 1000 ||
       !window.localStorage.getItem("token")
     )
       getToken();
   }, []);
 
+  const auth = true;
+
   return (
     <>
       <Router>
-        <Navbar auth={false} username={"Dummy"} />
+        <Navbar auth={auth} username={"Dummy"} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth/:authType" element={<Auth />} />
@@ -45,8 +47,12 @@ const App = () => {
           <Route path="/me" element={<User />} />
           <Route path="/callback" element={<Callback />} />
           <Route path="/album" element={<PlaylistPage />} />
-          <Route path="/player" element={<Playback />} />
+          <Route
+            path="/player"
+            element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}
+          />
         </Routes>
+        {/* {auth && <Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />} */}
       </Router>
     </>
   );
