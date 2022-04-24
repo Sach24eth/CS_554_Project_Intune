@@ -1,0 +1,86 @@
+#landing {
+  width: 100vw;
+  height: calc(100vh - 75px);
+  background-image: url("https://content-tooling.spotifycdn.com/images/1d2242b4-f071-4244-a276-3bcdc58e77cf_lie_circles-tablet.svg");
+  background-position: center center;
+  background-size: auto 181%;
+  background-repeat: no-repeat;
+  color: var(--accent);
+}
+
+#landing .container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#landing .container .heading {
+  width: max-content;
+  height: max-content;
+}
+
+#landing .container .heading .title {
+  font-size: 4rem;
+  letter-spacing: -1.5px;
+  font-weight: bold;
+  display: flex;
+  color: #1ed760;
+  font-family: "Prompt", sans-serif;
+}
+
+#landing .container .para {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-top: 1rem;
+  color: white;
+}
+
+#landing .container .signup {
+  width: 25%;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  color: black;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 2px;
+  border-radius: 500px;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: transform 100ms ease-in-out;
+}
+#landing .container .signup:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 700px) {
+  #landing {
+    background-size: auto 100%;
+  }
+  #landing .container .heading .title {
+    font-size: 2rem;
+  }
+
+  #landing .container .para {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  #landing .container .signup {
+    width: 75%;
+  }
+}
+
+@media (max-width: 1024px) {
+  #landing {
+    background-size: auto 100%;
+  }
+  #landing .container .signup {
+    width: 50%;
+  }
+}

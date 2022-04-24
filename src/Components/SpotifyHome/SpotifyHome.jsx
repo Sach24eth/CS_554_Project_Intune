@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Dashboard from "./Dashboard/Dashboard";
-
 import "./spotify.css";
 
 const SpotifyHome = ({ greeting, username }) => {

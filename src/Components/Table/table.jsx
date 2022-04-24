@@ -14,10 +14,6 @@ export const Table = ({ track, i, fn }) => {
         <img alt={track.track.name} src={track.track.album.images[2].url} />
         <p>{track.track.name}</p>
         <p>{artists.join(", ")}</p>
-        {/* {track.track.artists.map((name) => {
-          return <p>{name}</p>;
-        })} */}
-
         <p className="dur">{fn(track.track.duration_ms)}</p>
       </div>
     </div>

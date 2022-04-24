@@ -16,6 +16,7 @@ const Player = () => {
   const [player, setPlayer] = useState(undefined);
   const [deviceId, setDeviceId] = useState(undefined);
   const [playing, setPlaying] = useState(false);
+  const [seek, setSeek] = useState(0);
   const apiUrl = "https://api.spotify.com/v1";
   const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
   const URL_PAUSE = `${apiUrl}/me/player/pause?device_id=${deviceId}`;
@@ -53,6 +54,10 @@ const Player = () => {
       });
     };
   }, []);
+
+  const onSeek = (e) => {
+    setSeek((prev) => e.target.value);
+  };
 
   const playSong = async () => {
     const userToken = window.localStorage.getItem("access_token");
@@ -154,50 +159,65 @@ const Player = () => {
             <img
               src="https://i.scdn.co/image/ab67616d00001e02c50ee26def224e163f54ae0c"
               alt="track"
-            />
+            />{" "}
+            <FaHeart className="heart icon" />
             <div className="track-name">
               <p className="song">Hurricane (Arcano Remix)</p>
               <p className="artistName">
                 Cheat Codes, Grey, Tyson Ritter, Arcando
               </p>
             </div>
-            <FaHeart className="heart icon" />
-          </div>
-          <div className="controls">
-            <div className="icons">
-              <FaBackward
-                className="icon"
-                onClick={() => {
-                  prevSong();
-                }}
-              />
-              {!playing && (
-                <FaPlay
-                  className="white icon"
+            <div className="controls">
+              <div className="icons">
+                <FaBackward
+                  className="icon"
                   onClick={() => {
-                    playSong();
+                    prevSong();
                   }}
                 />
-              )}
-              {playing && (
-                <FaPause
-                  className="white icon"
+                {!playing && (
+                  <FaPlay
+                    className="white icon"
+                    onClick={() => {
+                      playSong();
+                    }}
+                  />
+                )}
+                {playing && (
+                  <FaPause
+                    className="white icon"
+                    onClick={() => {
+                      pauseSong();
+                    }}
+                  />
+                )}
+                <FaForward
+                  className="icon"
                   onClick={() => {
-                    pauseSong();
+                    nextSong();
                   }}
                 />
-              )}
-              <FaForward
-                className="icon"
-                onClick={() => {
-                  nextSong();
-                }}
-              />
+              </div>
+              <div className="slider">
+                <p className="time-playing font-sm">0:54</p>
+                <p className="slider-control">
+                  <span className="slider-actual-pointer"></span>
+                </p>
+                <p className="time-total font-sm">4:00</p>
+              </div>
             </div>
             <div className="slider">
               <p className="time-playing font-sm">0:54</p>
               <p className="slider-control">
-                <span className="slider-actual-pointer"></span>
+                <input
+                  type={"range"}
+                  width={"100%"}
+                  className="slider-actual-pointer"
+                  max={4 * 60000}
+                  value={seek}
+                  onChange={onSeek}
+                />
+                {/* <span className="slider-actual-pointer"></span> */}
               </p>
               <p className="time-total font-sm">4:00</p>
             </div>
@@ -217,9 +237,6 @@ const Player = () => {
         ;
       </>
     );
-  } else {
-    console.log(player);
-    return <h1>Ayo</h1>;
   }
 };
 
