@@ -1,16 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextField from "./TextField";
 import "./auth.css";
-import { NavLink } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { NavLink, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { FcGoogle } from "react-icons/fc";
-const Firebase = require("../../Firebase/Firebase")
+import Spinner from "../Spinner";
+import { useDispatch } from "react-redux";
+import { authLogin } from "../../Redux/Actions/Auth";
+const Firebase = require("../../Firebase/Firebase");
 const Auth = (props) => {
+  const dispatch = useDispatch();
+  const history = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeat, setRepeat] = useState("");
   const [displayName, setName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const onEmailChange = (e) => {
     setEmail(e.target.value);
@@ -25,39 +31,75 @@ const Auth = (props) => {
     setRepeat(e.target.value);
   };
 
-  const submitBtn = (type) => {
-    if(type === "Login"){
-      if(email ==='' || password === ''){
-        toast.error('Please enter all the fields')
-      }else{
-        const ha=Firebase.AppUserLogin({email, password})
-        console.log("ha",ha)
+  const submitBtn = async (type) => {
+    setLoading((prev) => !prev);
+    if (type === "Login") {
+      if (email === "" || password === "") {
+        toast.error("Please enter all the fields");
+      } else {
+        Firebase.AppUserLogin({ email, password })
+          .then((status) => {
+            const userDetails = JSON.parse(
+              window.localStorage.getItem("userDetails")
+            );
+
+            dispatch(
+              authLogin(
+                userDetails.uid,
+                userDetails.displayName,
+                userDetails.email,
+                userDetails.lastLoginAt
+              )
+            );
+
+            props.onLogin();
+            window.localStorage.setItem("authentication", 1);
+            setTimeout(() => {
+              history(status.redirectURL);
+            }, 700);
+          })
+          .catch((err) => {
+            toast.error(err);
+          });
+        // console.log("Login Status: " + loginStatus);
       }
-    }
-    else{
-      if(email ==='' || password === '' || repeat === ''){
-        toast.error('Please enter all the fields')
-      }
-      else{
-        if(password !== repeat){
+      setLoading(false);
+    } else {
+      if (email === "" || password === "" || repeat === "") {
+        toast.error("Please enter all the fields");
+      } else {
+        if (password !== repeat) {
           toast.error("Passwords do not match");
-        }
-        else{
-          Firebase.AppUserCreation({email, password, displayName})
+        } else {
+          Firebase.AppUserCreation({ email, password, displayName });
         }
       }
+      setLoading(false);
     }
-  }
+  };
   const googleLogin = () => {
-    Firebase.GoogleLogin()
-  }
+    setLoading(true);
+    Firebase.GoogleLogin();
+  };
+
   const type = props.type;
+
+  useEffect(() => {
+    if (type === "Logout") {
+      Firebase.AppSignOut();
+      props.onLogout();
+      window.localStorage.setItem("authentication", 0);
+    }
+  }, [type]);
+  if (type === "Logout") {
+    return <h1>Logging out...</h1>;
+  }
 
   return (
     <section id="auth">
       <div className="container">
         <div className="socials">
-          <div className="google" onClick={()=>googleLogin()}>
+          <div className="google" onClick={() => googleLogin()}>
             <FcGoogle size={20} />
             <span className="text">{props.type} with Google</span>
           </div>
@@ -71,7 +113,7 @@ const Auth = (props) => {
           <h1>{props.type} with email</h1>
         </div>
         {/* <h1>{props.type}</h1> */}
-        
+
         <form id="auth-form">
           <TextField
             type="email"
@@ -103,8 +145,10 @@ const Auth = (props) => {
             />
           )}
 
-          <div className="btn" onClick={()=>submitBtn(type)}>{type}</div>
-        <ToastContainer />
+          <div className="btn" onClick={() => submitBtn(type)}>
+            {loading ? <Spinner /> : type}
+          </div>
+          <ToastContainer />
         </form>
         <NavLink
           className="link"

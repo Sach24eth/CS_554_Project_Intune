@@ -1,5 +1,10 @@
-import React, { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 import generateToken from "./Services/generateToken";
 import "./app.css";
 import GenrePicker from "./Components/GenrePicker";
@@ -14,6 +19,24 @@ import LandingPage from "./Pages/Landing";
 import Auth from "./Pages/Auth";
 
 const App = () => {
+  const [auth, setAuth] = useState(false);
+  useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 1) {
+      setAuth((prev) => true);
+    } else setAuth((prev) => false);
+  }, []);
+  const onLogin = (e) => {
+    setAuth((prev) => true);
+  };
+
+  const onLogout = (e) => {
+    setAuth((prev) => false);
+  };
+
   useEffect(() => {
     let token = "";
     const date = new Date();
@@ -32,15 +55,20 @@ const App = () => {
       getToken();
   }, []);
 
-  const auth = true;
-
+  // const auth = window.localStorage.getItem("auth") === "1" ? true : false;
+  const username =
+    JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
+    "User";
   return (
     <>
       <Router>
-        <Navbar auth={auth} username={"Dummy"} />
+        <Navbar auth={auth} />
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/auth/:authType" element={<Auth />} />
+          <Route
+            path="/auth/:authType"
+            element={<Auth onLogin={onLogin} onLogout={onLogout} />}
+          />
           <Route path="/home" element={<Home />} />
           <Route path="/genres" element={<GenrePicker />} />
           <Route path="/library" element={<Library />} />

@@ -32,7 +32,7 @@ const Player = () => {
         setCurrentTS((prev) => Number(prev + 1000));
       }, 1000);
     }
-  }, [isPlaying]);
+  }, [isPlaying, currentTS]);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -40,14 +40,17 @@ const Player = () => {
     script.async = true;
     document.body.appendChild(script);
     window.onSpotifyWebPlaybackSDKReady = () => {
-      const spotifyPlayer = new window.Spotify.Player({
+      const _player = new window.Spotify.Player({
         name: "CS554_Project",
         getOAuthToken: (cb) => {
           cb(token);
         },
         volume: 1,
       });
-      spotifyPlayer.addListener("ready", ({ device_id }) => {
+
+      setPlayer((prev) => _player);
+      console.log(player);
+      player.addListener("ready", ({ device_id }) => {
         console.log("Ready with Device ID", device_id);
         const iframe = document.querySelector(
           'iframe[src="https://sdk.scdn.co/embedded/index.html"]'
@@ -80,7 +83,7 @@ const Player = () => {
         };
         //"spotify:track:7xGfFoTpQ2E7fRF5lN10tr"
         play({
-          playerInstance: spotifyPlayer,
+          playerInstance: player,
           spotify_uri: ["spotify:track:7xGfFoTpQ2E7fRF5lN10tr"],
         });
         player.togglePlay().then(() => {
@@ -91,6 +94,7 @@ const Player = () => {
       player.addListener("not_ready", ({ device_id }) => {
         console.log("Device ID has gone offline", device_id);
       });
+
       player.addListener("player_state_changed", (state) => {
         if (!state) {
           return;
@@ -112,7 +116,7 @@ const Player = () => {
       });
       player?.connect();
     };
-  }, []);
+  }, [token]);
 
   const onSeek = (e) => {
     setCurrentTS(e.target.value);
@@ -136,7 +140,7 @@ const Player = () => {
         <div className="controls">
           <div className="icons">
             <FaBackward className="icon" />
-            <FaPlay className="white icon" />
+            <FaPlay className="white icon" id="togglePlay" />
             <FaForward className="icon" />
           </div>
           <div className="slider">
