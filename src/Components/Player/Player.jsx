@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaBackward,
   FaPlay,
@@ -15,6 +15,7 @@ const Player = () => {
   const onSeek = (e) => {
     setSeek((prev) => e.target.value);
   };
+
   return (
     <>
       <div className="bottom-player">

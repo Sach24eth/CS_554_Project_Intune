@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import Discord from "../../images/Discord.svg";
 import Spotify from "../../images/Spotify.png";
 import "./navbar.css";
 
-const Navbar = ({ auth, username }) => {
+const Navbar = ({ auth }) => {
+  const authState = useSelector((state) => state.auth);
+  // console.log(authState);
+  // const isAuthenticated = authState?.isLoggedIn;
+  const username = authState.displayName || "User";
+  // const [auth, setAuth] = useState(false);
+
+  // useEffect(() => {
+  //   console.log("Auth: " + isAuthenticated);
+  //   if (isAuthenticated) setAuth(true);
+  //   else setAuth(false);
+  // }, [authState, isAuthenticated]);
+
   const toggleNav = (e) => {
     const navbarLinks = document.getElementsByClassName("navbar-links")[0];
     navbarLinks.classList.toggle("active");
@@ -40,6 +53,9 @@ const Navbar = ({ auth, username }) => {
             </li>
             <li>
               <NavLink to="/me">{username}</NavLink>
+            </li>
+            <li>
+              <NavLink to="/auth/logout">Logout</NavLink>
             </li>
           </ul>
         ) : (
