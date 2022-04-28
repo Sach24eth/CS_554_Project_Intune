@@ -59,32 +59,57 @@ function SpotifyFbLogin(data) {
   return "hahah";
 }
 
-function AppUserCreation(data) {
+async function AppUserCreation(data) {
   console.log("data", data);
-  createUserWithEmailAndPassword(
-    auth,
-    data.email,
-    data.password,
-    data.displayName
-  )
-    .then((userCredential) => {
-      userCredential.user.displayName = data.displayName;
-      toast.success("Account Created Successfully");
-      Firestore.createUsersInFirestore(
-        userCredential.user.uid,
-        userCredential.user.displayName,
-        userCredential.user.email,
-        userCredential.user.photoURL
-      );
-      window.localStorage.setItem(
-        "userDetails",
-        JSON.stringify(auth.currentUser)
-      );
-    })
-    .catch((error) => {
-      console.log("error", error);
-      toast.error(error.message);
-    });
+  try {
+    const createUser = await createUserWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password,
+      data.displayName
+    );
+    Firestore.createUsersInFirestore(
+      createUser.user.uid,
+      data.displayName,
+      createUser.user.email,
+      createUser.user.photoURL
+    );
+
+    window.localStorage.setItem(
+      "userDetails",
+      JSON.stringify(auth.currentUser)
+    );
+
+    return {
+      status: 200,
+      userCreated: true,
+      message: "User created. Redirecting...",
+    };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, userCreated: false, message: error };
+  }
+
+  // console.log(createUser.user);
+
+  // .then((userCredential) => {
+  //   userCredential.user.displayName = data.displayName;
+  //   toast.success("Account Created Successfully");
+  //   Firestore.createUsersInFirestore(
+  //     userCredential.user.uid,
+  //     userCredential.user.displayName,
+  //     userCredential.user.email,
+  //     userCredential.user.photoURL
+  //   );
+  //   window.localStorage.setItem(
+  //     "userDetails",
+  //     JSON.stringify(auth.currentUser)
+  //   );
+  // })
+  // .catch((error) => {
+  //   console.log("error", error);
+  //   toast.error(error.message);
+  // });
 }
 async function AppUserLogin(data) {
   let redirStatus;

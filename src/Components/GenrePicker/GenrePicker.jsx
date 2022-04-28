@@ -2,15 +2,21 @@ import React, { useState, useEffect } from "react";
 import "./gpicker.css";
 import axios from "axios";
 import Picker from "./Picker";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+import Spinner from "../Spinner";
 const Firestore = require("../../Firebase/Firestore");
+
 const GenrePicker = () => {
   const [genres, setGenres] = useState([]);
   const [selected, setSelected] = useState([]);
   const [genreCount, setGenreCount] = useState(0);
   const [maxGenreErr, setMaxGenreErr] = useState(false);
   const [loading, setLoading] = useState(undefined);
+  const [adding, setAdding] = useState(false);
+
+  const history = useNavigate();
   let delay = 0;
   const TOKEN = window.localStorage.getItem("token");
   const URL = "https://api.spotify.com/v1";
@@ -67,9 +73,13 @@ const GenrePicker = () => {
     setMaxGenreErr(false);
   };
 
-  const submitGenre = () => {
-    Firestore.updateGenre(selected);
-  }
+  const submitGenre = async () => {
+    setAdding(true);
+    const genres = await Firestore.updateGenre(selected);
+    setAdding(false);
+    if (genres.updated) history("/home");
+    else toast.error("Error updating genres.");
+  };
 
   return (
     <section id="genrePicker">
@@ -99,8 +109,8 @@ const GenrePicker = () => {
         )}
       </div>
       {selected.length > 0 ? (
-        <div className="continue" onClick={()=>submitGenre()}>
-          <span>Continue</span>
+        <div className="continue" onClick={() => submitGenre()}>
+          {adding ? <Spinner /> : <span>Continue</span>}
         </div>
       ) : (
         ""
@@ -112,7 +122,6 @@ const GenrePicker = () => {
       ) : (
         ""
       )}
-     
     </section>
   );
 };

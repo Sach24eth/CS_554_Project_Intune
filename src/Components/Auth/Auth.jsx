@@ -9,6 +9,7 @@ import Spinner from "../Spinner";
 import { useDispatch } from "react-redux";
 import { authLogin } from "../../Redux/Actions/Auth";
 const Firebase = require("../../Firebase/Firebase");
+
 const Auth = (props) => {
   const dispatch = useDispatch();
   const history = useNavigate();
@@ -32,7 +33,7 @@ const Auth = (props) => {
   };
 
   const submitBtn = async (type) => {
-    setLoading((prev) => !prev);
+    setLoading(true);
     if (type === "Login") {
       if (email === "" || password === "") {
         toast.error("Please enter all the fields");
@@ -53,6 +54,7 @@ const Auth = (props) => {
             );
 
             props.onLogin();
+            setLoading(false);
             window.localStorage.setItem("authentication", 1);
             setTimeout(() => {
               history(status.redirectURL);
@@ -61,9 +63,7 @@ const Auth = (props) => {
           .catch((err) => {
             toast.error(err);
           });
-        // console.log("Login Status: " + loginStatus);
       }
-      setLoading(false);
     } else {
       if (email === "" || password === "" || repeat === "") {
         toast.error("Please enter all the fields");
@@ -71,14 +71,35 @@ const Auth = (props) => {
         if (password !== repeat) {
           toast.error("Passwords do not match");
         } else {
-          Firebase.AppUserCreation({ email, password, displayName });
+          const create = await Firebase.AppUserCreation({
+            email,
+            password,
+            displayName,
+          });
+
+          if (create.status !== 200) {
+            toast.error(create.message.message);
+          } else {
+            const userDetails = JSON.parse(
+              window.localStorage.getItem("userDetails")
+            );
+            dispatch(
+              authLogin(
+                userDetails.uid,
+                userDetails.displayName,
+                userDetails.email,
+                userDetails.lastLoginAt
+              )
+            );
+            props.onLogin();
+            history("/genres");
+          }
         }
       }
       setLoading(false);
     }
   };
-  const googleLogin = () => {
-    setLoading(true);
+  const googleLogin = async () => {
     Firebase.GoogleLogin();
   };
 
@@ -88,11 +109,21 @@ const Auth = (props) => {
     if (type === "Logout") {
       Firebase.AppSignOut();
       props.onLogout();
+      window.localStorage.removeItem("userDetails");
+      window.localStorage.removeItem("user");
+      window.localStorage.removeItem("access_token");
+      window.localStorage.removeItem("refresh_token");
+      window.localStorage.removeItem("accessTokenCreatedTime");
+      window.localStorage.removeItem("expires_in");
       window.localStorage.setItem("authentication", 0);
     }
   }, [type]);
   if (type === "Logout") {
-    return <h1>Logging out...</h1>;
+    return (
+      <div className="center">
+        <h1>Logging out...</h1>
+      </div>
+    );
   }
 
   return (

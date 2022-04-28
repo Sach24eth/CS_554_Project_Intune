@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import generateToken from "./Services/generateToken";
 import "./app.css";
 import GenrePicker from "./Components/GenrePicker";
@@ -17,9 +12,29 @@ import PlaylistPage from "./Pages/Playlist";
 import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
 import Auth from "./Pages/Auth";
+import { useDispatch } from "react-redux";
+import { authLogin } from "./Redux/Actions/Auth";
 
 const App = () => {
   const [auth, setAuth] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const userDetails = JSON.parse(window.localStorage.getItem("userDetails"));
+
+    if (userDetails) {
+      dispatch(
+        authLogin(
+          userDetails.uid,
+          userDetails.displayName,
+          userDetails.email,
+          userDetails.lastLoginAt
+        )
+      );
+    }
+  }, []);
+
+  //Sets auth state based on local storage to keep user logged in
   useEffect(() => {
     const authLocalStorage = parseInt(
       window.localStorage.getItem("authentication")
@@ -29,14 +44,18 @@ const App = () => {
       setAuth((prev) => true);
     } else setAuth((prev) => false);
   }, []);
+
+  //Toggle for auth state upon login
   const onLogin = (e) => {
     setAuth((prev) => true);
   };
 
+  //Toggle for auth state upon logout
   const onLogout = (e) => {
     setAuth((prev) => false);
   };
 
+  //Token
   useEffect(() => {
     let token = "";
     const date = new Date();

@@ -4,10 +4,10 @@ import Auth from "../Components/Auth";
 
 const AuthPage = (props) => {
   const authType = useParams().authType;
-  console.log(authType);
   if (authType === "login") {
     return <Auth type={"Login"} onLogin={props.onLogin} />;
-  } else if (authType === "signup") return <Auth type={"Sign Up"} />;
+  } else if (authType === "signup")
+    return <Auth type={"Sign Up"} onLogin={props.onLogin} />;
   else if (authType === "logout")
     return <Auth type={"Logout"} onLogout={props.onLogout} />;
 };

@@ -63,6 +63,7 @@ async function updateGenre(genreList) {
   const auth = getAuth(app);
   const user = auth.currentUser;
   console.log("user", user);
+  let updated = false;
   const querySnapshot = await getDocs(collection(db, "users"));
   querySnapshot.forEach((docm) => {
     if (docm.data().id === user.uid) {
@@ -73,15 +74,34 @@ async function updateGenre(genreList) {
       })
         .then(() => {
           console.log("genre updated");
-          setTimeout(() => {
-            window.location.href = "/home";
-          }, 700);
+          updated = true;
         })
         .catch((error) => {
           console.log("error", error);
         });
     }
   });
+
+  return { status: 200, updated };
 }
 
-export { createUsersInFirestore, updateGenre };
+async function getGenreData(uid) {
+  const snapshot = await getDocs(collection(db, "users"));
+
+  let hasGenre = {};
+  snapshot.forEach((doc) => {
+    if (doc.data().id === uid) {
+      if (doc.data().genres.length === 0) {
+        hasGenre.hasData = false;
+        hasGenre.genres = null;
+      } else {
+        hasGenre.hasData = true;
+        hasGenre.genres = doc.data().genres;
+      }
+    }
+  });
+
+  return hasGenre;
+}
+
+export { createUsersInFirestore, updateGenre, getGenreData };
