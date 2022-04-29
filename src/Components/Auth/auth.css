@@ -129,7 +129,7 @@
   justify-content: center;
   align-items: center;
   font-size: 18px;
-  
+
   margin-top: 2vh;
   text-align: center;
   font-weight: bolder;
@@ -154,8 +154,17 @@
   text-decoration: underline;
 }
 
+.center {
+  width: 100vw;
+  height: calc(100vh - 75px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 @media (max-width: 1024px) {
-  #auth .container form .btn, .google-btn {
+  #auth .container form .btn,
+  .google-btn {
     width: 35%;
   }
   #auth .container .socials {
@@ -177,7 +186,8 @@
   #auth .container form label input {
     width: 100%;
   }
-  #auth .container form .btn, .google-btn {
+  #auth .container form .btn,
+  .google-btn {
     width: 75%;
   }
 }

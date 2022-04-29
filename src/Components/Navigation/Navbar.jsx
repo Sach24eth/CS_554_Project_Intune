@@ -48,9 +48,9 @@ const Navbar = ({ auth }) => {
             <li>
               <NavLink to="/library">Library</NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to="/playlists">Playlists</NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink to="/me">{username}</NavLink>
             </li>

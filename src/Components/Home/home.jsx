@@ -4,12 +4,13 @@ import Messages from "../Messages";
 import SpotifyHome from "../SpotifyHome";
 import axios from "axios";
 import Player from "../Player";
+import { useNavigate } from "react-router-dom";
 const Firebase = require("../../Firebase/Firebase");
 
 const Home = () => {
   const [greeting, setGreeting] = useState(undefined);
   const [username, setUsername] = useState(undefined);
-
+  const history = useNavigate();
   const refreshToken = window.localStorage.getItem("refresh_token") || null;
   const expiresIn = window.localStorage.getItem("expires_in") || null;
 
@@ -18,6 +19,16 @@ const Home = () => {
   let accessTokenCreatedTime = window.localStorage.getItem(
     "accessTokenCreatedTime"
   );
+
+  useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 0) {
+      history("/auth/login");
+    }
+  }, []);
 
   const getAccessToken = (refreshToken) => {
     axios
@@ -31,8 +42,7 @@ const Home = () => {
       });
   };
 
-  if (Number(currentTS - accessTokenCreatedTime) > 3600 * 1000 && refreshToken)
-    getAccessToken(refreshToken);
+  if (refreshToken) getAccessToken(refreshToken);
 
   useEffect(() => {
     if (!refreshToken || !expiresIn) return;
