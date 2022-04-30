@@ -46,13 +46,22 @@ function SpotifyFbLogin(data) {
     }).catch((error) => {
         console.log("error", error)
     })
-    return "hahah";
+    return "SpotifyLogin";
 }
 
 function AppUserCreation(data){
     console.log("data", data)
     createUserWithEmailAndPassword(auth, data.email, data.password, data.displayName).then((userCredential) => {
-        userCredential.user.displayName = data.displayName
+        updateProfile(auth.currentUser, {
+            displayName: data.displayName,
+
+        }).then(() => {
+            console.log('display name updated')
+            console.log('userCredential', userCredential);
+        }
+        ).catch((error) => {
+            console.log('error', error)
+        })
         toast.success('Account Created Successfully')
         Firestore.createUsersInFirestore(userCredential.user.uid, userCredential.user.displayName, 
             userCredential.user.email, userCredential.user.photoURL)
@@ -110,10 +119,15 @@ function GoogleLogin(){
         toast.error(error.message)
     }
     )
-
 }
-function CurrentUser(){
-    console.log("auth", auth)
-    return auth.currentUser
+async function CurrentUser(){
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            console.log('user', user)
+            return user
+        }else{
+            return null
+        }
+    })
 }
 export {SpotifyFbLogin, firebaseConfig, AppUserCreation, AppUserLogin, AppSignOut, GoogleLogin, CurrentUser}

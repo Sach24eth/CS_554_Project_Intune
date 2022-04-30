@@ -4,13 +4,16 @@ import Messages from "../Messages";
 import SpotifyHome from "../SpotifyHome";
 import axios from "axios";
 import Player from "../Player";
-const Firebase = require("../../Firebase/Firebase");
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 const Home = () => {
+  
+  const auth = getAuth();
   const [greeting, setGreeting] = useState(undefined);
   const [username, setUsername] = useState(undefined);
-
+  const [loadingAuth, setLoadingAuth] = useState(true)
   const refreshToken = window.localStorage.getItem("refresh_token") || null;
   const expiresIn = window.localStorage.getItem("expires_in") || null;
+  
   
   let date = new Date();
   let currentTS = date.getTime();
@@ -54,12 +57,18 @@ const Home = () => {
     } else {
       setGreeting("Good Evening");
     }
+    onAuthStateChanged(auth,user => {
+      if (user) {
+        setLoadingAuth(false)
+        console.log("usernamee", user)
+      }
+    });
     //Temp store username
     let userDetails = JSON.parse(window.localStorage.getItem("userDetails"))
     setUsername(userDetails.displayName || "User")
-  }, []);
-
-  return (
+  }, [auth]);
+  
+  return loadingAuth ? 'loading...' : (
     <section id="home">
       <div className="grid">
         <div className="left">
