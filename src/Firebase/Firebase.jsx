@@ -120,14 +120,5 @@ function GoogleLogin(){
     }
     )
 }
-async function CurrentUser(){
-    onAuthStateChanged(auth, user => {
-        if (user) {
-            console.log('user', user)
-            return user
-        }else{
-            return null
-        }
-    })
-}
+
 export {SpotifyFbLogin, firebaseConfig, AppUserCreation, AppUserLogin, AppSignOut, GoogleLogin, CurrentUser}
