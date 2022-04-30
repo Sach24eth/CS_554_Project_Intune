@@ -4,12 +4,15 @@ import Messages from "../Messages";
 import SpotifyHome from "../SpotifyHome";
 import axios from "axios";
 import Player from "../Player";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 const Firebase = require("../../Firebase/Firebase");
 
 const Home = () => {
+  const auth = getAuth();
   const [greeting, setGreeting] = useState(undefined);
   const [username, setUsername] = useState(undefined);
+  const [loadingAuth, setLoadingAuth] = useState(true);
   const history = useNavigate();
   const refreshToken = window.localStorage.getItem("refresh_token") || null;
   const expiresIn = window.localStorage.getItem("expires_in") || null;
@@ -65,10 +68,16 @@ const Home = () => {
     } else {
       setGreeting("Good Evening");
     }
+    onAuthStateChanged(auth,user => {
+      if (user) {
+        setLoadingAuth(false)
+        console.log("usernamee", user)
+      }
+    });
     //Temp store username
     let userDetails = JSON.parse(window.localStorage.getItem("userDetails"));
     setUsername(userDetails?.displayName || "User");
-  }, []);
+  }, [auth]);
 
   return (
     <section id="home">
