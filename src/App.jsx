@@ -75,9 +75,9 @@ const App = () => {
   }, []);
 
   // const auth = window.localStorage.getItem("auth") === "1" ? true : false;
-  const username =
-    JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
-    "User";
+  // const username =
+  //   JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
+  //   "User";
   return (
     <>
       <Router>
