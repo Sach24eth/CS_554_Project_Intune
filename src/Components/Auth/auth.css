@@ -170,6 +170,12 @@
   #auth .container .socials {
     width: 50%;
   }
+  #auth .container form {
+    width: 50%;
+  }
+  #auth .container form label {
+    width: 100%;
+  }
 }
 
 @media (max-width: 500px) {

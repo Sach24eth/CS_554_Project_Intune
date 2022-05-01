@@ -83,6 +83,7 @@ const Auth = (props) => {
             const userDetails = JSON.parse(
               window.localStorage.getItem("userDetails")
             );
+            window.localStorage.setItem("authentication", 1);
             dispatch(
               authLogin(
                 userDetails.uid,
@@ -91,6 +92,7 @@ const Auth = (props) => {
                 userDetails.lastLoginAt
               )
             );
+
             props.onLogin();
             history("/genres");
           }
@@ -100,7 +102,25 @@ const Auth = (props) => {
     }
   };
   const googleLogin = async () => {
-    Firebase.GoogleLogin();
+    const login = await Firebase.GoogleLogin();
+    if (login.status === 400) return toast.error(login.message);
+    else {
+      toast.success(login.message);
+      window.localStorage.setItem("authentication", 1);
+      const userDetails = JSON.parse(
+        window.localStorage.getItem("userDetails")
+      );
+      dispatch(
+        authLogin(
+          userDetails.uid,
+          userDetails.displayName,
+          userDetails.email,
+          userDetails.lastLoginAt
+        )
+      );
+      props.onLogin();
+      history("/genres");
+    }
   };
 
   const type = props.type;

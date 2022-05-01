@@ -178,31 +178,56 @@ function AppSignOut() {
     });
 }
 
-function GoogleLogin() {
+async function GoogleLogin() {
   const provider = new GoogleAuthProvider();
-  signInWithPopup(auth, provider)
-    .then((result) => {
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      console.log("res", result);
-      toast.success("Login Successful");
-      Firestore.createUsersInFirestore(
-        result.user.uid,
-        result.user.displayName,
-        result.user.email,
-        result.user.photoURL
-      );
 
-      window.localStorage.setItem(
-        "userDetails",
-        JSON.stringify(auth.currentUser)
-      );
-    })
-    .catch((error) => {
-      console.log("error", error);
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      toast.error(error.message);
-    });
+  try {
+    const googlePopup = await signInWithPopup(auth, provider);
+
+    console.log(googlePopup);
+    const credential = GoogleAuthProvider.credentialFromResult(googlePopup);
+    const token = credential.accessToken;
+    Firestore.createUsersInFirestore(
+      googlePopup.user.uid,
+      googlePopup.user.displayName,
+      googlePopup.user.email,
+      googlePopup.user.photoURL
+    );
+
+    window.localStorage.setItem(
+      "userDetails",
+      JSON.stringify(auth.currentUser)
+    );
+
+    return { status: 200, message: "Login Successful" };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, message: error.message };
+  }
+
+  // signInWithPopup(auth, provider)
+  //   .then((result) => {
+  //     const credential = GoogleAuthProvider.credentialFromResult(result);
+  //     const token = credential.accessToken;
+  //     console.log("res", result);
+  //     toast.success("Login Successful");
+  //     Firestore.createUsersInFirestore(
+  //       result.user.uid,
+  //       result.user.displayName,
+  //       result.user.email,
+  //       result.user.photoURL
+  //     );
+
+  //     window.localStorage.setItem(
+  //       "userDetails",
+  //       JSON.stringify(auth.currentUser)
+  //     );
+  //   })
+  //   .catch((error) => {
+  //     console.log("error", error);
+  //     const credential = GoogleAuthProvider.credentialFromError(error);
+  //     toast.error(error.message);
+  //   });
 }
 function CurrentUser() {
   console.log("auth", auth);
