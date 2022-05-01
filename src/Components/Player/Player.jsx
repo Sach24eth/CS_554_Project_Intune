@@ -5,9 +5,9 @@ import {
   FaPause,
   FaForward,
   FaVolumeUp,
+  FaVolumeMute,
   FaHeart,
   FaExpand,
-  FaEllipsisV,
 } from "react-icons/fa";
 import axios from "axios";
 
@@ -16,7 +16,9 @@ const Player = () => {
   const [deviceId, setDeviceId] = useState(undefined);
   const [playing, setPlaying] = useState(false);
   const [duration, setDuration] = useState("0:00");
+  const [progress, setProgress] = useState("0:00");
   const [seek, setSeek] = useState(0);
+  const [volume, setVolume] = useState(50);
   const [active, setActive] = useState(false);
   const [currentSong, setCurrentSong] = useState(undefined);
   const token = window.localStorage.getItem("access_token");
@@ -26,6 +28,7 @@ const Player = () => {
   const URL_NEXT = `${apiUrl}/me/player/next?device_id=${deviceId}`;
   const URL_PREV = `${apiUrl}/me/player/previous?device_id=${deviceId}`;
   const URL_RECENT_TRACKS = `${apiUrl}/me/player/recently-played`;
+  const URL_VOLUME = `${apiUrl}/me/player/volume?volume_percent=`;
   const URL_STATUS = `${apiUrl}/me/player`;
   const URL_SONG = `${apiUrl}/tracks/`;
   const URL_TRANSFER = `${apiUrl}/me/player`;
@@ -62,14 +65,35 @@ const Player = () => {
     };
   }, []);
 
-  const onSeek = (e) => {
-    setSeek((prev) => e.target.value);
-  };
+  useEffect(() => {
+    let isMounted = true;
+    const timeout = setInterval(async () => {
+      let { data } = await axios({
+        method: "GET",
+        url: URL_STATUS,
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+      });
+      if (data) {
+        setProgress(convertToTime(data.progress_ms));
+        setSeek(data.progress_ms);
+      }
+    }, 800);
+    return () => {
+      isMounted = false;
+      clearInterval(timeout);
+    };
+  }, []);
 
   const convertToTime = (millis) => {
     let seconds = millis / 1000;
     let minutes = Math.floor(seconds / 60);
     seconds = Math.floor(seconds - minutes * 60);
+    if (seconds < 10) {
+      return `${minutes}:0${seconds}`;
+    }
     return `${minutes}:${seconds}`;
   };
 
@@ -85,6 +109,9 @@ const Player = () => {
       });
       if (data) {
         setDuration(convertToTime(data.item.duration_ms));
+        setSeek(data.progress_ms);
+        setProgress(convertToTime(data.progress_ms));
+        setVolume(data.device.volume_percent);
         const url = URL_SONG + data.item.id;
         try {
           let song = await axios({
@@ -96,6 +123,19 @@ const Player = () => {
             },
           });
           setCurrentSong(song.data);
+        } catch (e) {
+          console.log(e);
+        }
+        try {
+          setVolume((prev) => volume);
+          await axios({
+            method: "PUT",
+            url: URL_VOLUME + volume,
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          });
         } catch (e) {
           console.log(e);
         }
@@ -224,6 +264,63 @@ const Player = () => {
     return list;
   };
 
+  const changeVolume = async (e) => {
+    try {
+      setVolume((prev) => e.target.value);
+      if (playing) {
+        await axios({
+          method: "PUT",
+          url: URL_VOLUME + e.target.value,
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const toggleMute = async () => {
+    console.log("hey");
+    if (muted.val) {
+      setVolume(50);
+      muted.val = false;
+      muted.html = (
+        <FaVolumeMute
+          className="icon"
+          onClick={() => {
+            toggleMute();
+          }}
+        />
+      );
+    } else {
+      setVolume(0);
+      muted.val = true;
+      muted.html = (
+        <FaVolumeUp
+          className="icon"
+          onClick={() => {
+            toggleMute();
+          }}
+        />
+      );
+    }
+  };
+
+  let muted = {
+    val: true,
+    html: (
+      <FaVolumeMute
+        className="icon"
+        onClick={() => {
+          toggleMute();
+        }}
+      />
+    ),
+  };
+
   if (currentSong) {
     return (
       <>
@@ -268,7 +365,7 @@ const Player = () => {
               />
             </div>
             <div className="slider">
-              <p className="time-playing font-sm">0:54</p>
+              <p className="time-playing font-sm">{progress}</p>
               <p className="slider-control">
                 <input
                   type={"range"}
@@ -276,7 +373,7 @@ const Player = () => {
                   className="slider-actual-pointer"
                   max={4 * 60000}
                   value={seek}
-                  onChange={onSeek}
+                  readOnly
                 />
                 {/* <span className="slider-actual-pointer"></span> */}
               </p>
@@ -284,7 +381,19 @@ const Player = () => {
             </div>
           </div>
           <div className="volume">
-            <FaVolumeUp className="icon" />
+            <p className="slider-control">
+              <input
+                type={"range"}
+                width={"100%"}
+                className="slider-actual-pointer"
+                max={100}
+                value={volume}
+                onChange={changeVolume}
+                step={10}
+              />
+              {/* <span className="slider-actual-pointer"></span> */}
+            </p>
+            {muted.html}
             <FaExpand
               className="icon"
               onClick={() => {
