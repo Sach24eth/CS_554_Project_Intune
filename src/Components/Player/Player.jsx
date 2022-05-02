@@ -24,6 +24,7 @@ const Player = () => {
   const [currentSong, setCurrentSong] = useState(undefined);
   const [invalidToken, setInvalidToken] = useState(false);
   const [invalidCounter, setInvalidCounter] = useState(0);
+  const [currentUri, setCurrentUri] = useState(0);
   const token = window.localStorage.getItem("access_token");
   const apiUrl = "https://api.spotify.com/v1";
   let previousTime = 100000;
@@ -86,13 +87,14 @@ const Player = () => {
             },
           });
           if (data) {
-            if (data.progress_ms < previousTime) {
+            if (data.progress_ms < previousTime || currentUri != data.item.id) {
               getData();
             }
             setProgress(convertToTime(data.progress_ms));
             setSeek(data.progress_ms);
             setPlaying(data.is_playing);
             previousTime = data.progress_ms;
+            setCurrentUri(data.item.id);
           }
           setInvalidCounter(0);
         }
@@ -237,6 +239,7 @@ const Player = () => {
       console.log(e);
     }
     setPlaying(false);
+    getData();
   };
 
   const nextSong = async () => {
@@ -253,7 +256,7 @@ const Player = () => {
       console.log(e);
     }
     setPlaying(true);
-    getData();
+    await getData();
   };
 
   const prevSong = async () => {
