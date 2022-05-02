@@ -14,7 +14,8 @@ const Library = () => {
     const [display, setDisplay] = useState(undefined);
     const [likedSongs, setLikedSongs] = useState(null);
     let card = null;
-    let access_token = window.localStorage.getItem("access_token");;
+    let access_token = window.localStorage.getItem("access_token");
+    let navigate = useNavigate();
 
     function fetchData() {
         if (access_token){
@@ -160,12 +161,18 @@ const Library = () => {
         );
     }
     else {
+
+        const routeChange = () =>{
+            let path = `/me`;
+            navigate(path);
+        }
         return (
             <section id="library">
                 <div className="container">
                     <div className="header">
                         <h1>Library</h1>
-
+                        <h3>You are Not Connected to Spotify</h3>
+                        <button onClick={routeChange}>Connect to Spotify</button>
                     </div>
                 </div>
             </section>
