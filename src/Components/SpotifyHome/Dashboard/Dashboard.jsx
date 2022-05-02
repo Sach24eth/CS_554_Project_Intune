@@ -71,7 +71,7 @@ class Dashboard extends Component {
           },
         })
         .then((res) => {
-          console.log(res.data.items);
+          // console.log(res.data.items);
           this.setState({
             songs: res.data.items,
           });
@@ -86,7 +86,7 @@ class Dashboard extends Component {
           },
         })
         .then((res) => {
-          console.log(res.data.artists);
+          // console.log(res.data.artists);
           this.setState({
             followings: res.data.artists.items,
           });
@@ -105,7 +105,7 @@ class Dashboard extends Component {
           },
         })
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           this.setState({
             playlist: res.data.items,
           });
