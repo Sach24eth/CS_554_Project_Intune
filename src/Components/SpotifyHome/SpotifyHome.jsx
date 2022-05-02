@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Dashboard from "./Dashboard/Dashboard";
@@ -35,7 +34,7 @@ const SpotifyHome = ({ greeting, username }) => {
     }
 
     getGenre();
-  }, []);
+  }, [history]);
 
   useEffect(() => {
     setTemplateToLoad(
