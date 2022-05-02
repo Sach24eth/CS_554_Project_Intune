@@ -13,6 +13,8 @@ const Library = () => {
     const [albums, setAlbums] = useState(undefined);
     const [display, setDisplay] = useState(undefined);
     const [likedSongs, setLikedSongs] = useState(null);
+    const [artists, setArtists] = useState(null);
+
     let card = null;
     let access_token = window.localStorage.getItem("access_token");
     let navigate = useNavigate();
@@ -23,6 +25,7 @@ const Library = () => {
             const URL_ALBUMS = `${apiUrl}/me/albums`;
             const URL_USER_PlAYLISTS = `${apiUrl}/me/playlists`;
             const URL_USER_LIKED_SONGS = `${apiUrl}/me/tracks`;
+            const URL_USER_FOLLOWING = `${apiUrl}/me/following?type=artist`;
 
             setLoading(true)
 
@@ -50,6 +53,19 @@ const Library = () => {
                     // console.log(res.data);
                     setPlaylists(res.data.items);
                     // setLoading(false)
+                })
+                .catch((e) => console.log(e.response));
+
+            axios
+                .get(URL_USER_FOLLOWING, {
+                    headers: {
+                        Authorization: "Bearer " + access_token,
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then((res) => {
+                    console.log(res.data.artists);
+                    setArtists(res.data.artists.items);
                 })
                 .catch((e) => console.log(e.response));
 
@@ -133,6 +149,24 @@ const Library = () => {
                                         uri={playlist.uri}
                                         albumId={playlist.id}
                                         albumRedir={redirToPlaylist}
+                                    />
+                                );
+                            })}
+                        </div>
+
+                        <h3>Artists</h3>
+                        <div className="card-list" id="albums">
+                            {artists && artists.map((artist) => {
+                                return (
+                                    <Card
+                                        key={artist.id}
+                                        id={artist.id}
+                                        heading={artist.name}
+                                        image={artist.images[0].url}
+                                        // clickHandler={this.props.onPlaySong}
+                                        uri={artist.uri}
+                                        albumId={artist.id}
+                                        // albumRedir={redirToPlaylist}
                                     />
                                 );
                             })}
