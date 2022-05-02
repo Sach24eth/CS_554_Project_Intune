@@ -93,7 +93,7 @@ const App = () => {
           <Route path="/library" element={<Library />} />
           <Route path="/me" element={<User />} />
           <Route path="/callback" element={<Callback />} />
-          <Route path="/album" element={<PlaylistPage />} />
+          <Route path="/playlist" element={<PlaylistPage />} />
           <Route
             path="/player"
             element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}

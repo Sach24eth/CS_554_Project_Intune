@@ -130,7 +130,7 @@ class Dashboard extends Component {
 
   redirToAlbum = (e) => {
     const albumId = e.target.parentNode.parentNode.id;
-    window.location.href = "/album?id=" + albumId.split(":")[2];
+    window.location.href = "/playlist?id=" + albumId.split(":")[2];
   };
   render() {
     return (
