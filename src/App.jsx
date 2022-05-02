@@ -11,6 +11,7 @@ import Callback from "./Components/CallbackHandler/Callback";
 import PlaylistPage from "./Pages/Playlist";
 import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
+import AlbumPage from "./Pages/Album";
 import Auth from "./Pages/Auth";
 import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
@@ -94,6 +95,7 @@ const App = () => {
           <Route path="/me" element={<User />} />
           <Route path="/callback" element={<Callback />} />
           <Route path="/playlist" element={<PlaylistPage />} />
+          <Route path="/album" element={<AlbumPage />} />
           <Route
             path="/player"
             element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}
