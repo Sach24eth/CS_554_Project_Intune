@@ -9,11 +9,11 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  onAuthStateChanged,
   browserLocalPersistence,
 } from "firebase/auth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 const Firestore = require("./Firestore");
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -30,7 +30,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app, {
   persistence: browserLocalPersistence,
 });
-
 function SpotifyFbLogin(data) {
   signInWithCustomToken(auth, data.firebaseToken)
     .then((userCredential) => {
@@ -55,60 +54,44 @@ function SpotifyFbLogin(data) {
     .catch((error) => {
       console.log("error", error);
     });
-  return "hahah";
+  return "SpotifyLogin";
 }
 
-async function AppUserCreation(data) {
+function AppUserCreation(data) {
   console.log("data", data);
-  try {
-    const createUser = await createUserWithEmailAndPassword(
-      auth,
-      data.email,
-      data.password,
-      data.displayName
-    );
-    Firestore.createUsersInFirestore(
-      createUser.user.uid,
-      data.displayName,
-      createUser.user.email,
-      createUser.user.photoURL
-    );
-
-    window.localStorage.setItem(
-      "userDetails",
-      JSON.stringify(auth.currentUser)
-    );
-
-    return {
-      status: 200,
-      userCreated: true,
-      message: "User created. Redirecting...",
-    };
-  } catch (error) {
-    console.log(error);
-    return { status: 400, userCreated: false, message: error };
-  }
-
-  // console.log(createUser.user);
-
-  // .then((userCredential) => {
-  //   userCredential.user.displayName = data.displayName;
-  //   toast.success("Account Created Successfully");
-  //   Firestore.createUsersInFirestore(
-  //     userCredential.user.uid,
-  //     userCredential.user.displayName,
-  //     userCredential.user.email,
-  //     userCredential.user.photoURL
-  //   );
-  //   window.localStorage.setItem(
-  //     "userDetails",
-  //     JSON.stringify(auth.currentUser)
-  //   );
-  // })
-  // .catch((error) => {
-  //   console.log("error", error);
-  //   toast.error(error.message);
-  // });
+  createUserWithEmailAndPassword(
+    auth,
+    data.email,
+    data.password,
+    data.displayName
+  )
+    .then((userCredential) => {
+      updateProfile(auth.currentUser, {
+        displayName: data.displayName,
+      })
+        .then(() => {
+          console.log("display name updated");
+          console.log("userCredential", userCredential);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+      toast.success("Account Created Successfully");
+      Firestore.createUsersInFirestore(
+        userCredential.user.uid,
+        userCredential.user.displayName,
+        userCredential.user.email,
+        userCredential.user.photoURL
+      );
+      window.localStorage.setItem(
+        "userDetails",
+        JSON.stringify(auth.currentUser)
+      );
+    })
+    .catch((error) => {
+      console.log("error", error);
+      toast.error(error.message);
+    });
 }
 async function AppUserLogin(data) {
   let redirStatus;
@@ -139,12 +122,10 @@ async function AppUserLogin(data) {
     return { err: true };
   }
 }
-
 function AppSignOut() {
   signOut(auth)
     .then(() => {
       toast.success("Logged Out Successfully");
-      window.localStorage.setItem("auth", 0);
       setTimeout(() => {
         window.location.href = "/";
       }, 700);
@@ -182,10 +163,7 @@ async function GoogleLogin() {
     return { status: 400, message: error.message };
   }
 }
-function CurrentUser() {
-  console.log("auth", auth);
-  return auth.currentUser;
-}
+
 export {
   SpotifyFbLogin,
   firebaseConfig,
@@ -193,5 +171,4 @@ export {
   AppUserLogin,
   AppSignOut,
   GoogleLogin,
-  CurrentUser,
 };

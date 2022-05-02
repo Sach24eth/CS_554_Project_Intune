@@ -20,7 +20,6 @@ const db = getFirestore(app);
 async function createUsersInFirestore(id, displayName, email, photoURL) {
   let userDetails = {};
   console.log("database", db);
-  console.log("into da db");
   const querySnapshot = await getDocs(collection(db, "users"));
   //find if data already exists
   let userExists = false;
