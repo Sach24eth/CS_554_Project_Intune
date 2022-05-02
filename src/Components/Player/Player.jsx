@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { ReactDOM } from "react-dom";
 import {
   FaBackward,
   FaPlay,
@@ -15,14 +16,17 @@ const Player = () => {
   const [player, setPlayer] = useState(undefined);
   const [deviceId, setDeviceId] = useState(undefined);
   const [playing, setPlaying] = useState(false);
-  const [duration, setDuration] = useState("0:00");
+  const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState("0:00");
   const [seek, setSeek] = useState(0);
   const [volume, setVolume] = useState(50);
   const [active, setActive] = useState(false);
   const [currentSong, setCurrentSong] = useState(undefined);
+  const [invalidToken, setInvalidToken] = useState(false);
+  const [invalidCounter, setInvalidCounter] = useState(0);
   const token = window.localStorage.getItem("access_token");
   const apiUrl = "https://api.spotify.com/v1";
+  let previousTime = 100000;
   const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
   const URL_PAUSE = `${apiUrl}/me/player/pause?device_id=${deviceId}`;
   const URL_NEXT = `${apiUrl}/me/player/next?device_id=${deviceId}`;
@@ -39,6 +43,8 @@ const Player = () => {
     script.async = true;
 
     document.body.appendChild(script);
+
+    setInvalidToken(true);
 
     window.onSpotifyWebPlaybackSDKReady = () => {
       const player = new window.Spotify.Player({
@@ -59,6 +65,7 @@ const Player = () => {
 
       player.addListener("ready", ({ device_id }) => {
         setDeviceId(device_id);
+        window.localStorage.setItem("deviceId", device_id);
       });
 
       getData();
@@ -68,17 +75,33 @@ const Player = () => {
   useEffect(() => {
     let isMounted = true;
     const timeout = setInterval(async () => {
-      let { data } = await axios({
-        method: "GET",
-        url: URL_STATUS,
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-      });
-      if (data) {
-        setProgress(convertToTime(data.progress_ms));
-        setSeek(data.progress_ms);
+      try {
+        if (!invalidToken) {
+          let { data } = await axios({
+            method: "GET",
+            url: URL_STATUS,
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          });
+          if (data) {
+            if (data.progress_ms < previousTime) {
+              getData();
+            }
+            setProgress(convertToTime(data.progress_ms));
+            setSeek(data.progress_ms);
+            setPlaying(data.is_playing);
+            previousTime = data.progress_ms;
+          }
+          setInvalidCounter(0);
+        }
+      } catch (e) {
+        setInvalidCounter(invalidCounter + 1);
+        if (invalidCounter > 5) {
+          setInvalidToken(true);
+        }
+        console.log(e);
       }
     }, 800);
     return () => {
@@ -108,10 +131,9 @@ const Player = () => {
         },
       });
       if (data) {
-        setDuration(convertToTime(data.item.duration_ms));
+        setDuration(data.item.duration_ms);
         setSeek(data.progress_ms);
         setProgress(convertToTime(data.progress_ms));
-        setVolume(data.device.volume_percent);
         const url = URL_SONG + data.item.id;
         try {
           let song = await axios({
@@ -282,45 +304,6 @@ const Player = () => {
     }
   };
 
-  const toggleMute = async () => {
-    console.log("hey");
-    if (muted.val) {
-      setVolume(50);
-      muted.val = false;
-      muted.html = (
-        <FaVolumeMute
-          className="icon"
-          onClick={() => {
-            toggleMute();
-          }}
-        />
-      );
-    } else {
-      setVolume(0);
-      muted.val = true;
-      muted.html = (
-        <FaVolumeUp
-          className="icon"
-          onClick={() => {
-            toggleMute();
-          }}
-        />
-      );
-    }
-  };
-
-  let muted = {
-    val: true,
-    html: (
-      <FaVolumeMute
-        className="icon"
-        onClick={() => {
-          toggleMute();
-        }}
-      />
-    ),
-  };
-
   if (currentSong) {
     return (
       <>
@@ -371,13 +354,12 @@ const Player = () => {
                   type={"range"}
                   width={"100%"}
                   className="slider-actual-pointer"
-                  max={4 * 60000}
+                  max={duration}
                   value={seek}
                   readOnly
                 />
-                {/* <span className="slider-actual-pointer"></span> */}
               </p>
-              <p className="time-total font-sm">{duration}</p>
+              <p className="time-total font-sm">{convertToTime(duration)}</p>
             </div>
           </div>
           <div className="volume">
@@ -393,7 +375,7 @@ const Player = () => {
               />
               {/* <span className="slider-actual-pointer"></span> */}
             </p>
-            {muted.html}
+            <FaVolumeUp className="icon" />
             <FaExpand
               className="icon"
               onClick={() => {
@@ -402,7 +384,6 @@ const Player = () => {
             />
           </div>
         </div>
-        ;
       </>
     );
   } else {

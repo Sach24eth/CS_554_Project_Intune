@@ -11,7 +11,7 @@ const Home = () => {
 
   const refreshToken = window.localStorage.getItem("refresh_token") || null;
   const expiresIn = window.localStorage.getItem("expires_in") || null;
-  
+
   let date = new Date();
   let currentTS = date.getTime();
   let accessTokenCreatedTime = window.localStorage.getItem(
@@ -55,8 +55,8 @@ const Home = () => {
       setGreeting("Good Evening");
     }
     //Temp store username
-    let userDetails = JSON.parse(window.localStorage.getItem("userDetails"))
-    setUsername(userDetails.displayName || "User")
+    let userDetails = JSON.parse(window.localStorage.getItem("userDetails"));
+    setUsername(userDetails.displayName || "User");
   }, []);
 
   return (
@@ -68,7 +68,7 @@ const Home = () => {
         <div className="right">
           <Messages />
         </div>
-        <Player />
+        {/* <Player /> */}
       </div>
     </section>
   );

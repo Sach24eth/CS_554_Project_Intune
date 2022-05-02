@@ -12,6 +12,7 @@ import PlaylistPage from "./Pages/Playlist";
 import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
 import Auth from "./Pages/Auth";
+import Player from "./Components/Player";
 
 const App = () => {
   useEffect(() => {
@@ -47,6 +48,7 @@ const App = () => {
           <Route path="/album" element={<PlaylistPage />} />
           <Route path="/player" element={<Playback />} />
         </Routes>
+        <Player />
       </Router>
     </>
   );
