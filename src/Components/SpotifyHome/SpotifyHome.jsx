@@ -1,10 +1,30 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Dashboard from "./Dashboard/Dashboard";
 import "./spotify.css";
 
+const firestore = require("../../Firebase/Firestore");
+
 const SpotifyHome = ({ greeting, username }) => {
   const [templateToLoad, setTemplateToLoad] = useState(undefined);
+  const history = useNavigate();
+  useEffect(() => {
+    async function getGenre() {
+      const id =
+        JSON.parse(window.localStorage.getItem("userDetails")).uid || null;
+      if (id) {
+        firestore
+          .getGenreData(id)
+          .then((res) => {
+            console.log(res);
+            if (!res.hasData) history("/genres");
+          })
+          .catch((err) => console.log(err));
+      }
+    }
+
+    getGenre();
+  }, [history]);
 
   useEffect(() => {
     setTemplateToLoad(

@@ -8,6 +8,8 @@ const Firestore = require("../../Firebase/Firestore");
 const User = () => {
   const [user, setUser] = useState({});
   const [isLoggedInWithSpotify, setIsLoggedInWithSpotify] = useState(undefined);
+  const userEmail =
+    JSON.parse(window.localStorage.getItem("userDetails")).email || null;
   window.history.pushState(null, document.title, "/me");
   useEffect(() => {
     let access_token = window.localStorage.getItem("access_token");
@@ -23,9 +25,14 @@ const User = () => {
       axios
         .post(`${process.env.REACT_APP_API_URL}/me`, { access_token })
         .then((res) => {
-          console.log("hah",res.data);
+          console.log("hah", res.data);
           setUser(res.data);
-          Firestore.createUsersInFirestore(res.data.id, res.data.displayName, res.data.email, res.data.photoURL)
+          Firestore.createUsersInFirestore(
+            res.data.id,
+            res.data.displayName,
+            res.data.email,
+            res.data.photoURL
+          );
           window.localStorage.setItem("user", JSON.stringify(res.data));
         })
         .catch((err) => console.log(err.response));
@@ -79,7 +86,7 @@ const User = () => {
               <input
                 type={"email"}
                 placeholder="Email"
-                value={user.email ? user.email : "test@gmail.com"}
+                value={userEmail ? userEmail : "No Email"}
                 contentEditable={false}
                 disabled={true}
               />

@@ -46,13 +46,22 @@ function SpotifyFbLogin(data) {
     }).catch((error) => {
         console.log("error", error)
     })
-    return "hahah";
+    return "SpotifyLogin";
 }
 
 function AppUserCreation(data){
     console.log("data", data)
     createUserWithEmailAndPassword(auth, data.email, data.password, data.displayName).then((userCredential) => {
-        userCredential.user.displayName = data.displayName
+        updateProfile(auth.currentUser, {
+            displayName: data.displayName,
+
+        }).then(() => {
+            console.log('display name updated')
+            console.log('userCredential', userCredential);
+        }
+        ).catch((error) => {
+            console.log('error', error)
+        })
         toast.success('Account Created Successfully')
         Firestore.createUsersInFirestore(userCredential.user.uid, userCredential.user.displayName, 
             userCredential.user.email, userCredential.user.photoURL)
@@ -92,28 +101,32 @@ function AppSignOut(){
     )
 }
 
-function GoogleLogin(){
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider).then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        console.log('res', result)
-        toast.success('Login Successful')
-        Firestore.createUsersInFirestore(result.user.uid, result.user.displayName,
-            result.user.email, result.user.photoURL)
+async function GoogleLogin() {
+  const provider = new GoogleAuthProvider();
 
-            window.localStorage.setItem("userDetails", JSON.stringify(auth.currentUser));
-    }
-    ).catch((error) => {
-        console.log('error', error)
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        toast.error(error.message)
-    }
-    )
+  try {
+    const googlePopup = await signInWithPopup(auth, provider);
 
+    console.log(googlePopup);
+    const credential = GoogleAuthProvider.credentialFromResult(googlePopup);
+    const token = credential.accessToken;
+    Firestore.createUsersInFirestore(
+      googlePopup.user.uid,
+      googlePopup.user.displayName,
+      googlePopup.user.email,
+      googlePopup.user.photoURL
+    );
+
+    window.localStorage.setItem(
+      "userDetails",
+      JSON.stringify(auth.currentUser)
+    );
+
+    return { status: 200, message: "Login Successful" };
+  } catch (error) {
+    console.log(error);
+    return { status: 400, message: error.message };
+  }
 }
-function CurrentUser(){
-    console.log("auth", auth)
-    return auth.currentUser
-}
-export {SpotifyFbLogin, firebaseConfig, AppUserCreation, AppUserLogin, AppSignOut, GoogleLogin, CurrentUser}
+
+export {SpotifyFbLogin, firebaseConfig, AppUserCreation, AppUserLogin, AppSignOut, GoogleLogin}
