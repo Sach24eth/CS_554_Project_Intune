@@ -12,6 +12,7 @@ import PlaylistPage from "./Pages/Playlist";
 import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
 import Auth from "./Pages/Auth";
+import ChatRoom from "./Components/Chatrooms/Chatrooms"
 import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
 
@@ -94,6 +95,7 @@ const App = () => {
           <Route path="/me" element={<User />} />
           <Route path="/callback" element={<Callback />} />
           <Route path="/album" element={<PlaylistPage />} />
+          <Route path ="/chatrooms" element={<ChatRoom />} />
           <Route
             path="/player"
             element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}

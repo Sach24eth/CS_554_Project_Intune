@@ -1,6 +1,7 @@
 {
   "name": "spotify-clone",
   "version": "0.1.0",
+  "proxy": "http://localhost:4000",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
@@ -23,6 +24,7 @@
     "react-spotify-web-playback": "^0.9.1",
     "react-toastify": "^8.2.0",
     "redux": "^4.2.0",
+    "socket.io-client": "^4.5.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
