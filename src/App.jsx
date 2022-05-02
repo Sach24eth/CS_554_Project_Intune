@@ -9,12 +9,14 @@ import Library from "./Components/Library";
 import User from "./Components/User/User";
 import Callback from "./Components/CallbackHandler/Callback";
 import PlaylistPage from "./Pages/Playlist";
+import AlbumPage from "./Pages/Album";
+import LikedSongsPage from "./Pages/LikedSongs";
 import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
-import AlbumPage from "./Pages/Album";
 import Auth from "./Pages/Auth";
 import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
+
 
 const App = () => {
   const [auth, setAuth] = useState(false);
@@ -25,12 +27,12 @@ const App = () => {
 
     if (userDetails) {
       dispatch(
-        authLogin(
-          userDetails.uid,
-          userDetails.displayName,
-          userDetails.email,
-          userDetails.lastLoginAt
-        )
+          authLogin(
+              userDetails.uid,
+              userDetails.displayName,
+              userDetails.email,
+              userDetails.lastLoginAt
+          )
       );
     }
   }, []);
@@ -38,7 +40,7 @@ const App = () => {
   //Sets auth state based on local storage to keep user logged in
   useEffect(() => {
     const authLocalStorage = parseInt(
-      window.localStorage.getItem("authentication")
+        window.localStorage.getItem("authentication")
     );
 
     if (authLocalStorage === 1) {
@@ -69,41 +71,43 @@ const App = () => {
       window.localStorage.setItem("tokenSetTime", dTime);
     }
     if (
-      Number(currentTime) - Number(creationTime) > Number(3600 * 1000) - 1000 ||
-      !window.localStorage.getItem("token")
+        Number(currentTime) - Number(creationTime) > Number(3600 * 1000) - 1000 ||
+        !window.localStorage.getItem("token")
     )
       getToken();
   }, []);
 
   // const auth = window.localStorage.getItem("auth") === "1" ? true : false;
-  // const username =
-  //   JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
-  //   "User";
+  const username =
+      JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
+      "User";
   return (
-    <>
-      <Router>
-        <Navbar auth={auth} />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route
-            path="/auth/:authType"
-            element={<Auth onLogin={onLogin} onLogout={onLogout} />}
-          />
-          <Route path="/home" element={<Home />} />
-          <Route path="/genres" element={<GenrePicker />} />
-          <Route path="/library" element={<Library />} />
-          <Route path="/me" element={<User />} />
-          <Route path="/callback" element={<Callback />} />
-          <Route path="/playlist" element={<PlaylistPage />} />
-          <Route path="/album" element={<AlbumPage />} />
-          <Route
-            path="/player"
-            element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}
-          />
-        </Routes>
-        {/* {auth && <Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />} */}
-      </Router>
-    </>
+      <>
+        <Router>
+          <Navbar auth={auth} />
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route
+                path="/auth/:authType"
+                element={<Auth onLogin={onLogin} onLogout={onLogout} />}
+            />
+            <Route path="/home" element={<Home />} />
+            <Route path="/genres" element={<GenrePicker />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/me" element={<User />} />
+            <Route path="/callback" element={<Callback />} />
+            <Route path="/playlist" element={<PlaylistPage />} />
+            <Route path="/album" element={<AlbumPage />} />
+            {/*<Route path='/search' element={<SearchPage />} />*/}
+            <Route path='/liked-songs' element={<LikedSongsPage />} />
+            <Route
+                path="/player"
+                element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}
+            />
+          </Routes>
+          {/* {auth && <Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />} */}
+        </Router>
+      </>
   );
 };
 
