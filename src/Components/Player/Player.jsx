@@ -18,15 +18,16 @@ const Player = () => {
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState("0:00");
   const [seek, setSeek] = useState(0);
-  const [volume, setVolume] = useState(50);
+  let prevVolume = 50;
+  const [volume, setVolume] = useState(prevVolume);
   const [active, setActive] = useState(false);
   const [currentSong, setCurrentSong] = useState(undefined);
   const [invalidToken, setInvalidToken] = useState(false);
   const [invalidCounter, setInvalidCounter] = useState(0);
-  const [currentUri, setCurrentUri] = useState(0);
   const token = window.localStorage.getItem("access_token");
   const apiUrl = "https://api.spotify.com/v1";
   let previousTime = 100000;
+  let currentUri = 0;
   const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
   const URL_PAUSE = `${apiUrl}/me/player/pause?device_id=${deviceId}`;
   const URL_NEXT = `${apiUrl}/me/player/next?device_id=${deviceId}`;
@@ -93,7 +94,7 @@ const Player = () => {
             setSeek(data.progress_ms);
             setPlaying(data.is_playing);
             previousTime = data.progress_ms;
-            setCurrentUri(data.item.id);
+            currentUri = data.item.id;
           }
           setInvalidCounter(0);
         }
@@ -146,11 +147,12 @@ const Player = () => {
             },
           });
           setCurrentSong(song.data);
+          currentUri = song.data.id;
         } catch (e) {
           console.log(e);
         }
         try {
-          setVolume((prev) => volume);
+          // setVolume((prev) => volume);
           await axios({
             method: "PUT",
             url: URL_VOLUME + volume,
@@ -291,6 +293,7 @@ const Player = () => {
   const changeVolume = async (e) => {
     try {
       setVolume((prev) => e.target.value);
+      prevVolume = e.target.value;
       if (playing) {
         await axios({
           method: "PUT",
