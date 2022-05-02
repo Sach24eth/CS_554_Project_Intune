@@ -133,7 +133,7 @@ function ChatroomMaker() {
         <div>
         <h1>Current room: {room}</h1>
         {state.name && (
-            <div className="card">
+            <div id="chatroom">
               <div className="render-chat">
                 <h1>Chat Log</h1>
                 {renderChat()}
