@@ -1,0 +1,122 @@
+#artist {
+  height: calc(100vh - 75px);
+  width: auto;
+  margin: 0 2rem;
+  overflow-y: scroll;
+}
+
+#artist::-webkit-scrollbar {
+  display: none;
+}
+
+#artist .container {
+  width: 100%;
+  height: 100%;
+}
+
+#artist .container .artist {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+  background-color: var(--bg-color);
+}
+
+#artist .container .artist .artist-details {
+  margin-left: 1rem;
+}
+
+#artist .container .artist .artist-details .artistName {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  line-height: 0.75;
+  font-family: "Prompt", sans-serif;
+  font-weight: bolder;
+}
+
+.genres {
+  display: flex;
+  width: 75%;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+#artist .container .row {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 1rem;
+  scroll-behavior: smooth;
+}
+
+#artist .container .top {
+  margin-top: 1rem;
+  /* max-height: 50%; */
+  width: 50%;
+  /* overflow-y: scroll; */
+}
+
+#artist .container .top > h1 {
+  font-size: 3rem;
+  font-family: "Prompt", sans-serif;
+}
+#artist .container .artist-tracks {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+#artist .container .artist-tracks .track {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 0.5rem;
+  border-radius: 6px;
+  height: min-content;
+  cursor: pointer;
+}
+
+#artist .container .artist-tracks .track:hover {
+  background-color: var(--card-hover);
+}
+
+#artist .container .artist-tracks .track .left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+#artist .container .artist-tracks .track .right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 1rem;
+}
+
+#artist .container .artist-tracks .track .right .artists {
+  color: grey;
+}
+
+#artist .container .artist-tracks .track .play-icon {
+  float: right;
+}
+
+#artist .container .albums {
+  margin-top: 1rem;
+
+  width: 50%;
+}
+
+#artist .container .albums > h1 {
+  font-size: 3rem;
+  font-family: "Prompt", sans-serif;
+}
+
+#artist .container .top::-webkit-scrollbar,
+#artist .container .albums::-webkit-scrollbar {
+  display: none;
+}

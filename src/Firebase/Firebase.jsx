@@ -9,7 +9,6 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
-  onAuthStateChanged,
   browserLocalPersistence,
 } from "firebase/auth";
 import { toast } from "react-toastify";
@@ -139,28 +138,6 @@ async function AppUserLogin(data) {
     toast.error("Cannot Login");
     return { err: true };
   }
-  // .then(async (userCredential) => {
-  //   console.log("userCredential", userCredential);
-  //   toast.success("Login Successful");
-  //   redirStatus = await Firestore.createUsersInFirestore(
-  //     userCredential.user.uid,
-  //     userCredential.user.displayName,
-  //     userCredential.user.email,
-  //     userCredential.user.photoURL
-  //   );
-  //   window.localStorage.setItem(
-  //     "userDetails",
-  //     JSON.stringify(auth.currentUser)
-  //   );
-  //   console.log(redirStatus);
-  //   return redirStatus;
-  // })
-  // .catch((error) => {
-  //   console.log("error", error);
-  //   toast.error(error.message);
-  // });
-  console.log(redirStatus);
-  return { redirStatus };
 }
 
 function AppSignOut() {
@@ -185,8 +162,8 @@ async function GoogleLogin() {
     const googlePopup = await signInWithPopup(auth, provider);
 
     console.log(googlePopup);
-    const credential = GoogleAuthProvider.credentialFromResult(googlePopup);
-    const token = credential.accessToken;
+    // const credential = GoogleAuthProvider.credentialFromResult(googlePopup);
+    // const token = credential.accessToken;
     Firestore.createUsersInFirestore(
       googlePopup.user.uid,
       googlePopup.user.displayName,
@@ -204,30 +181,6 @@ async function GoogleLogin() {
     console.log(error);
     return { status: 400, message: error.message };
   }
-
-  // signInWithPopup(auth, provider)
-  //   .then((result) => {
-  //     const credential = GoogleAuthProvider.credentialFromResult(result);
-  //     const token = credential.accessToken;
-  //     console.log("res", result);
-  //     toast.success("Login Successful");
-  //     Firestore.createUsersInFirestore(
-  //       result.user.uid,
-  //       result.user.displayName,
-  //       result.user.email,
-  //       result.user.photoURL
-  //     );
-
-  //     window.localStorage.setItem(
-  //       "userDetails",
-  //       JSON.stringify(auth.currentUser)
-  //     );
-  //   })
-  //   .catch((error) => {
-  //     console.log("error", error);
-  //     const credential = GoogleAuthProvider.credentialFromError(error);
-  //     toast.error(error.message);
-  //   });
 }
 function CurrentUser() {
   console.log("auth", auth);

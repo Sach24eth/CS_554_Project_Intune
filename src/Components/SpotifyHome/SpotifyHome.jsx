@@ -32,9 +32,10 @@ const SpotifyHome = ({ greeting, username }) => {
         onClickCard={onClickCard}
         username={username}
         greeting={greeting}
+        history={history}
       />
     );
-  }, [greeting, username]);
+  }, [greeting, username, history]);
 
   const onClickCard = (e) => {
     e.preventDefault();

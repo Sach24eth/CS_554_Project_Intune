@@ -10,7 +10,7 @@ export const Table = ({ track, i, fn }) => {
   return (
     <div className="max-width">
       <div className="table">
-        <p>{i + 1}</p>
+        <p className="id">{i + 1}</p>
         <img alt={track.track.name} src={track.track.album.images[2].url} />
         <p>{track.track.name}</p>
         <p>{artists.join(", ")}</p>
