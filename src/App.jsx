@@ -12,6 +12,7 @@ import PlaylistPage from "./Pages/Playlist";
 import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
 import Auth from "./Pages/Auth";
+import Player from "./Components/Player";
 import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
 
@@ -99,7 +100,7 @@ const App = () => {
             element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}
           />
         </Routes>
-        {/* {auth && <Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />} */}
+        <Player />
       </Router>
     </>
   );

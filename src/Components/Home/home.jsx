@@ -68,10 +68,10 @@ const Home = () => {
     } else {
       setGreeting("Good Evening");
     }
-    onAuthStateChanged(auth,user => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        setLoadingAuth(false)
-        console.log("usernamee", user)
+        setLoadingAuth(false);
+        console.log("usernamee", user);
       }
     });
     //Temp store username
@@ -88,7 +88,7 @@ const Home = () => {
         <div className="right">
           <Messages />
         </div>
-        <Player />
+        {/* <Player /> */}
       </div>
     </section>
   );
