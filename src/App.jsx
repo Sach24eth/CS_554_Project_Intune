@@ -13,10 +13,11 @@ import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
 import Auth from "./Pages/Auth";
 import Player from "./Components/Player";
-import { useDispatch } from "react-redux";
-import { authLogin } from "./Redux/Actions/Auth";
 import SpacePage from "./Pages/Space";
 import Artist from "./Components/Artist";
+import ChangePassword from "./Components/User/ForgotPassword";
+import { useDispatch } from "react-redux";
+import { authLogin } from "./Redux/Actions/Auth";
 
 const App = () => {
   const [auth, setAuth] = useState(false);
@@ -100,6 +101,7 @@ const App = () => {
           <Route path="/playlist" element={<PlaylistPage />} />
           <Route path="/space" element={<SpacePage />} />
           <Route path="/artist" element={<Artist />} />
+          <Route path="/me/forgot-password" element={<ChangePassword />} />
           <Route
             path="/player"
             element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}

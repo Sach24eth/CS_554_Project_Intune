@@ -1,6 +1,6 @@
 #album-page {
   width: 100vw;
-  height: calc(100vh - 75px);
+  height: calc(100vh - 175px);
   overflow-x: hidden;
   overflow-y: scroll;
 }

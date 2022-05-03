@@ -50,7 +50,13 @@ const Player = () => {
   }, [window.location.pathname]);
 
   useEffect(() => {
+    const access_token = window.localStorage.getItem("access_token");
+    if (access_token) setRenderPlayer((prev) => true);
+  }, []);
+
+  useEffect(() => {
     if (!renderPlayer) return;
+    if (!window.localStorage.getItem("access_token")) return;
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
     script.async = true;
@@ -323,7 +329,7 @@ const Player = () => {
 
   if (!renderPlayer) {
     return null;
-  } else if (currentSong && renderPlayer) {
+  } else if (currentSong) {
     return (
       <>
         <div className="bottom-player">
@@ -333,7 +339,7 @@ const Player = () => {
               <p className="song">{currentSong.name}</p>
               <p className="artistName">{writeArtists(currentSong.artists)}</p>
             </div>
-            <FaHeart className="heart icon" />
+            {/* <FaHeart className="heart icon" /> */}
           </div>
           <div className="controls">
             <div className="icons">
@@ -406,7 +412,11 @@ const Player = () => {
       </>
     );
   } else {
-    return <h1>Could not load player</h1>;
+    return (
+      <div className="bottom-player">
+        <h1 className="spotify-err">Login to Spotify to access the player.</h1>
+      </div>
+    );
   }
 };
 

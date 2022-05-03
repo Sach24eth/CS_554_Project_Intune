@@ -37,7 +37,7 @@
 
 .genres {
   display: flex;
-  width: 75%;
+  width: auto;
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;

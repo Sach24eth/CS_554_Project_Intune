@@ -7,10 +7,12 @@ const Card = ({ heading, image, clickHandler, uri, albumId, albumRedir }) => {
       className="card"
       onClick={albumId ? albumRedir : clickHandler}
     >
-      <div className="img">
-        <img src={image} alt={heading} />
+      <div className="img" id={uri}>
+        <img src={image} alt={heading} id={uri} />
       </div>
-      <p className="heading">{heading}</p>
+      <p className="heading" id={uri}>
+        {heading}
+      </p>
     </div>
   );
 };
