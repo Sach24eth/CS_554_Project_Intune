@@ -127,7 +127,9 @@ class Dashboard extends Component {
 
   redirToAlbum = (e) => {
     const albumId = e.target.parentNode.parentNode.id;
+
     this.props.history(`/playlist?id=${albumId.split(":")[2]}`);
+
   };
 
   redirToArtist = (e) => {

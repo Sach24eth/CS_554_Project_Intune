@@ -9,6 +9,8 @@ import Library from "./Components/Library";
 import User from "./Components/User/User";
 import Callback from "./Components/CallbackHandler/Callback";
 import PlaylistPage from "./Pages/Playlist";
+import AlbumPage from "./Pages/Album";
+import LikedSongsPage from "./Pages/LikedSongs";
 import LandingPage from "./Pages/Landing";
 import Auth from "./Pages/Auth";
 import Player from "./Components/Player";
@@ -96,9 +98,9 @@ const App = () => {
   }, []);
 
   // const auth = window.localStorage.getItem("auth") === "1" ? true : false;
-  // const username =
-  //   JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
-  //   "User";
+  const username =
+    JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
+    "User";
   return (
     <>
       <Router>
