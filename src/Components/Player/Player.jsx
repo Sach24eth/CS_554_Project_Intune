@@ -5,7 +5,7 @@ import {
   FaPause,
   FaForward,
   FaVolumeUp,
-  FaVolumeMute,
+  FaRandom,
   FaHeart,
   FaExpand,
 } from "react-icons/fa";
@@ -18,6 +18,7 @@ const Player = () => {
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState("0:00");
   const [seek, setSeek] = useState(0);
+  const [seeking, setSeeking] = useState(false);
   let prevVolume = 50;
   const [volume, setVolume] = useState(prevVolume);
   const [active, setActive] = useState(false);
@@ -37,6 +38,7 @@ const Player = () => {
   const URL_STATUS = `${apiUrl}/me/player`;
   const URL_SONG = `${apiUrl}/tracks/`;
   const URL_TRANSFER = `${apiUrl}/me/player`;
+  const URL_SEEK = `${apiUrl}/me/player/seek?device_id=${deviceId}&position_ms=`;
   const [renderPlayer, setRenderPlayer] = useState(true);
   useEffect(() => {
     const path = window.location.pathname;
@@ -102,8 +104,10 @@ const Player = () => {
             if (data.progress_ms < previousTime || currentUri != data.item.id) {
               getData();
             }
+            if (!seeking) {
+              setSeek(data.progress_ms);
+            }
             setProgress(convertToTime(data.progress_ms));
-            setSeek(data.progress_ms);
             setPlaying(data.is_playing);
             previousTime = data.progress_ms;
             currentUri = data.item.id;
@@ -164,7 +168,6 @@ const Player = () => {
           console.log(e);
         }
         try {
-          // setVolume((prev) => volume);
           await axios({
             method: "PUT",
             url: URL_VOLUME + volume,
@@ -321,6 +324,34 @@ const Player = () => {
     }
   };
 
+  const seekSong = async (e) => {
+    setSeek((prev) => e.target.value);
+    setSeeking(true);
+    console.log("yo");
+  };
+
+  const stopSeek = async (e) => {
+    // if (mouseDown) {
+    //   setSeeking(true);
+    // } else {
+    //   setSeeking(false);
+    // }
+    console.log(seeking);
+  };
+
+  const seekTrack = async (e) => {
+    console.log("alright");
+    await axios({
+      method: "PUT",
+      url: URL_SEEK + seek,
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+    });
+    getData();
+  };
+
   if (!renderPlayer) {
     return null;
   } else if (currentSong && renderPlayer) {
@@ -375,7 +406,8 @@ const Player = () => {
                   className="slider-actual-pointer"
                   max={duration}
                   value={seek}
-                  readOnly
+                  onChange={seekSong}
+                  onMouseUp={seekTrack}
                 />
               </p>
               <p className="time-total font-sm">{convertToTime(duration)}</p>
@@ -395,6 +427,7 @@ const Player = () => {
               {/* <span className="slider-actual-pointer"></span> */}
             </p>
             <FaVolumeUp className="icon" />
+            <FaRandom className="icon" />
             <FaExpand
               className="icon"
               onClick={() => {
