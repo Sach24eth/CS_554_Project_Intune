@@ -1,9 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "./artist.css";
-import Spinner from "../Spinner";
 import Bubble from "../ArtistGenreBubble/buble";
-import { FaPlay } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Artist = () => {
@@ -106,7 +104,36 @@ const Artist = () => {
                   let artist = [];
                   track.album.artists.forEach((art) => artist.push(art.name));
                   return (
-                    <div className="track" id={track.uri} key={track.id}>
+                    <div
+                      onClick={async () => {
+                        console.log(track.uri);
+                        try {
+                          const token =
+                            window.localStorage.getItem("access_token");
+                          const deviceId =
+                            window.localStorage.getItem("deviceId");
+                          const apiUrl = "https://api.spotify.com/v1";
+                          const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
+                          await axios({
+                            method: "PUT",
+                            url: URL_PLAY,
+                            data: {
+                              uris: [track.uri],
+                              position_ms: 0,
+                            },
+                            headers: {
+                              Authorization: "Bearer " + token,
+                              "Content-Type": "application/json",
+                            },
+                          });
+                        } catch (e) {
+                          console.log(e.response);
+                        }
+                      }}
+                      className="track"
+                      id={track.uri}
+                      key={track.id}
+                    >
                       <div className="left">
                         <p>{i + 1}</p>
                         <div className="image">

@@ -1,8 +1,9 @@
 #artist {
-  height: calc(100vh - 75px);
+  height: calc(100vh - 175px);
   width: auto;
   margin: 0 2rem;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 #artist::-webkit-scrollbar {
@@ -53,9 +54,7 @@
 
 #artist .container .top {
   margin-top: 1rem;
-  /* max-height: 50%; */
   width: 50%;
-  /* overflow-y: scroll; */
 }
 
 #artist .container .top > h1 {

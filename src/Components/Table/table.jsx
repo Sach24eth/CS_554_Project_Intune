@@ -13,6 +13,7 @@ export const Table = ({ track, i, fn, playlist }) => {
     <div
       className="max-width"
       onClick={async () => {
+        console.log(playlist.uri);
         try {
           const token = window.localStorage.getItem("access_token");
           const deviceId = window.localStorage.getItem("deviceId");

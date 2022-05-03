@@ -17,7 +17,6 @@ import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
 import SpacePage from "./Pages/Space";
 import Artist from "./Components/Artist";
-import Albums from "./Components/Albums/";
 
 const App = () => {
   const [auth, setAuth] = useState(false);
@@ -99,7 +98,6 @@ const App = () => {
           <Route path="/me" element={<User />} />
           <Route path="/callback" element={<Callback />} />
           <Route path="/playlist" element={<PlaylistPage />} />
-          <Route path="/album" element={<Albums />} />
           <Route path="/space" element={<SpacePage />} />
           <Route path="/artist" element={<Artist />} />
           <Route
