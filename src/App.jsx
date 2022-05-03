@@ -12,7 +12,11 @@ import PlaylistPage from "./Pages/Playlist";
 import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
 import Auth from "./Pages/Auth";
+<<<<<<< HEAD
 import ChatRoom from "./Components/Chatrooms/Chatrooms"
+=======
+import Player from "./Components/Player";
+>>>>>>> 52c8bd14a839a1d13cf173fd1aaaee4e54c5e473
 import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
 
@@ -101,7 +105,7 @@ const App = () => {
             element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}
           />
         </Routes>
-        {/* {auth && <Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />} */}
+        <Player />
       </Router>
     </>
   );
