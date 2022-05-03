@@ -14,8 +14,11 @@ import LikedSongsPage from "./Pages/LikedSongs";
 import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
 import Auth from "./Pages/Auth";
+import Player from "./Components/Player";
 import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
+import SpacePage from "./Pages/Space";
+import Artist from "./Components/Artist";
 
 
 const App = () => {
@@ -71,8 +74,10 @@ const App = () => {
       window.localStorage.setItem("tokenSetTime", dTime);
     }
     if (
-        Number(currentTime) - Number(creationTime) > Number(3600 * 1000) - 1000 ||
-        !window.localStorage.getItem("token")
+
+      Number(currentTime) - Number(creationTime) >
+        Number(3600 * 1000) - 10000 ||
+      !window.localStorage.getItem("token")
     )
       getToken();
   }, []);
@@ -82,32 +87,32 @@ const App = () => {
       JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
       "User";
   return (
-      <>
-        <Router>
-          <Navbar auth={auth} />
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route
-                path="/auth/:authType"
-                element={<Auth onLogin={onLogin} onLogout={onLogout} />}
-            />
-            <Route path="/home" element={<Home />} />
-            <Route path="/genres" element={<GenrePicker />} />
-            <Route path="/library" element={<Library />} />
-            <Route path="/me" element={<User />} />
-            <Route path="/callback" element={<Callback />} />
-            <Route path="/playlist" element={<PlaylistPage />} />
-            <Route path="/album" element={<AlbumPage />} />
-            {/*<Route path='/search' element={<SearchPage />} />*/}
-            <Route path='/liked-songs' element={<LikedSongsPage />} />
-            <Route
-                path="/player"
-                element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}
-            />
-          </Routes>
-          {/* {auth && <Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />} */}
-        </Router>
-      </>
+
+    <>
+      <Router>
+        <Navbar auth={auth} />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/auth/:authType"
+            element={<Auth onLogin={onLogin} onLogout={onLogout} />}
+          />
+          <Route path="/home" element={<Home />} />
+          <Route path="/genres" element={<GenrePicker />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/me" element={<User />} />
+          <Route path="/callback" element={<Callback />} />
+          <Route path="/playlist" element={<PlaylistPage />} />
+          <Route path="/space" element={<SpacePage />} />
+          <Route path="/artist" element={<Artist />} />
+          <Route
+            path="/player"
+            element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}
+          />
+        </Routes>
+        <Player />
+      </Router>
+    </>
   );
 };
 

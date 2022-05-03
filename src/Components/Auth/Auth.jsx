@@ -19,6 +19,16 @@ const Auth = (props) => {
   const [displayName, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 1) {
+      history("/home");
+    }
+  }, [history]);
+
   const onEmailChange = (e) => {
     setEmail(e.target.value);
   };
@@ -137,7 +147,7 @@ const Auth = (props) => {
       window.localStorage.removeItem("expires_in");
       window.localStorage.setItem("authentication", 0);
     }
-  }, [type]);
+  }, [type, props]);
   if (type === "Logout") {
     return (
       <div className="center">

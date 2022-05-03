@@ -6,6 +6,7 @@
   background-size: auto 181%;
   background-repeat: no-repeat;
   color: var(--accent);
+  overflow-x: hidden;
 }
 
 #landing .container {
