@@ -133,24 +133,24 @@ function ChatroomMaker() {
         <div>
         <h1>Current room: {room}</h1>
         {state.name && (
-            <div id="chatroom">
-              <div className="render-chat">
+            <div id="cardChat">
+              <div id="render-chat">
                 <h1>Chat Log</h1>
                 {renderChat()}
               </div >
-                <form className= "messageBox" onSubmit={onMessageSubmit}>
-                  <div>
-                    <input
-                      name="message"
-                      placeholder="Say 'hi!'"
-                      id="message"
-                      variant="outlined"
-                      label="Message"
-                    />
-                  </div>
-                <button>Send Message</button>
-                </form>
-              </div>
+              <form id= "messageSubmit"  onSubmit={onMessageSubmit}>
+                <div>
+                  <input
+                    name="message"
+                    placeholder="Say 'hi!'"
+                    id="message"
+                    variant="outlined"
+                    label="Message"
+                  />
+                </div>
+              <button id="msgBtn">Send Message</button>
+              </form>
+            </div>
           )}
         </div>
       );
