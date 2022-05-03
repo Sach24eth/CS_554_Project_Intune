@@ -6,10 +6,11 @@ import Spotify from "../../images/Spotify.png";
 import "./navbar.css";
 
 const Navbar = ({ auth }) => {
-  const authState = useSelector((state) => state.auth);
+  const authState =
+    JSON.parse(window.localStorage.getItem("userDetails")) || undefined;
   // console.log(authState);
   // const isAuthenticated = authState?.isLoggedIn;
-  const username = authState.displayName || "User";
+  const username = authState?.displayName || "User";
   // const [auth, setAuth] = useState(false);
 
   // useEffect(() => {

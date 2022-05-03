@@ -15,6 +15,8 @@ import Auth from "./Pages/Auth";
 import Player from "./Components/Player";
 import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
+import SpacePage from "./Pages/Space";
+import Artist from "./Components/Artist";
 
 const App = () => {
   const [auth, setAuth] = useState(false);
@@ -69,7 +71,8 @@ const App = () => {
       window.localStorage.setItem("tokenSetTime", dTime);
     }
     if (
-      Number(currentTime) - Number(creationTime) > Number(3600 * 1000) - 1000 ||
+      Number(currentTime) - Number(creationTime) >
+        Number(3600 * 1000) - 10000 ||
       !window.localStorage.getItem("token")
     )
       getToken();
@@ -94,7 +97,9 @@ const App = () => {
           <Route path="/library" element={<Library />} />
           <Route path="/me" element={<User />} />
           <Route path="/callback" element={<Callback />} />
-          <Route path="/album" element={<PlaylistPage />} />
+          <Route path="/playlist" element={<PlaylistPage />} />
+          <Route path="/space" element={<SpacePage />} />
+          <Route path="/artist" element={<Artist />} />
           <Route
             path="/player"
             element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}

@@ -4,7 +4,7 @@
 }
 
 .card .heading {
-  width: 90%;
+  width: 300px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
