@@ -9,7 +9,6 @@ import Library from "./Components/Library";
 import User from "./Components/User/User";
 import Callback from "./Components/CallbackHandler/Callback";
 import PlaylistPage from "./Pages/Playlist";
-import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
 import Auth from "./Pages/Auth";
 import Player from "./Components/Player";
@@ -21,6 +20,7 @@ import { authLogin } from "./Redux/Actions/Auth";
 
 const App = () => {
   const [auth, setAuth] = useState(false);
+  const [loadPlayer, setLoadPlayer] = useState(undefined);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -37,6 +37,22 @@ const App = () => {
       );
     }
   }, []);
+
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (
+      path === "/" ||
+      path === "/auth/login" ||
+      path === "/auth/signup" ||
+      path === "/auth/logout"
+    ) {
+      setLoadPlayer((prev) => false);
+    } else {
+      setLoadPlayer((prev) => true);
+    }
+  }, []);
+
+  console.log(loadPlayer);
 
   //Sets auth state based on local storage to keep user logged in
   useEffect(() => {
@@ -102,12 +118,8 @@ const App = () => {
           <Route path="/space" element={<SpacePage />} />
           <Route path="/artist" element={<Artist />} />
           <Route path="/me/forgot-password" element={<ChangePassword />} />
-          <Route
-            path="/player"
-            element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}
-          />
         </Routes>
-        <Player />
+        <Player shouldLoad={loadPlayer} />
       </Router>
     </>
   );

@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import axios from "axios";
 
-const Player = () => {
+const Player = (props) => {
   const [player, setPlayer] = useState(undefined);
   const [deviceId, setDeviceId] = useState(undefined);
   const [playing, setPlaying] = useState(false);
@@ -37,25 +37,8 @@ const Player = () => {
   const URL_STATUS = `${apiUrl}/me/player`;
   const URL_SONG = `${apiUrl}/tracks/`;
   const URL_TRANSFER = `${apiUrl}/me/player`;
-  const [renderPlayer, setRenderPlayer] = useState(true);
-  useEffect(() => {
-    const path = window.location.pathname;
-    if (
-      path === "/" ||
-      path === "/auth/login" ||
-      path === "/auth/signup" ||
-      path === "/auth/logout"
-    )
-      setRenderPlayer((prev) => false);
-  }, [window.location.pathname]);
 
   useEffect(() => {
-    const access_token = window.localStorage.getItem("access_token");
-    if (access_token) setRenderPlayer((prev) => true);
-  }, []);
-
-  useEffect(() => {
-    if (!renderPlayer) return;
     if (!window.localStorage.getItem("access_token")) return;
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -92,6 +75,7 @@ const Player = () => {
   }, []);
 
   useEffect(() => {
+    if (!token) return;
     let isMounted = true;
     const timeout = setInterval(async () => {
       try {
@@ -105,7 +89,10 @@ const Player = () => {
             },
           });
           if (data) {
-            if (data.progress_ms < previousTime || currentUri != data.item.id) {
+            if (
+              data.progress_ms < previousTime ||
+              currentUri !== data.item.id
+            ) {
               getData();
             }
             setProgress(convertToTime(data.progress_ms));
@@ -141,6 +128,7 @@ const Player = () => {
   };
 
   const getData = async () => {
+    if (!token) return;
     try {
       let { data } = await axios({
         method: "GET",
@@ -327,7 +315,11 @@ const Player = () => {
     }
   };
 
-  if (!renderPlayer) {
+  if (props.shouldLoad) {
+    getData();
+  }
+
+  if (!props.shouldLoad) {
     return null;
   } else if (currentSong) {
     return (
@@ -414,7 +406,7 @@ const Player = () => {
   } else {
     return (
       <div className="bottom-player">
-        <h1 className="spotify-err">Login to Spotify to access the player.</h1>
+        <h1 className="spotify-err">Refresh to start spotify player</h1>
       </div>
     );
   }

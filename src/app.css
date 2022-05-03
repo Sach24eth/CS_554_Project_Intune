@@ -151,7 +151,7 @@ input:focus {
   }
 
   .bottom-player .track-img {
-    justify-content: space-between;
+    justify-content: flex-start;
   }
   .heart {
     margin-right: 1rem;
