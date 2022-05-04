@@ -87,6 +87,26 @@ const Search = () => {
         return () => (cancel = true)
     }, [search, access_token])
 
+    const playSong = (uri) => {
+
+        const deviceId = window.localStorage.getItem("deviceId");
+        const apiUrl = "https://api.spotify.com/v1";
+        const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
+
+        axios
+            .put(URL_PLAY,
+                {
+                    uris: [uri],
+
+                },{
+                    headers: {
+                        Authorization: "Bearer " + access_token,
+                        "Content-Type": "application/json",
+                    }
+
+            })
+            .catch((e) => console.log(e.response));
+    }
 
     
     return(
@@ -103,7 +123,7 @@ const Search = () => {
                 {searchTracks && <h2>Tracks</h2>}
                 {searchTracks && searchTracks.map(track => {
                     return (
-                        <div style={{ display: 'flex' }}>
+                        <div style={{ display: 'flex', cursor: 'pointer' }} onClick={() => {playSong(track.uri)}}>
 
                             <img src={track.image} style={{ height: "64px", width: "64px" }} />
                             <div>
