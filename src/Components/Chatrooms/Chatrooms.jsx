@@ -25,7 +25,7 @@ function ChatroomMaker() {
     const socketRef = useRef();
     
     // Use effect to get chatroom userDetails
-    useMemo(() => {
+    useEffect(() => {
         async function getGenre() {
           //let id = null;
           axios
