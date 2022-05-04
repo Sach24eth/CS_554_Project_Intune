@@ -34,50 +34,49 @@ const Search = () => {
             .then(res => {
 
                 setsearchTracks(
-                    res.data['tracks'].items.map(x => {
+                    res.data['tracks'].items.map(track => {
                     return {
-                        title: x.name,
-                        image: x.album.images[0].url,
-                        artists: (x.artists.map(artist => {return artist.name })).join(','),
-                        uri: x.uri
+                        title: track.name,
+                        image: track.album.images[0].url,
+                        artists: (track.artists.map(artist => {return artist.name })).join(','),
+                        uri: track.uri
                     };
                 }))
 
                 setSearchAlbums(
-                    res.data['albums'].items.map(x => {
+                    res.data['albums'].items.map(album => {
                         return {
-                            id: x.id,
-                            title: x.name,
-                            image: x.images[0].url,
-                            artists: (x.artists.map(artist => {return artist.name })).join(','),
-                            uri: x.uri
+                            id: album.id,
+                            title: album.name,
+                            image: album.images[0].url,
+                            artists: (album.artists.map(artist => {return artist.name })).join(','),
+                            uri: album.uri
                         }
                     })
                 )
 
                 setSearchArtists(
-                    res.data['artists'].items.map(x => {
+                    res.data['artists'].items.map(artist => {
                         return {
-                            id: x.id,
-                            name: x.name,
-                            image: x.images[0].url,
-                            uri: x.uri
+                            id: artist.id,
+                            name: artist.name,
+                            image: artist.images[0].url,
+                            uri: artist.uri
                         }
                     })
                 )
 
                 setSearchPlaylist(
-                    res.data['playlists'].items.map(x => {
+                    res.data['playlists'].items.map(playlist => {
                         return {
-                            id: x.id,
-                            title: x.name,
-                            image: x.images[0].url,
-                            owner: x.owner.display_name,
-                            uri: x.uri
+                            id: playlist.id,
+                            title: playlist.name,
+                            image: playlist.images[0].url,
+                            owner: playlist.owner.display_name,
+                            uri: playlist.uri
                         }
                     })
                 )
-                console.log(res.data['playlists'].items)
 
             })
             .catch((e) => console.log(e.response));
@@ -116,15 +115,15 @@ const Search = () => {
 
             <div id='albums-result'>
                 {searchAlbums && <h2>Albums</h2>}
-                {searchAlbums && searchAlbums.map(track => {
+                {searchAlbums && searchAlbums.map(album => {
                     return (
                         <div style={{ display: 'flex' }}>
 
-                            <a href={`/album?id=${track.id}`}>
-                                <img src={track.image} style={{ height: "64px", width: "64px" }} />
+                            <a href={`/album?id=${album.id}`}>
+                                <img src={album.image} style={{ height: "64px", width: "64px" }} />
                                 <div>
-                                    <div>{track.title}</div>
-                                    <div className="text-muted">{track.artists}</div>
+                                    <div>{album.title}</div>
+                                    <div className="text-muted">{album.artists}</div>
                                 </div>
                             </a>
                         </div>
@@ -134,14 +133,14 @@ const Search = () => {
 
             <div id='artists-result'>
                 {searchArtists && <h2>Artists</h2>}
-                {searchArtists && searchArtists.map(track => {
+                {searchArtists && searchArtists.map(artist => {
                     return (
                         <div style={{ display: 'flex' }}>
 
-                            <a href={`/artist?id=${track.id}`} >
-                            <img src={track.image} style={{ height: "64px", width: "64px" }} />
+                            <a href={`/artist?id=${artist.id}`} >
+                            <img src={artist.image} style={{ height: "64px", width: "64px" }} />
                             <div>
-                                <div>{track.name}</div>
+                                <div>{artist.name}</div>
                             </div>
                             </a>
                         </div>
@@ -151,15 +150,15 @@ const Search = () => {
 
             <div id='playlist-result'>
                 {searchPlaylist && <h2>Playlists</h2>}
-                {searchPlaylist && searchPlaylist.map(track => {
+                {searchPlaylist && searchPlaylist.map(playlist => {
                     return (
                         <div style={{ display: 'flex' }}>
 
-                            <a href={`/playlist?id=${track.id}`} >
-                                <img src={track.image} style={{ height: "64px", width: "64px" }} />
+                            <a href={`/playlist?id=${playlist.id}`} >
+                                <img src={playlist.image} style={{ height: "64px", width: "64px" }} />
                                 <div>
-                                    <div>{track.title}</div>
-                                    <div className="text-muted">{track.owner}</div>
+                                    <div>{playlist.title}</div>
+                                    <div className="text-muted">{playlist.owner}</div>
                                 </div>
                             </a>
 
