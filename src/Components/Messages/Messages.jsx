@@ -49,15 +49,11 @@ const Messages = () => {
                 tempMessagesRoom[i] = {id:i,title:res.genres[i]}
               }
               setUsrGenres(tempMessagesRoom);
-
-              //console.log("Genre data",tempMessagesRoom);
               if (!res.hasData) history("/genres");
             })
             .catch((err) => console.log(err));
         }
       });
-      // const stat = await client.setAsync("UsrGenres", JSON.stringify(usrData))
-      // console.log("stat:",stat)
     }
     getGenre();
   }, []);
@@ -68,14 +64,12 @@ const Messages = () => {
       try {
         let searchResults = [];
         if ((searchTerm.length!== 0 && searchTerm)) {
-          // console.log("Search Triggered");
-          //console.log("Searching this:",searchTerm.length)
+          console.log("Searching this:",searchTerm.length)
           for (let i = 0; i < genres.length; i++) {
             //console.log("Genre:", genres[i], "searchTerm", searchTerm.toLowerCase())
             let tfFlag = genres[i].includes(searchTerm.toLowerCase());
             //console.log("TF Flag:", tfFlag);
             if (tfFlag === true) {
-              //console.log("if triggers")
               // console.log("True vals", genres[i]);
               let objRoom = {id:i,title:genres[i].toUpperCase()}
               searchResults.push(objRoom);
@@ -86,7 +80,8 @@ const Messages = () => {
           if (searchResults.length > 0) {
             setUsrGenres(searchResults)
           }
-          else if (searchResults.length === 0) {
+          else if (searchResults.length === 0 ) {
+            console.log("Searching this searchRes:")
             setNoRes('true')
             const auth = getAuth();
             onAuthStateChanged(auth,user => {
