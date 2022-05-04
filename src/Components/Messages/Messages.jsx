@@ -64,6 +64,7 @@ const Messages = () => {
     async function searchRooms() {
       try {
         let searchResults = [];
+        console.log("Searching this:",searchTerm)
         if (searchTerm.length > 0) {
           for (let i = 0; i < genres.length; i++) {
             if (genres[i].includes(searchTerm.toLowerCase()) === 'true') {
@@ -71,7 +72,7 @@ const Messages = () => {
             }
           }
           if (searchResults.length > 0) {
-            setSearchRes(searchResults)
+            setUsrGenres(searchResults)
           } else {
             setNoRes('true')
           }

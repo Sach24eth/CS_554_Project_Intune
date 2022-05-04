@@ -9,6 +9,8 @@ import Library from "./Components/Library";
 import User from "./Components/User/User";
 import Callback from "./Components/CallbackHandler/Callback";
 import PlaylistPage from "./Pages/Playlist";
+import AlbumPage from "./Pages/Album";
+import LikedSongsPage from "./Pages/LikedSongs";
 import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
 import Auth from "./Pages/Auth";
@@ -18,6 +20,7 @@ import { authLogin } from "./Redux/Actions/Auth";
 import SpacePage from "./Pages/Space";
 import Artist from "./Components/Artist";
 import ChatRoom from "./Components/Chatrooms/Chatrooms"
+
 const App = () => {
   const [auth, setAuth] = useState(false);
   const dispatch = useDispatch();
@@ -27,12 +30,12 @@ const App = () => {
 
     if (userDetails) {
       dispatch(
-        authLogin(
-          userDetails.uid,
-          userDetails.displayName,
-          userDetails.email,
-          userDetails.lastLoginAt
-        )
+          authLogin(
+              userDetails.uid,
+              userDetails.displayName,
+              userDetails.email,
+              userDetails.lastLoginAt
+          )
       );
     }
   }, []);
@@ -40,7 +43,7 @@ const App = () => {
   //Sets auth state based on local storage to keep user logged in
   useEffect(() => {
     const authLocalStorage = parseInt(
-      window.localStorage.getItem("authentication")
+        window.localStorage.getItem("authentication")
     );
 
     if (authLocalStorage === 1) {
@@ -71,6 +74,7 @@ const App = () => {
       window.localStorage.setItem("tokenSetTime", dTime);
     }
     if (
+
       Number(currentTime) - Number(creationTime) >
         Number(3600 * 1000) - 10000 ||
       !window.localStorage.getItem("token")
@@ -79,10 +83,11 @@ const App = () => {
   }, []);
 
   // const auth = window.localStorage.getItem("auth") === "1" ? true : false;
-  // const username =
-  //   JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
-  //   "User";
+  const username =
+      JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
+      "User";
   return (
+
     <>
       <Router>
         <Navbar auth={auth} />
