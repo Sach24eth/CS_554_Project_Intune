@@ -117,6 +117,7 @@ const App = () => {
           <Route path="/me" element={<User />} />
           <Route path="/callback" element={<Callback />} />
           <Route path="/playlist" element={<PlaylistPage />} />
+          <Route path="/album" element={<AlbumPage />} />
           <Route path="/space" element={<SpacePage />} />
           <Route path="/artist" element={<Artist />} />
           <Route path="/me/forgot-password" element={<ChangePassword />} />

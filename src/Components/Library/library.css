@@ -1,0 +1,57 @@
+#library {
+  width: 100vw;
+  height: calc(100vh - 175px);
+  overflow-x: hidden;
+}
+
+#library .container {
+  width: 100%;
+  max-height: 100%;
+  margin: 1rem;
+}
+
+#library .container .header {
+  font-size: 3rem;
+  font-family: "Prompt", sans-serif;
+}
+
+#library .container .err-text {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+#library .container .connect {
+  height: 50px;
+  background-color: var(--accent);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 18px;
+  transition: all 100ms ease-in;
+}
+
+#library .container .connect:hover {
+  background-color: var(--accent-hover);
+}
+
+#library .container .title {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+}
+
+#library .container .card-list {
+  margin-top: 1rem;
+  margin-right: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+#library .container .card-list .card {
+  padding-left: 0;
+}
+
+#library .container .card-list .card .heading {
+  font-size: 18px;
+}
