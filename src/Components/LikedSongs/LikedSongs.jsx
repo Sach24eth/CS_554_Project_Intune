@@ -38,7 +38,7 @@ class LikedSongs extends Component {
                 },
             })
             .then((res) => {
-                this.setState({playlist: res.data, loading: false})
+                this.setState({playlist: res.data, loading: false});
                 console.log(res.data)
             })
             .catch((e) => {
@@ -70,12 +70,6 @@ class LikedSongs extends Component {
                                 />
                                 <div className="playlist-container">
                                     <h1>Liked Songs</h1>
-                                    {/* <p className="description">
-                    {this.state.playlist.description}
-                  </p> */}
-                                    {/* <p className="followers">
-                    Followers: {this.state.playlist.followers.total}
-                  </p> */}
                                 </div>
                             </div>
                             <div className="playlist-tracks">
