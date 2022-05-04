@@ -120,6 +120,7 @@ const App = () => {
           <Route path="/album" element={<AlbumPage />} />
           <Route path="/space" element={<SpacePage />} />
           <Route path="/artist" element={<Artist />} />
+          <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/me/forgot-password" element={<ChangePassword />} />
         </Routes>
         <Player shouldLoad={loadPlayer} />

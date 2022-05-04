@@ -6,12 +6,9 @@ import likedSongsImage from "../../images/liked-songs-300.png";
 import "./library.css";
 
 const Library = () => {
-  const [isLoggedInWithSpotify, setIsLoggedInWithSpotify] = useState(undefined);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [playlists, setPlaylists] = useState(undefined);
   const [albums, setAlbums] = useState(undefined);
-  const [display, setDisplay] = useState(undefined);
   const [likedSongs, setLikedSongs] = useState(null);
   const [artists, setArtists] = useState(null);
 
@@ -103,8 +100,7 @@ const Library = () => {
   };
 
   const redirToTracks = () => {
-    console.log("hee");
-    window.location.href = "/liked-songs";
+    navigate("/liked-songs");
   };
 
   if (loading) {
@@ -195,10 +191,6 @@ const Library = () => {
       </section>
     );
   } else {
-    const routeChange = () => {
-      let path = `/me`;
-      navigate(path);
-    };
     return (
       <section id="library">
         <div className="container">

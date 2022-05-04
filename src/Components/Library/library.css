@@ -4,6 +4,10 @@
   overflow-x: hidden;
 }
 
+#library::-webkit-scrollbar {
+  display: none;
+}
+
 #library .container {
   width: 100%;
   max-height: 100%;

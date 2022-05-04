@@ -47,6 +47,7 @@ const Album = () => {
         <div className="album-cover">
           <img src={album.images[1].url} alt={album.name} />
           <div className="album-info">
+            <p className="type">{album.type}</p>
             <h1>{album.name}</h1>
             {/* <p className="artist">{covertArtists(album.artists)}</p> */}
             <div className="artists">
@@ -61,7 +62,7 @@ const Album = () => {
           {album.tracks.items.map((track, i) => {
             console.log(track);
             return (
-              <div className="track" id={track.uri}>
+              <div key={i} className="track" id={track.uri}>
                 <div className="left">
                   <p className="count">{i + 1}</p>
                   <div className="row">

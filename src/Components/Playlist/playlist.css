@@ -17,22 +17,29 @@
 #album-page .container .playlist {
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
 }
 
 #album-page .container .playlist .playlist-info {
   display: flex;
   flex-direction: row;
   align-items: center;
-  position: sticky;
-  height: 10%;
-  top: 0;
   padding-left: 2rem;
-  background-color: var(--bg-color);
-  background-blend-mode: color-burn;
 }
 
 #album-page .container .playlist .playlist-info .playlist-container {
   margin-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+#album-page .container .playlist .playlist-info .playlist-container .type {
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 0;
+  letter-spacing: 2px;
 }
 
 #album-page .container .playlist .playlist-info .playlist-container > h1 {
