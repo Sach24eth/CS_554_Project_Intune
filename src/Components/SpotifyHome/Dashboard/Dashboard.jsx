@@ -43,7 +43,7 @@ class Dashboard extends Component {
 
   fetchData(genricToken, user_access_token) {
     const apiUrl = "https://api.spotify.com/v1";
-    const URL_RELEASES = `${apiUrl}/browse/new-releases?country=IN`;
+    const URL_RELEASES = `${apiUrl}/browse/new-releases?country=US`;
     const URL_CATEGORY = `${apiUrl}/browse/categories`;
     const URL_USER_TOP = `${apiUrl}/me/top/tracks`;
     const URL_USER_FOLLOWING = `${apiUrl}/me/following?type=artist`;
@@ -113,25 +113,32 @@ class Dashboard extends Component {
         .catch((e) => console.log(e.response));
     }
 
-    axios
-      .get(URL_CATEGORY, {
-        headers: {
-          Authorization: "Bearer " + genricToken,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res) => {
-        this.setState({
-          categories: res.data.categories.items,
-        });
-      })
-      .catch((e) => console.log(e.response));
+    // axios
+    //   .get(URL_CATEGORY, {
+    //     headers: {
+    //       Authorization: "Bearer " + genricToken,
+    //       "Content-Type": "application/json",
+    //     },
+    //   })
+    //   .then((res) => {
+    //     this.setState({
+    //       categories: res.data.categories.items,
+    //     });
+    //   })
+    //   .catch((e) => console.log(e.response));
   }
 
   redirToAlbum = (e) => {
     const albumId = e.target.parentNode.parentNode.id;
-    window.location.href = "/album?id=" + albumId.split(":")[2];
+    this.props.history(`/playlist?id=${albumId.split(":")[2]}`);
   };
+
+  redirToArtist = (e) => {
+    const artistId = e.target.parentNode.parentNode.id;
+    console.log(artistId);
+    this.props.history(`/artist?id=${artistId.split(":")[2]}`);
+  };
+
   render() {
     return (
       <>
@@ -188,7 +195,7 @@ class Dashboard extends Component {
             <div className="header">
               <h1>Top 20 Most Played</h1>
             </div>
-            <div className="card-list" id="categories">
+            <div className="card-list" id="songs">
               {this.state.songs &&
                 this.state.songs.map((songs) => {
                   return (
@@ -212,7 +219,7 @@ class Dashboard extends Component {
             <div className="header">
               <h1>Following</h1>
             </div>
-            <div className="card-list" id="categories">
+            <div className="card-list" id="following">
               {this.state.followings &&
                 this.state.followings.map((follow) => {
                   return (
@@ -221,7 +228,7 @@ class Dashboard extends Component {
                       id={follow.id}
                       heading={follow.name}
                       image={follow.images[1].url}
-                      // clickHandler={this.props.onPlaySong}
+                      clickHandler={this.redirToArtist}
                       uri={follow.uri}
                     />
                   );
@@ -231,7 +238,7 @@ class Dashboard extends Component {
         ) : (
           ""
         )}
-        <div className="new">
+        {/* <div className="new">
           <div className="header">
             <h1>Categories</h1>
           </div>
@@ -244,12 +251,13 @@ class Dashboard extends Component {
                     id={category.id}
                     heading={category.name}
                     image={category.icons[0].url}
-                    clickHandler={this.props.onClickCard}
+                    clickHandler={this.redirToCategory}
+                    uri={category.id}
                   />
                 );
               })}
           </div>
-        </div>
+        </div> */}
       </>
     );
   }

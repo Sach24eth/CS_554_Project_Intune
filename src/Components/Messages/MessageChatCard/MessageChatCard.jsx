@@ -10,13 +10,15 @@ const MessageChatCard = (props) => {
   const chatIcon =
     props.chat.title.split("")[0].toUpperCase() +
     props.chat.title.split("")[1].toUpperCase();
-    const handleNavigation = () => {
-      console.log("Window open!!")
-      //setRoom(true)
-      window.open(`http://localhost:3000/chatrooms?room=${props.chat.title}`)
-    }
+    //Removing this after discussion 
+  
+    // const handleNavigation = () => {
+    //   console.log("Window open!!")
+    //   //setRoom(true)
+    //   window.open(`http://localhost:3000/chatrooms?room=${props.chat.title}`)
+    // }
   return (
-    <div className="chat-info-card" onClick={() => handleNavigation()}>
+    <div className="chat-info-card" onClick={() => window.location=`http://localhost:3000/chatrooms?room=${props.chat.title}`}>
       <div className="chat-icon">
         <span className="icon">{chatIcon}</span>
       </div>

@@ -16,12 +16,28 @@ const Messages = () => {
   let tempMessagesRoom = [];
   const [usrData, setUsrData] = useState();
   const [usrgenres, setUsrGenres] = useState([]);
-  //const [genres,setGenres]=useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [genres,setGenres]=useState([]);
+  const [noRes, setNoRes] = useState('false');
+  const [searchRes,setSearchRes]=useState([]);
   useEffect(() => {
     async function getGenre() {
       // const id =JSON.parse(window.localStorage.getItem("userDetails")).uid || null;
       // console.log(id)
       let id = null;
+      axios
+            .get(URL + "/recommendations/available-genre-seeds", {
+              headers: {
+                Authorization: "Bearer " + TOKEN,
+                "Content-Type": "application/json",
+              },
+            })
+            .then((res) => {
+                //console.log("All Genres data",res.data.genres);
+                setGenres(res.data.genres);
+                
+            })
+            .catch((err) => console.log(err.response));
       onAuthStateChanged(auth,user => {
         if (user.uid || user) {
           //console.log("userData:", user.displayName);
@@ -42,6 +58,33 @@ const Messages = () => {
     }
     getGenre();
   }, []);
+
+  useEffect(() => {
+    console.log("Search Triggered");
+    async function searchRooms() {
+      try {
+        let searchResults = [];
+        if (searchTerm.length > 0) {
+          for (let i = 0; i < genres.length; i++) {
+            if (genres[i].includes(searchTerm.toLowerCase()) === 'true') {
+              searchResults.push(genres[i]);
+            }
+          }
+          if (searchResults.length > 0) {
+            setSearchRes(searchResults)
+          } else {
+            setNoRes('true')
+          }
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    searchRooms();
+  }, [searchTerm])
+  console.log("Results:", searchRes);
+  // console.log("flag: ",noRes);
+  //console.log("All Genres:", genres);
   //console.log("Outside: ", usrgenres)
   return (
     <div className="header">
@@ -52,6 +95,9 @@ const Messages = () => {
             type={"text"}
             placeholder="Search chatroom..."
             name="search-chat"
+            onChange={(event) => {
+              setSearchTerm(event.target.value);
+            } }
           />
         </label>
       </div>
@@ -63,6 +109,8 @@ const Messages = () => {
       </div>
     </div>
   );
+
+
 };
 
 export default Messages;

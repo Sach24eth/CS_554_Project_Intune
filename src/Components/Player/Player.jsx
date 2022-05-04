@@ -37,8 +37,20 @@ const Player = () => {
   const URL_STATUS = `${apiUrl}/me/player`;
   const URL_SONG = `${apiUrl}/tracks/`;
   const URL_TRANSFER = `${apiUrl}/me/player`;
+  const [renderPlayer, setRenderPlayer] = useState(true);
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (
+      path === "/" ||
+      path === "/auth/login" ||
+      path === "/auth/signup" ||
+      path === "/auth/logout"
+    )
+      setRenderPlayer((prev) => false);
+  }, [window.location.pathname]);
 
   useEffect(() => {
+    if (!renderPlayer) return;
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
     script.async = true;
@@ -309,7 +321,9 @@ const Player = () => {
     }
   };
 
-  if (currentSong) {
+  if (!renderPlayer) {
+    return null;
+  } else if (currentSong && renderPlayer) {
     return (
       <>
         <div className="bottom-player">
