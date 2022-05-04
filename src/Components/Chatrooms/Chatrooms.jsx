@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, Component  } from "react";
+import React, { useEffect, useRef, useState, useMemo  } from "react";
 import { io } from "socket.io-client"
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -25,7 +25,7 @@ function ChatroomMaker() {
     const socketRef = useRef();
     
     // Use effect to get chatroom userDetails
-    useEffect(() => {
+    useMemo(() => {
         async function getGenre() {
           //let id = null;
           axios
@@ -85,7 +85,8 @@ function ChatroomMaker() {
         //console.log("Message start",socketRef.current);
         socketRef.current.on("message", ({ name, message, room }) => {
             //console.log(`Setting Chat.... Name: ${name} Message: ${message} Room: ${room}`)
-            setChat([...chat, { name, message, room }]);
+          setChat([...chat, { name, message, room }]);
+          //setChat([{ name, message, room }]);
         });
         socketRef.current.on("user_join", function (data) {
         //console.log("user_join",data.name)
@@ -98,7 +99,10 @@ function ChatroomMaker() {
                 },
             ]);
         });
-    }, [chat, room]);
+        return () => {
+          socketRef.current.off("receiveMsg");
+        };
+    }, [chat,room]);
     //console.log("Chat:", chat);
     //console.log("Room:", room);
     
