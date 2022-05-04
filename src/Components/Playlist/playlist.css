@@ -67,13 +67,20 @@
 }
 
 @media (max-width: 1000px) {
+  #album-page {
+    height: calc(100vh - 75px - 150px);
+  }
   #album-page .container .playlist .playlist-info {
     flex-direction: column;
     align-items: flex-start;
   }
 
   #album-page .container .playlist .playlist-info .playlist-container {
+    margin-top: 1rem;
     margin-left: 0;
+  }
+  #album-page .container .playlist .playlist-info .playlist-container .type {
+    margin-bottom: 0.5rem;
   }
   #album-page .container .playlist .playlist-info .playlist-container > h1 {
     font-size: 2rem;

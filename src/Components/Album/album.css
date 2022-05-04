@@ -85,3 +85,23 @@
   background-color: var(--card-hover);
   border-radius: 6px;
 }
+
+@media (max-width: 768px) {
+  #album {
+    height: calc(100vh - 75px - 150px);
+  }
+
+  #album .container .album-cover {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  #album .container .tracks {
+    width: 90%;
+  }
+
+  #album .container .tracks .track .left .row h1 {
+    font-size: 1rem;
+  }
+}

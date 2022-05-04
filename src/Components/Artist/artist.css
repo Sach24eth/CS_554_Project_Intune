@@ -119,3 +119,35 @@
 #artist .container .albums::-webkit-scrollbar {
   display: none;
 }
+
+@media (max-width: 768px) {
+  #artist {
+    height: calc(100vh - 75px - 150px);
+  }
+  #artist .container .artist {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  #artist .container .artist .artist-details {
+    margin-left: 0;
+  }
+
+  #artist .container .artist .artist-details .artistName {
+    font-size: 2rem;
+  }
+
+  #artist .container .row {
+    flex-direction: column;
+  }
+
+  #artist .container .top,
+  #artist .container .albums {
+    width: 100%;
+  }
+
+  #artist .container .artist-tracks .track .right > h1 {
+    font-size: 1rem;
+  }
+}
