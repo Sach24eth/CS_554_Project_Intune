@@ -6,6 +6,7 @@ import {
   FaForward,
   FaVolumeUp,
   FaVolumeMute,
+  FaRandom,
   FaHeart,
   FaExpand,
 } from "react-icons/fa";
@@ -18,12 +19,12 @@ const Player = (props) => {
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState("0:00");
   const [seek, setSeek] = useState(0);
-  let prevVolume = 50;
-  const [volume, setVolume] = useState(prevVolume);
+  const [volume, setVolume] = useState(50);
   const [active, setActive] = useState(false);
   const [currentSong, setCurrentSong] = useState(undefined);
-  const [invalidToken, setInvalidToken] = useState(false);
-  const [invalidCounter, setInvalidCounter] = useState(0);
+  const [shuffle, setShuffle] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [muted, setMuted] = useState(false);
   const token = window.localStorage.getItem("access_token");
   const apiUrl = "https://api.spotify.com/v1";
   let previousTime = 100000;
@@ -37,6 +38,19 @@ const Player = (props) => {
   const URL_STATUS = `${apiUrl}/me/player`;
   const URL_SONG = `${apiUrl}/tracks/`;
   const URL_TRANSFER = `${apiUrl}/me/player`;
+  const URL_SEEK = `${apiUrl}/me/player/seek?device_id=${deviceId}&position_ms=`;
+  const URL_SHUFFLE = `${apiUrl}/me/player/shuffle?device_id=${deviceId}&state=`;
+  const [renderPlayer, setRenderPlayer] = useState(true);
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (
+      path === "/" ||
+      path === "/auth/login" ||
+      path === "/auth/signup" ||
+      path === "/auth/logout"
+    )
+      setRenderPlayer((prev) => false);
+  }, [window.location.pathname]);
 
   useEffect(() => {
     if (!window.localStorage.getItem("access_token")) return;
@@ -45,8 +59,6 @@ const Player = (props) => {
     script.async = true;
 
     document.body.appendChild(script);
-
-    setInvalidToken(true);
 
     window.onSpotifyWebPlaybackSDKReady = () => {
       const player = new window.Spotify.Player({
@@ -79,35 +91,28 @@ const Player = (props) => {
     let isMounted = true;
     const timeout = setInterval(async () => {
       try {
-        if (!invalidToken) {
-          let { data } = await axios({
-            method: "GET",
-            url: URL_STATUS,
-            headers: {
-              Authorization: "Bearer " + token,
-              "Content-Type": "application/json",
-            },
-          });
-          if (data) {
-            if (
-              data.progress_ms < previousTime ||
-              currentUri !== data.item.id
-            ) {
-              getData();
-            }
-            setProgress(convertToTime(data.progress_ms));
-            setSeek(data.progress_ms);
-            setPlaying(data.is_playing);
-            previousTime = data.progress_ms;
-            currentUri = data.item.id;
+        let { data } = await axios({
+          method: "GET",
+          url: URL_STATUS,
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+        });
+        if (data) {
+          if (data.progress_ms < previousTime || currentUri != data.item.id) {
+            getData();
           }
-          setInvalidCounter(0);
+          setSeek(data.progress_ms);
+          setProgress(convertToTime(data.progress_ms));
+          setPlaying(data.is_playing);
+          previousTime = data.progress_ms;
+          currentUri = data.item.id;
+        }
+        if (document.fullscreenElement == null) {
+          setFullscreen(false);
         }
       } catch (e) {
-        setInvalidCounter(invalidCounter + 1);
-        if (invalidCounter > 5) {
-          setInvalidToken(true);
-        }
         console.log(e);
       }
     }, 800);
@@ -142,6 +147,7 @@ const Player = (props) => {
         setDuration(data.item.duration_ms);
         setSeek(data.progress_ms);
         setProgress(convertToTime(data.progress_ms));
+        setVolume(data.device.volume_percent);
         const url = URL_SONG + data.item.id;
         try {
           let song = await axios({
@@ -154,19 +160,6 @@ const Player = (props) => {
           });
           setCurrentSong(song.data);
           currentUri = song.data.id;
-        } catch (e) {
-          console.log(e);
-        }
-        try {
-          // setVolume((prev) => volume);
-          await axios({
-            method: "PUT",
-            url: URL_VOLUME + volume,
-            headers: {
-              Authorization: "Bearer " + token,
-              "Content-Type": "application/json",
-            },
-          });
         } catch (e) {
           console.log(e);
         }
@@ -250,40 +243,69 @@ const Player = (props) => {
   };
 
   const nextSong = async () => {
-    try {
-      await axios({
-        method: "POST",
-        url: URL_NEXT,
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-      });
-    } catch (e) {
-      console.log(e);
+    if (!active) {
+      await transferPlayback();
+    } else {
+      try {
+        await axios({
+          method: "POST",
+          url: URL_NEXT,
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (e) {
+        console.log(e);
+      }
     }
     setPlaying(true);
     await getData();
   };
 
   const prevSong = async () => {
-    try {
-      await axios({
-        method: "POST",
-        url: URL_PREV,
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-      });
-    } catch (e) {
-      console.log(e);
+    if (!active) {
+      await transferPlayback();
+    } else {
+      try {
+        await axios({
+          method: "POST",
+          url: URL_PREV,
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (e) {
+        console.log(e);
+      }
     }
     setPlaying(true);
     getData();
   };
 
-  const toggleFullscreen = async () => {};
+  const toggleFullscreen = async () => {
+    const container = document.querySelector("#root");
+    if (!fullscreen) {
+      container
+        .requestFullscreen()
+        .then(() => {
+          setFullscreen(true);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    } else {
+      document
+        .exitFullscreen()
+        .then(() => {
+          setFullscreen(false);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  };
 
   const writeArtists = (artists) => {
     let list = "";
@@ -296,11 +318,18 @@ const Player = (props) => {
     return list;
   };
 
+  const moveVolume = async (e) => {
+    setVolume((prev) => e.target.value);
+  };
+
   const changeVolume = async (e) => {
     try {
-      setVolume((prev) => e.target.value);
-      prevVolume = e.target.value;
-      if (playing) {
+      if (active) {
+        if (e.target.value > 0) {
+          setMuted(false);
+        } else {
+          setMuted(true);
+        }
         await axios({
           method: "PUT",
           url: URL_VOLUME + e.target.value,
@@ -315,11 +344,72 @@ const Player = (props) => {
     }
   };
 
-  if (props.shouldLoad) {
-    getData();
-  }
+  const seekSong = async (e) => {
+    setSeek((prev) => e.target.value);
+  };
 
-  if (!props.shouldLoad) {
+  const seekTrack = async (e) => {
+    await axios({
+      method: "PUT",
+      url: URL_SEEK + seek,
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+    });
+    getData();
+  };
+
+  const toggleMute = async () => {
+    if (active) {
+      setMuted((currentMuted) => !currentMuted);
+      if (muted) {
+        try {
+          await axios({
+            method: "PUT",
+            url: URL_VOLUME + "50",
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          });
+          setVolume(50);
+        } catch (e) {
+          console.log(e);
+        }
+      } else {
+        try {
+          await axios({
+            method: "PUT",
+            url: URL_VOLUME + "0",
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          });
+          setVolume(0);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    }
+  };
+
+  const toggleShuffle = async () => {
+    if (active) {
+      await axios({
+        method: "PUT",
+        url: URL_SHUFFLE + !shuffle,
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+      });
+    }
+    setShuffle((currentShuffle) => !currentShuffle);
+  };
+
+  if (!renderPlayer) {
     return null;
   } else if (currentSong) {
     return (
@@ -373,7 +463,8 @@ const Player = (props) => {
                   className="slider-actual-pointer"
                   max={duration}
                   value={seek}
-                  readOnly
+                  onChange={seekSong}
+                  onMouseUp={seekTrack}
                 />
               </p>
               <p className="time-total font-sm">{convertToTime(duration)}</p>
@@ -387,18 +478,60 @@ const Player = (props) => {
                 className="slider-actual-pointer"
                 max={100}
                 value={volume}
-                onChange={changeVolume}
-                step={10}
+                onChange={moveVolume}
+                onMouseUp={changeVolume}
               />
-              {/* <span className="slider-actual-pointer"></span> */}
             </p>
-            <FaVolumeUp className="icon" />
-            <FaExpand
-              className="icon"
-              onClick={() => {
-                toggleFullscreen();
-              }}
-            />
+            {!muted && (
+              <FaVolumeUp
+                className="icon"
+                onClick={() => {
+                  toggleMute();
+                }}
+              />
+            )}
+            {muted && (
+              <FaVolumeMute
+                className="icon"
+                onClick={() => {
+                  toggleMute();
+                }}
+              />
+            )}
+            {shuffle && (
+              <FaRandom
+                className="icon"
+                id="shuffleGreen"
+                onClick={() => {
+                  toggleShuffle();
+                }}
+              />
+            )}
+            {!shuffle && (
+              <FaRandom
+                className="icon"
+                onClick={() => {
+                  toggleShuffle();
+                }}
+              />
+            )}
+            {!fullscreen && (
+              <FaExpand
+                className="icon"
+                onClick={() => {
+                  toggleFullscreen();
+                }}
+              />
+            )}
+            {fullscreen && (
+              <FaExpand
+                className="icon"
+                id="expandGreen"
+                onClick={() => {
+                  toggleFullscreen();
+                }}
+              />
+            )}
           </div>
         </div>
       </>

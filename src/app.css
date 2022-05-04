@@ -114,6 +114,7 @@ input:focus {
   display: flex;
   justify-content: center;
   align-items: center;
+  accent-color: #1db954;
 }
 
 .volume > * {
@@ -133,6 +134,15 @@ input:focus {
   /* color: white !important; */
   border-radius: 6px;
   z-index: 2;
+  accent-color: #1db954;
+}
+
+#shuffleGreen {
+  color: #1db954;
+}
+
+#expandGreen {
+  color: #1db954;
 }
 /* 
 .bottom-player
