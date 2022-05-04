@@ -12,6 +12,7 @@ import PlaylistPage from "./Pages/Playlist";
 import AlbumPage from "./Pages/Album";
 import LikedSongsPage from "./Pages/LikedSongs";
 import LandingPage from "./Pages/Landing";
+import SearchPage from "./Pages/Search";
 import Auth from "./Pages/Auth";
 import Player from "./Components/Player";
 import SpacePage from "./Pages/Space";
@@ -119,9 +120,12 @@ const App = () => {
           <Route path="/playlist" element={<PlaylistPage />} />
           <Route path="/album" element={<AlbumPage />} />
           <Route path="/space" element={<SpacePage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/artist" element={<Artist />} />
           <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/me/forgot-password" element={<ChangePassword />} />
+          <Route path="/liked-songs" element={<LikedSongsPage />} />
+          <Route path="/album" element={<AlbumPage />} />
         </Routes>
         <Player shouldLoad={loadPlayer} />
       </Router>
