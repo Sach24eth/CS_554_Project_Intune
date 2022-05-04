@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
+
 
 const Search = () => {
 
@@ -119,13 +121,14 @@ const Search = () => {
                     return (
                         <div style={{ display: 'flex' }}>
 
-                            <a href={`/album?id=${album.id}`}>
+                            <Link to={`/album?id=${album.id}`}>
+
                                 <img src={album.image} style={{ height: "64px", width: "64px" }} />
                                 <div>
                                     <div>{album.title}</div>
                                     <div className="text-muted">{album.artists}</div>
                                 </div>
-                            </a>
+                            </Link>
                         </div>
                     )
                 })}
@@ -137,12 +140,12 @@ const Search = () => {
                     return (
                         <div style={{ display: 'flex' }}>
 
-                            <a href={`/artist?id=${artist.id}`} >
-                            <img src={artist.image} style={{ height: "64px", width: "64px" }} />
-                            <div>
-                                <div>{artist.name}</div>
-                            </div>
-                            </a>
+                            <Link to={`/artist?id=${artist.id}`}>
+                                <img src={artist.image} style={{ height: "64px", width: "64px" }} />
+                                <div>
+                                    <div>{artist.name}</div>
+                                </div>
+                            </Link>
                         </div>
                     )
                 })}
@@ -154,13 +157,14 @@ const Search = () => {
                     return (
                         <div style={{ display: 'flex' }}>
 
-                            <a href={`/playlist?id=${playlist.id}`} >
+                            <Link to={`/playlist?id=${playlist.id}`}>
+                                
                                 <img src={playlist.image} style={{ height: "64px", width: "64px" }} />
                                 <div>
                                     <div>{playlist.title}</div>
                                     <div className="text-muted">{playlist.owner}</div>
                                 </div>
-                            </a>
+                            </Link>
 
                         </div>
                     )
