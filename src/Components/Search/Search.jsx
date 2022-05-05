@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import "./search.css";
 
 const Search = () => {
@@ -12,8 +13,9 @@ const Search = () => {
   const [searchPlaylist, setSearchPlaylist] = useState(null);
   const [searchArtists, setSearchArtists] = useState(null);
   const [noSearchResult, setNoSearchResult] = useState(null);
+  const [error, setError] = useState(null);
 
-  let limit = 10;
+  const SEARCH_LIMIT = 10;
 
   useEffect(() => {
     if (!search) return;
@@ -30,7 +32,7 @@ const Search = () => {
           "Content-Type": "application/json",
         },
         params: {
-          limit: limit,
+          limit: SEARCH_LIMIT,
         },
       })
       .then((res) => {
@@ -93,13 +95,20 @@ const Search = () => {
             };
           }) : null
         );
+        setError(null);
       })
-      .catch((e) => console.log(e.response));
+      .catch((e) => {
+        console.log(e.response)
+        setError(`Error ${e.response.data.error.status}: ${e.response.data.error.message}`);
+      });
 
     return () => (cancel = true);
-  }, [search, access_token, limit]);
+  }, [search, access_token, SEARCH_LIMIT]);
 
   const playSong = (uri) => {
+
+    if (!access_token) return toast.error('Connect to Spotify to Play Song');
+
     const deviceId = window.localStorage.getItem("deviceId");
     const apiUrl = "https://api.spotify.com/v1";
     const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
@@ -117,13 +126,15 @@ const Search = () => {
           },
         }
       )
-      .catch((e) => console.log(e.response));
+      .catch((e) => {
+        console.log(e.response)
+      });
   };
-
 
   return (
     <section id="search">
       <div className="container">
+        <Link to={'/me'}><ToastContainer /></Link>
         <div className="search-box">
           <label>
             <input
@@ -133,6 +144,10 @@ const Search = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
           </label>
+        </div>
+
+        <div className="small-cont" id="no-results-found">
+          {error && <h2 className="title">{error}</h2>}
         </div>
 
         <div className="small-cont" id="no-results-found">
