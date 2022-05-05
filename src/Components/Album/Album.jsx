@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import Bubble from "../ArtistGenreBubble/buble";
 import "./album.css";
 
@@ -19,7 +21,6 @@ const Album = () => {
         },
       })
       .then((res) => {
-        console.log(res.data);
         setAlbum(res.data);
         setLoading(false);
       })
@@ -43,6 +44,7 @@ const Album = () => {
 
   const playAlbum = (uri, i) => {
     const access_token = window.localStorage.getItem("access_token");
+    if (!access_token) return toast.error('Connect to Spotify to Play Song');
 
     const body = {
       context_uri: uri,
@@ -51,7 +53,6 @@ const Album = () => {
       },
       position_ms: 0
     };
-    
 
     const deviceId = window.localStorage.getItem("deviceId");
     const apiUrl = "https://api.spotify.com/v1";
@@ -74,12 +75,15 @@ const Album = () => {
   return (
     <section id="album">
       <div className="container">
+
+        <Link to={'/me'}><ToastContainer /></Link>
+
         <div className="album-cover">
           <img src={album.images[1].url} alt={album.name} />
           <div className="album-info">
             <p className="type">{album.type}</p>
             <h1>{album.name}</h1>
-            {/* <p className="artist">{covertArtists(album.artists)}</p> */}
+
             <div className="artists">
               {album.artists.map((artist) => {
                 return <Bubble key={artist.name} genre={artist.name} />;
