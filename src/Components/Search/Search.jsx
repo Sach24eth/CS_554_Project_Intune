@@ -36,8 +36,8 @@ const Search = () => {
       .then((res) => {
 
         setNoSearchResult(
-            !res.data["tracks"].total && !res.data["tracks"].total &&
-            !res.data["tracks"].total && !res.data["tracks"].total ? true: null
+            !res.data["tracks"].total && !res.data["albums"].total &&
+            !res.data["artists"].total && !res.data["playlists"].total ? true: null
         )
 
         setsearchTracks( res.data["tracks"].total ?
