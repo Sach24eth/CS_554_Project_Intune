@@ -4,18 +4,20 @@ import { Link } from "react-router-dom";
 import "./search.css";
 
 const Search = () => {
-  let access_token = window.localStorage.getItem("access_token");
+  const access_token = window.localStorage.getItem("access_token");
+  const genricToken = window.localStorage.getItem("token");
   const [search, setSearch] = useState(undefined);
   const [searchTracks, setsearchTracks] = useState(null);
   const [searchAlbums, setSearchAlbums] = useState(null);
   const [searchPlaylist, setSearchPlaylist] = useState(null);
   const [searchArtists, setSearchArtists] = useState(null);
+  const [noSearchResult, setNoSearchResult] = useState(null);
 
   let limit = 10;
 
   useEffect(() => {
     if (!search) return;
-    if (!access_token) return;
+    if (!genricToken) return;
 
     let cancel = false;
     const apiUrl = "https://api.spotify.com/v1";
@@ -24,7 +26,7 @@ const Search = () => {
     axios
       .get(SEARCH, {
         headers: {
-          Authorization: "Bearer " + access_token,
+          Authorization: "Bearer " + genricToken,
           "Content-Type": "application/json",
         },
         params: {
@@ -32,7 +34,13 @@ const Search = () => {
         },
       })
       .then((res) => {
-        setsearchTracks(
+
+        setNoSearchResult(
+            !res.data["tracks"].total && !res.data["tracks"].total &&
+            !res.data["tracks"].total && !res.data["tracks"].total ? true: null
+        )
+
+        setsearchTracks( res.data["tracks"].total ?
           res.data["tracks"].items.map((track) => {
             return {
               title: track.name,
@@ -44,10 +52,10 @@ const Search = () => {
                 .join(","),
               uri: track.uri,
             };
-          })
+          }) : null
         );
 
-        setSearchAlbums(
+        setSearchAlbums( res.data["albums"].total ?
           res.data["albums"].items.map((album) => {
             return {
               id: album.id,
@@ -60,10 +68,10 @@ const Search = () => {
                 .join(","),
               uri: album.uri,
             };
-          })
+          }) : null
         );
 
-        setSearchArtists(
+        setSearchArtists( res.data["artists"].total ?
           res.data["artists"].items.map((artist) => {
             return {
               id: artist.id,
@@ -71,10 +79,10 @@ const Search = () => {
               image: artist.images[0].url,
               uri: artist.uri,
             };
-          })
+          }) : null
         );
 
-        setSearchPlaylist(
+        setSearchPlaylist( res.data["playlists"].total ?
           res.data["playlists"].items.map((playlist) => {
             return {
               id: playlist.id,
@@ -83,7 +91,7 @@ const Search = () => {
               owner: playlist.owner.display_name,
               uri: playlist.uri,
             };
-          })
+          }) : null
         );
       })
       .catch((e) => console.log(e.response));
@@ -112,6 +120,7 @@ const Search = () => {
       .catch((e) => console.log(e.response));
   };
 
+
   return (
     <section id="search">
       <div className="container">
@@ -125,6 +134,11 @@ const Search = () => {
             />
           </label>
         </div>
+
+        <div className="small-cont" id="no-results-found">
+          {noSearchResult && <h2 className="title">Sorry, No Results Found !</h2>}
+        </div>
+
         <div className="small-cont">
           <div id="tracks-result">
             {searchTracks && <h2 className="title">Tracks</h2>}
