@@ -8,7 +8,7 @@ const TOKEN = window.localStorage.getItem("token");
 //console.log(TOKEN);
 const URL = "https://api.spotify.com/v1";
 
-
+let socket;
 function ChatroomMaker() {
     const auth = getAuth();
     const queryString = window.location.search;
@@ -22,7 +22,7 @@ function ChatroomMaker() {
     const [genres,setGenres]=useState([]);
     const [state, setState] = useState({ message: "", name: "" });
     const [chat, setChat] = useState([]); 
-    const socketRef = useRef();
+    //const socketRef = useRef();
     
     // Use effect to get chatroom userDetails
     useEffect(() => {
@@ -54,7 +54,12 @@ function ChatroomMaker() {
     const userjoin = (name) => {
         if (name !== undefined) {
             console.log("defined")
-            socketRef.current.emit("user_join", { name, room: room });
+            //socketRef.current.emit("user_join", { name, room: room });
+            socket.emit("user_join", { name, room: room });
+            return () => {
+              //socketRef.current.off("receiveMsg");
+              socket.off("receiveMsg");
+            };
         }
     };
     useEffect(() => {
@@ -72,25 +77,28 @@ function ChatroomMaker() {
     
     //Server setup
     useEffect(() => {
-        //socketRef.current = io("ws://localhost:4000/");
-        socketRef.current = io("/");
+        socket= io("http://localhost:4000/");
+        //socketRef.current = io("/");
         //console.log("hello server: ", socketRef.current)
         return () => {
-        socketRef.current.disconnect();
+        //socketRef.current.disconnect();
+          socket.disconnect();
         };  
     }, []);
     //console.log("Room number is set: ", room)
     // Use effect for setting chat status
     useEffect(() => {
         //console.log("Message start",socketRef.current);
-        socketRef.current.on("message", ({ name, message, room }) => {
+        //socketRef.current
+        socket.on("message", ({ name, message, room }) => {
             //console.log(`Setting Chat.... Name: ${name} Message: ${message} Room: ${room}`)
-          setChat([...chat, { name, message, room }]);
+          setChat((chat)=>[...chat, { name, message, room }]);
           //setChat([{ name, message, room }]);
         });
-        socketRef.current.on("user_join", function (data) {
+        //socketRef.current
+        socket.on("user_join", function (data) {
         //console.log("user_join",data.name)
-        setChat([
+        setChat((chat)=>[
                 ...chat,
                 {
                     name: "SpotBot",
@@ -99,10 +107,11 @@ function ChatroomMaker() {
                 },
             ]);
         });
-        return () => {
-          socketRef.current.off("receiveMsg");
+      return () => {
+          //socketRef.current
+          socket.off("receiveMsg");
         };
-    }, [chat,room]);
+    }, []);
     //console.log("Chat:", chat);
     //console.log("Room:", room);
     
@@ -111,7 +120,8 @@ function ChatroomMaker() {
         let msgEle = document.getElementById("message");
         //console.log([msgEle.name], msgEle.value);
         setState({ ...state, [msgEle.name]: msgEle.value });
-        socketRef.current.emit("message", {
+        //socketRef.current
+        socket.emit("message", {
             name: state.name,
             message: msgEle.value,
             room: room,
@@ -120,6 +130,10 @@ function ChatroomMaker() {
         setState({ message: "", name: state.name });
         msgEle.value = "";
         msgEle.focus();
+        return () => {
+          //socketRef.current.off("receiveMsg");
+          socket.off("receiveMsg");
+        };
     };
 
     const renderChat = () => {
