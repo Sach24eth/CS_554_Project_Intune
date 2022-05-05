@@ -1,74 +1,72 @@
-#album-page {
-    width: 100vw;
-    height: calc(100vh - 75px);
-    overflow-x: hidden;
-    overflow-y: scroll;
+#liked-page {
+  width: 100vw;
+  height: calc(100vh - 175px);
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
-#album-page::-webkit-scrollbar {
-    display: none;
+#liked-page::-webkit-scrollbar {
+  display: none;
 }
 
-#album-page .container {
-    max-width: 100%;
-    max-height: 100%;
+#liked-page .container {
+  max-width: 100%;
+  max-height: 100%;
 }
 
-#album-page .container .playlist {
-    display: flex;
-    flex-direction: column;
+#liked-page .container .playlist {
+  display: flex;
+  flex-direction: column;
 }
 
-#album-page .container .playlist .playlist-info {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: sticky;
-    height: 10%;
-    top: 0;
-    padding-left: 2rem;
-    background-color: var(--bg-color);
-    background-blend-mode: color-burn;
+#liked-page .container .playlist .playlist-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 2rem;
 }
 
-#album-page .container .playlist .playlist-info .playlist-container {
-    margin-left: 1rem;
+#liked-page .container .playlist .playlist-info .playlist-container {
+  margin-left: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 
-#album-page .container .playlist .playlist-info .playlist-container > h1 {
-    font-size: 5rem;
+#liked-page .container .playlist .playlist-info .playlist-container > h1 {
+  font-size: 5rem;
 }
 
-#album-page
-.container
-.playlist
-.playlist-info
-.playlist-container
-.description {
-    font-size: 1.25rem;
-    margin-left: 0.5rem;
-    margin-top: 1rem;
+#liked-page
+  .container
+  .playlist
+  .playlist-info
+  .playlist-container
+  .description {
+  font-size: 1.25rem;
+  margin-left: 0.5rem;
+  margin-top: 1rem;
 }
 
-#album-page .container .playlist .playlist-info .playlist-container .followers {
-    font-size: 16px;
-    margin-left: 0.5rem;
+#liked-page .container .playlist .playlist-info .playlist-container .followers {
+  font-size: 16px;
+  margin-left: 0.5rem;
 }
 
-#album-page .container .playlist .playlist-tracks {
-    margin-top: 5rem;
+#liked-page .container .playlist .playlist-tracks {
+  margin-top: 1rem;
 }
 
 @media (max-width: 1000px) {
-    #album-page .container .playlist .playlist-info {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+  #liked-page .container .playlist .playlist-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-    #album-page .container .playlist .playlist-info .playlist-container {
-        margin-left: 0;
-    }
-    #album-page .container .playlist .playlist-info .playlist-container > h1 {
-        font-size: 2rem;
-    }
+  #liked-page .container .playlist .playlist-info .playlist-container {
+    margin-left: 0;
+  }
+  #liked-page .container .playlist .playlist-info .playlist-container > h1 {
+    font-size: 2rem;
+  }
 }

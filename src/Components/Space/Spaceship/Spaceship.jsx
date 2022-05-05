@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FaBackward, FaPlay, FaForward } from "react-icons/fa";
 import "./spaceship.css";
 import { generateCode } from "../../../Services/generateCode";
+
 const Spaceship = () => {
   const [search, setSearch] = useState(undefined);
   const [result, setResult] = useState([]);
@@ -10,6 +11,20 @@ const Spaceship = () => {
   const SEARCH_URL = `${apiUrl}/search`;
   const genricToken = window.localStorage.getItem("token");
   const inviteCode = generateCode();
+
+  useEffect(() => {
+    const access_token = window.localStorage.getItem("access_token");
+    axios({
+      method: "GET",
+      url: `${apiUrl}/me/top/tracks`,
+      headers: {
+        Authorization: "Bearer " + access_token,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.data)
+      .catch((err) => console.log(err.response));
+  }, []);
 
   useEffect(() => {
     if (!search) return;
@@ -28,10 +43,10 @@ const Spaceship = () => {
   }, [search, SEARCH_URL, genricToken]);
 
   const onSearchTextChange = (e) => {
-    if (e.target.value === "") setResult([]);
+    // if (e.target.value === "") setResult([]);
     setSearch(e.target.value);
   };
-  console.log(result);
+
   return (
     <div id="spaceship">
       <div className="space-cont">
@@ -51,7 +66,7 @@ const Spaceship = () => {
           </div>
           {result.length === 0 ? (
             <div className="player">
-              <img
+              {/* <img
                 width={200}
                 height={200}
                 src="https://i.scdn.co/image/ab67616d00001e02c50ee26def224e163f54ae0c"
@@ -67,7 +82,7 @@ const Spaceship = () => {
                   <FaPlay className="icon" size={30} />
                   <FaForward className="icon" size={20} />
                 </div>
-              </div>
+              </div> */}
             </div>
           ) : (
             <div className="search-container">
@@ -77,7 +92,32 @@ const Spaceship = () => {
                   artists.push(artist.name);
                 });
                 return (
-                  <div className="search-res">
+                  <div
+                    className="search-res"
+                    id={song.uri}
+                    onClick={async () => {
+                      const token = window.localStorage.getItem("access_token");
+                      const deviceId = window.localStorage.getItem("deviceId");
+                      const apiUrl = "https://api.spotify.com/v1";
+                      try {
+                        const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
+                        await axios({
+                          method: "PUT",
+                          url: URL_PLAY,
+                          data: {
+                            uris: [song.uri],
+                            position_ms: 0,
+                          },
+                          headers: {
+                            Authorization: "Bearer " + token,
+                            "Content-Type": "application/json",
+                          },
+                        });
+                      } catch (e) {
+                        console.log(e.response);
+                      }
+                    }}
+                  >
                     <div>
                       <img src={song.album.images[2].url} alt={song.name} />
                       <div className="artist-info">

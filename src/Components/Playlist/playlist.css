@@ -1,6 +1,6 @@
 #album-page {
   width: 100vw;
-  height: calc(100vh - 75px);
+  height: calc(100vh - 175px);
   overflow-x: hidden;
   overflow-y: scroll;
 }
@@ -17,22 +17,29 @@
 #album-page .container .playlist {
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
 }
 
 #album-page .container .playlist .playlist-info {
   display: flex;
   flex-direction: row;
   align-items: center;
-  position: sticky;
-  height: 10%;
-  top: 0;
   padding-left: 2rem;
-  background-color: var(--bg-color);
-  background-blend-mode: color-burn;
 }
 
 #album-page .container .playlist .playlist-info .playlist-container {
   margin-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+#album-page .container .playlist .playlist-info .playlist-container .type {
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 0;
+  letter-spacing: 2px;
 }
 
 #album-page .container .playlist .playlist-info .playlist-container > h1 {
@@ -60,13 +67,20 @@
 }
 
 @media (max-width: 1000px) {
+  #album-page {
+    height: calc(100vh - 75px - 150px);
+  }
   #album-page .container .playlist .playlist-info {
     flex-direction: column;
     align-items: flex-start;
   }
 
   #album-page .container .playlist .playlist-info .playlist-container {
+    margin-top: 1rem;
     margin-left: 0;
+  }
+  #album-page .container .playlist .playlist-info .playlist-container .type {
+    margin-bottom: 0.5rem;
   }
   #album-page .container .playlist .playlist-info .playlist-container > h1 {
     font-size: 2rem;
