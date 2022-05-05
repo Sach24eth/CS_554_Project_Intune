@@ -1,6 +1,7 @@
 #spaceship {
   height: calc(100vh - 100px);
   padding: 1rem;
+  overflow: hidden;
 }
 
 #spaceship .space-cont {
@@ -77,7 +78,7 @@
 
 #spaceship .space-cont .space-body .search-container {
   width: 75%;
-  height: 100%;
+  height: calc(100% - 175px);
   overflow: scroll;
 }
 
@@ -136,6 +137,7 @@
 @media (max-width: 768px) {
   #spaceship .space-cont .space-body .search-container {
     width: 100%;
+    height: calc(100% - 225px);
   }
   #spaceship .space-cont .space-body .search-music {
     width: 90%;

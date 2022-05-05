@@ -1,97 +1,86 @@
 import axios from "axios";
-import React, { Component } from "react";
-import { AlbumTable } from "../Table/AlbumTable";
+import React, { useState, useEffect } from "react";
+import Bubble from "../ArtistGenreBubble/buble";
 import "./album.css";
 
-class Album extends Component {
-    constructor(props) {
-        super(props);
+const Album = () => {
+  const id = new URLSearchParams(window.location.search).get("id");
+  const [album, setAlbum] = useState({});
+  const [loading, setLoading] = useState(true);
 
-        this.state = {
-            id: "",
-            access_token: "",
-            playlist: null,
-            loading: true,
-        };
-    }
+  useEffect(() => {
+    const apiUrl = "https://api.spotify.com/v1/albums/";
+    const token = window.localStorage.getItem("token");
+    axios
+      .get(apiUrl + id, {
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setAlbum(res.data);
+        setLoading(false);
+      })
+      .catch((err) => console.log(err.response));
+  }, [id]);
 
-    componentDidMount() {
-        const id = new URLSearchParams(window.location.search).get("id");
-        const access_token = window.localStorage.getItem("access_token");
-        this.setState({
-            id: id,
-            access_token: access_token,
-            playlist: null,
-        });
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
 
-        const URL_ALBUM = `https://api.spotify.com/v1/albums/${id}`;
+  const covertArtists = (artists) => {
+    let artistsArray = artists.map((artist) => artist.name);
+    return artistsArray.join(", ");
+  };
 
-        axios
-            .get(URL_ALBUM, {
-                headers: {
-                    Authorization: "Bearer " + access_token,
-                    "Content-Type": "application/json",
-                },
-            })
-            .then((res) => {
-                this.setState({playlist: res.data, loading: false})
-            })
-            .catch((e) => {
-                console.log(e.response)
-            });
-    }
+  const millisToMinutesAndSeconds = (millis) => {
+    var minutes = Math.floor(millis / 60000);
+    var seconds = ((millis % 60000) / 1000).toFixed(0);
+    return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+  };
 
-    millisToMinutesAndSeconds(millis) {
-        var minutes = Math.floor(millis / 60000);
-        var seconds = ((millis % 60000) / 1000).toFixed(0);
-        return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-    }
-
-    render() {
-        console.log(this.state);
-        return (
-            <section id="album-page">
-                <div className="container">
-                    {this.state.loading ? (
-                        <h1>Loading Data...</h1>
-                    ) : (
-                        <div className="playlist">
-                            <div className="playlist-info">
-                                <img
-                                    width={200}
-                                    height={200}
-                                    src={this.state.playlist.images[0].url}
-                                    alt={this.state.playlist.name}
-                                />
-                                <div className="playlist-container">
-                                    <h1>{this.state.playlist.name}</h1>
-                                    {/* <p className="description">
-                    {this.state.playlist.description}
-                  </p> */}
-                                    {/* <p className="followers">
-                    Followers: {this.state.playlist.followers.total}
-                  </p> */}
-                                </div>
-                            </div>
-                            <div className="playlist-tracks">
-                                {this.state.playlist.tracks &&
-                                this.state.playlist.tracks.items.map((track, i) => {
-                                    return (
-                                        <AlbumTable
-                                            key={i}
-                                            track={track}
-                                            i={i}
-                                            fn={this.millisToMinutesAndSeconds}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
+  return (
+    <section id="album">
+      <div className="container">
+        <div className="album-cover">
+          <img src={album.images[1].url} alt={album.name} />
+          <div className="album-info">
+            <p className="type">{album.type}</p>
+            <h1>{album.name}</h1>
+            {/* <p className="artist">{covertArtists(album.artists)}</p> */}
+            <div className="artists">
+              {album.artists.map((artist) => {
+                return <Bubble key={artist.name} genre={artist.name} />;
+              })}
+              <Bubble genre={album.label} />
+            </div>
+          </div>
+        </div>
+        <div className="tracks">
+          {album.tracks.items.map((track, i) => {
+            console.log(track);
+            return (
+              <div key={i} className="track" id={track.uri}>
+                <div className="left">
+                  <p className="count">{i + 1}</p>
+                  <div className="row">
+                    <h1>{track.name}</h1>
+                    <p className="artist">{covertArtists(track.artists)}</p>
+                  </div>
                 </div>
-            </section>
-        );
-    }
-}
-
+                <div className="right">
+                  <p className="dur">
+                    {millisToMinutesAndSeconds(track.duration_ms)}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
 export default Album;

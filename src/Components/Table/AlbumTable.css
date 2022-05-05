@@ -1,31 +1,50 @@
 .max-width {
-    width: 100vw;
-    display: flex;
-    justify-content: space-evenly;
+  width: 100vw;
+  display: flex;
+  justify-content: space-evenly;
 }
 
 .max-width .table {
-    overflow-x: hidden;
-    width: 90%;
-    display: grid;
-    grid-template-columns: 0.2fr 0.5fr 2fr 2fr 0.5fr;
-    margin: 0.5rem 0;
-    justify-content: center;
-    align-items: center;
-    padding-left: 2rem;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.1s ease-in;
+  overflow-x: hidden;
+  width: 90%;
+  display: grid;
+  grid-template-columns: 0.2fr 0.5fr 2fr 2fr 0.5fr;
+  margin: 0.5rem 0;
+  justify-content: center;
+  align-items: center;
+  padding-left: 2rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.1s ease-in;
 }
 
 .max-width .table .tr {
-    text-align: end !important;
+  text-align: end !important;
 }
 
 .sticky:hover {
-    background-color: var(--bg-color);
+  background-color: var(--bg-color);
 }
 
 .table:hover {
-    background-color: var(--card-hover);
+  background-color: var(--card-hover);
+}
+
+@media (min-width: 768px) and (max-width: 1000px) {
+  .max-width .table {
+    width: 100%;
+    grid-template-columns: 0.2fr 2fr 3fr 2fr 0.5fr;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .max-width .table {
+    width: 100%;
+    grid-template-columns: 2fr 2fr 3fr 2fr 0.5fr;
+    font-size: 12px;
+  }
+  .max-width .table .id {
+    display: none;
+  }
 }

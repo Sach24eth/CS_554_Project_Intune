@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import Discord from "../../images/Discord.svg";
-import Spotify from "../../images/Spotify.png";
+import Spotify from "../../images/Spotify_Full.png";
 import "./navbar.css";
 
 const Navbar = ({ auth }) => {
@@ -27,9 +27,9 @@ const Navbar = ({ auth }) => {
     <nav className="navbar">
       <div className="brand">
         <NavLink to="/" className="brand">
-          <img src={Spotify} width={32} height={32} alt="Spotify Logo" />
-          <span className="cross">X</span>
-          <img src={Discord} width={32} height={32} alt="Discord Logo" />
+          <img src={Spotify} height={32} alt="Spotify Logo" />
+          {/* <span className="cross">X</span>
+          <img src={Discord} width={32} height={32} alt="Discord Logo" /> */}
         </NavLink>
       </div>
       <div className="toggle-button" onClick={toggleNav}>
