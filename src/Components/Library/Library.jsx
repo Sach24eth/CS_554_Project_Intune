@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Card from "../Card/Card";
-import {useNavigate} from "react-router-dom";
+import {Navigate , useNavigate} from "react-router-dom";
 import likedSongsImage from '../../images/liked-songs-300.png';
 
 const Library = () => {
@@ -16,8 +16,8 @@ const Library = () => {
     const [artists, setArtists] = useState(null);
 
     let card = null;
-    let access_token = window.localStorage.getItem("access_token");
-    let navigate = useNavigate();
+    const access_token = window.localStorage.getItem("access_token");
+    const navigate = useNavigate();
 
     function fetchData() {
         if (access_token){
@@ -36,10 +36,7 @@ const Library = () => {
                         "Content-Type": "application/json",
                     }
                 })
-                .then(res => {
-                    console.log(res.data);
-                    setLikedSongs(res.data.total);
-                })
+                .then(res => { setLikedSongs(res.data.total); })
                 .catch((e) => console.log(e.response));
 
             axios
@@ -49,11 +46,7 @@ const Library = () => {
                         "Content-Type": "application/json",
                     }
                 })
-                .then(res => {
-                    // console.log(res.data);
-                    setPlaylists(res.data.items);
-                    // setLoading(false)
-                })
+                .then(res => { setPlaylists(res.data.items); })
                 .catch((e) => console.log(e.response));
 
             axios
@@ -64,7 +57,6 @@ const Library = () => {
                     },
                 })
                 .then((res) => {
-                    console.log(res.data.artists);
                     setArtists(res.data.artists.items);
                 })
                 .catch((e) => console.log(e.response));
@@ -87,28 +79,27 @@ const Library = () => {
 
     useEffect(() => {
 
-        fetchData()
+        fetchData();
     }, [access_token])
 
 
 
     const redirToPlaylist = (e) => {
-        const albumId = e.target.parentNode.parentNode.id;
-        window.location.href = "/playlist?id=" + albumId.split(":")[2];
+        const playlistId = e.target.parentNode.parentNode.id;
+        navigate(`/playlist?id=${playlistId.split(":")[2]}`);
     };
 
     const redirToAlbum = (e) => {
         const albumId = e.target.parentNode.parentNode.id;
-        window.location.href = "/album?id=" + albumId.split(":")[2];
+        navigate(`/album?id=${albumId.split(":")[2]}`);
     };
 
     const redirToTracks = () => {
-        console.log('hee')
-        window.location.href = "/liked-songs";
+        navigate("/liked-songs");
     };
 
     if (!loading) {
-        console.log(albums)
+
         return (
             <section id="library">
                 <div className="container">
@@ -133,8 +124,6 @@ const Library = () => {
                             </div>
                         </div>
                         }
-
-
 
                         <h3>Playlist</h3>
                         <div className="card-list" id="albums">
@@ -194,6 +183,18 @@ const Library = () => {
             </section>
         );
     }
+    else if (loading && access_token){
+        return (
+            <section id="library">
+                <div className="container">
+                    <div className="header">
+                        <h1>Library</h1>
+                        <h2>Loading ...</h2>
+                    </div>
+                </div>
+            </section>
+        )
+    }
     else {
 
         const routeChange = () =>{
@@ -212,8 +213,6 @@ const Library = () => {
             </section>
         );
     }
-
-
 
 };
 
