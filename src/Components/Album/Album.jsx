@@ -41,6 +41,36 @@ const Album = () => {
     return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
   };
 
+  const playAlbum = (uri, i) => {
+    const access_token = window.localStorage.getItem("access_token");
+
+    const body = {
+      context_uri: uri,
+      offset: {
+        position: i
+      },
+      position_ms: 0
+    };
+    
+
+    const deviceId = window.localStorage.getItem("deviceId");
+    const apiUrl = "https://api.spotify.com/v1";
+    const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
+
+    axios
+        .put(
+            URL_PLAY,
+            body,
+            {
+              headers: {
+                Authorization: "Bearer " + access_token,
+                "Content-Type": "application/json",
+              },
+            }
+        )
+        .catch((e) => console.log(e.response));
+  }
+
   return (
     <section id="album">
       <div className="container">
@@ -62,7 +92,9 @@ const Album = () => {
           {album.tracks.items.map((track, i) => {
             console.log(track);
             return (
-              <div key={i} className="track" id={track.uri}>
+              <div key={i} className="track" id={track.uri} onClick={() => {
+                playAlbum(album.uri, i);
+              }}>
                 <div className="left">
                   <p className="count">{i + 1}</p>
                   <div className="row">
