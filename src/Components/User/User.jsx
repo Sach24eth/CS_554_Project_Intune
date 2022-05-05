@@ -3,10 +3,12 @@ import { loginUrl } from "../../Services/spotify";
 import Spotify from "../../images/Spotify_White.png";
 import "./user.css";
 import axios from "axios";
+import { NavLink, useNavigate } from "react-router-dom";
 const Firestore = require("../../Firebase/Firestore");
 
 const User = () => {
   const [user, setUser] = useState({});
+  const history = useNavigate();
   const [isLoggedInWithSpotify, setIsLoggedInWithSpotify] = useState(undefined);
   const userEmail =
     JSON.parse(window.localStorage.getItem("userDetails")).email || null;
@@ -90,9 +92,9 @@ const User = () => {
                 contentEditable={false}
                 disabled={true}
               />
-              <a href="/user/1" className="details-extra">
+              {/* <a href="/user/1" className="details-extra">
                 (Change)
-              </a>
+              </a> */}
             </div>
             <div className="details-container">
               <p className="details-title">Spotify Email</p>
@@ -124,9 +126,9 @@ const User = () => {
                 contentEditable={false}
                 disabled={true}
               />
-              <a href="/user/1" className="details-extra">
+              <NavLink to={"/me/forgot-password"} className="details-extra">
                 (Change)
-              </a>
+              </NavLink>
             </div>
           </div>
         </div>

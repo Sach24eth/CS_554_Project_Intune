@@ -71,7 +71,6 @@ class Dashboard extends Component {
           },
         })
         .then((res) => {
-          // console.log(res.data.items);
           this.setState({
             songs: res.data.items,
           });
@@ -86,7 +85,6 @@ class Dashboard extends Component {
           },
         })
         .then((res) => {
-          // console.log(res.data.artists);
           this.setState({
             followings: res.data.artists.items,
           });
@@ -105,7 +103,6 @@ class Dashboard extends Component {
           },
         })
         .then((res) => {
-          // console.log(res.data);
           this.setState({
             playlist: res.data.items,
           });
@@ -137,8 +134,33 @@ class Dashboard extends Component {
 
   redirToArtist = (e) => {
     const artistId = e.target.parentNode.parentNode.id;
-    console.log(artistId);
     this.props.history(`/artist?id=${artistId.split(":")[2]}`);
+  };
+
+  playSong = async (e) => {
+    const uri = e.target.id;
+    const typeURI = uri.split(":")[1];
+    const body =
+      typeURI === "album"
+        ? { context_uri: uri, position_ms: 0 }
+        : { uris: [uri], position_ms: 0 };
+    try {
+      const token = window.localStorage.getItem("access_token");
+      const deviceId = window.localStorage.getItem("deviceId");
+      const apiUrl = "https://api.spotify.com/v1";
+      const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
+      await axios({
+        method: "PUT",
+        url: URL_PLAY,
+        data: body,
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (e) {
+      console.log(e.response);
+    }
   };
 
   render() {
@@ -159,7 +181,7 @@ class Dashboard extends Component {
                     key={album.id}
                     heading={album.name}
                     image={album.images[1].url}
-                    clickHandler={this.props.onPlaySong}
+                    clickHandler={this.playSong}
                     uri={album.uri}
                   />
                 );
@@ -180,7 +202,6 @@ class Dashboard extends Component {
                       id={playlist.id}
                       heading={playlist.name}
                       image={playlist.images[0].url}
-                      clickHandler={this.props.onPlaySong}
                       uri={playlist.uri}
                       albumId={playlist.id}
                       albumRedir={this.redirToAlbum}
@@ -206,7 +227,7 @@ class Dashboard extends Component {
                       id={songs.id}
                       heading={songs.name}
                       image={songs.album.images[1].url}
-                      clickHandler={this.props.onPlaySong}
+                      clickHandler={this.playSong}
                       uri={songs.uri}
                     />
                   );
@@ -217,7 +238,7 @@ class Dashboard extends Component {
           ""
         )}
         {this.state.user_access_token ? (
-          <div className="new">
+          <div className="new" style={{ marginBottom: "2rem" }}>
             <div className="header">
               <h1>Following</h1>
             </div>
@@ -240,26 +261,6 @@ class Dashboard extends Component {
         ) : (
           ""
         )}
-        {/* <div className="new">
-          <div className="header">
-            <h1>Categories</h1>
-          </div>
-          <div className="card-list" id="categories">
-            {this.state.categories &&
-              this.state.categories.map((category) => {
-                return (
-                  <Card
-                    key={category.id}
-                    id={category.id}
-                    heading={category.name}
-                    image={category.icons[0].url}
-                    clickHandler={this.redirToCategory}
-                    uri={category.id}
-                  />
-                );
-              })}
-          </div>
-        </div> */}
       </>
     );
   }

@@ -59,6 +59,7 @@ class Playlist extends Component {
                   alt={this.state.playlist.name}
                 />
                 <div className="playlist-container">
+                  <p className="type">{this.state.playlist.type}</p>
                   <h1>{this.state.playlist.name}</h1>
                   {/* <p className="description">
                     {this.state.playlist.description}

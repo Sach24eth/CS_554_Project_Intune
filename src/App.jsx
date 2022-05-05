@@ -11,19 +11,19 @@ import Callback from "./Components/CallbackHandler/Callback";
 import PlaylistPage from "./Pages/Playlist";
 import AlbumPage from "./Pages/Album";
 import LikedSongsPage from "./Pages/LikedSongs";
-import Playback from "./Components/Player_Test/Player";
 import LandingPage from "./Pages/Landing";
-import SearchPage from './Pages/Search';
+import SearchPage from "./Pages/Search";
 import Auth from "./Pages/Auth";
 import Player from "./Components/Player";
-import { useDispatch } from "react-redux";
-import { authLogin } from "./Redux/Actions/Auth";
 import SpacePage from "./Pages/Space";
 import Artist from "./Components/Artist";
+import ChangePassword from "./Components/User/ForgotPassword";
+import { useDispatch } from "react-redux";
+import { authLogin } from "./Redux/Actions/Auth";
 import ChatRoom from "./Components/Chatrooms/Chatrooms"
-
 const App = () => {
   const [auth, setAuth] = useState(false);
+  const [loadPlayer, setLoadPlayer] = useState(undefined);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,20 +31,36 @@ const App = () => {
 
     if (userDetails) {
       dispatch(
-          authLogin(
-              userDetails.uid,
-              userDetails.displayName,
-              userDetails.email,
-              userDetails.lastLoginAt
-          )
+        authLogin(
+          userDetails.uid,
+          userDetails.displayName,
+          userDetails.email,
+          userDetails.lastLoginAt
+        )
       );
     }
   }, []);
 
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (
+      path === "/" ||
+      path === "/auth/login" ||
+      path === "/auth/signup" ||
+      path === "/auth/logout"
+    ) {
+      setLoadPlayer((prev) => false);
+    } else {
+      setLoadPlayer((prev) => true);
+    }
+  }, []);
+
+  console.log(loadPlayer);
+
   //Sets auth state based on local storage to keep user logged in
   useEffect(() => {
     const authLocalStorage = parseInt(
-        window.localStorage.getItem("authentication")
+      window.localStorage.getItem("authentication")
     );
 
     if (authLocalStorage === 1) {
@@ -75,7 +91,6 @@ const App = () => {
       window.localStorage.setItem("tokenSetTime", dTime);
     }
     if (
-
       Number(currentTime) - Number(creationTime) >
         Number(3600 * 1000) - 10000 ||
       !window.localStorage.getItem("token")
@@ -85,10 +100,9 @@ const App = () => {
 
   // const auth = window.localStorage.getItem("auth") === "1" ? true : false;
   const username =
-      JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
-      "User";
+    JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
+    "User";
   return (
-
     <>
       <Router>
         <Navbar auth={auth} />
@@ -104,18 +118,17 @@ const App = () => {
           <Route path="/me" element={<User />} />
           <Route path="/callback" element={<Callback />} />
           <Route path="/playlist" element={<PlaylistPage />} />
+          <Route path="/album" element={<AlbumPage />} />
           <Route path="/space" element={<SpacePage />} />
-          <Route path='/search' element={<SearchPage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/artist" element={<Artist />} />
-          <Route path='/liked-songs' element={<LikedSongsPage />} />
-          <Route path='/album' element={<AlbumPage />} />
-          <Route
-            path="/player"
-            element={<Playback uri={"spotify:track:4lmAXtOr6m1WFNQ6ssjdht"} />}
-          />
+          <Route path="/liked-songs" element={<LikedSongsPage />} />
+          <Route path="/me/forgot-password" element={<ChangePassword />} />
+          <Route path="/liked-songs" element={<LikedSongsPage />} />
+          <Route path="/album" element={<AlbumPage />} />
           <Route path ="/chatrooms" element={<ChatRoom />} />
         </Routes>
-        <Player />
+        <Player shouldLoad={loadPlayer} />
       </Router>
     </>
   );

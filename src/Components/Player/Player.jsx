@@ -12,7 +12,7 @@ import {
 } from "react-icons/fa";
 import axios from "axios";
 
-const Player = () => {
+const Player = (props) => {
   const [player, setPlayer] = useState(undefined);
   const [deviceId, setDeviceId] = useState(undefined);
   const [playing, setPlaying] = useState(false);
@@ -53,7 +53,7 @@ const Player = () => {
   }, [window.location.pathname]);
 
   useEffect(() => {
-    if (!renderPlayer) return;
+    if (!window.localStorage.getItem("access_token")) return;
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
     script.async = true;
@@ -87,6 +87,7 @@ const Player = () => {
   }, []);
 
   useEffect(() => {
+    if (!token) return;
     let isMounted = true;
     const timeout = setInterval(async () => {
       try {
@@ -132,6 +133,7 @@ const Player = () => {
   };
 
   const getData = async () => {
+    if (!token) return;
     try {
       let { data } = await axios({
         method: "GET",
@@ -409,7 +411,7 @@ const Player = () => {
 
   if (!renderPlayer) {
     return null;
-  } else if (currentSong && renderPlayer) {
+  } else if (currentSong) {
     return (
       <>
         <div className="bottom-player">
@@ -419,7 +421,7 @@ const Player = () => {
               <p className="song">{currentSong.name}</p>
               <p className="artistName">{writeArtists(currentSong.artists)}</p>
             </div>
-            <FaHeart className="heart icon" />
+            {/* <FaHeart className="heart icon" /> */}
           </div>
           <div className="controls">
             <div className="icons">
@@ -535,7 +537,11 @@ const Player = () => {
       </>
     );
   } else {
-    return <h1>Could not load player</h1>;
+    return (
+      <div className="bottom-player">
+        <h1 className="spotify-err">Refresh to start spotify player</h1>
+      </div>
+    );
   }
 };
 
