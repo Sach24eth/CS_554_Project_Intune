@@ -18,7 +18,6 @@ class Dashboard extends Component {
       username: this.props.username,
       id: null,
     };
-
     this.fetchData = this.fetchData.bind(this);
   }
 
@@ -56,6 +55,7 @@ class Dashboard extends Component {
         },
       })
       .then((res) => {
+        console.log(res)
         this.setState({
           albums: res.data.albums.items,
         });
@@ -125,9 +125,35 @@ class Dashboard extends Component {
     //   .catch((e) => console.log(e.response));
   }
 
+   playSong = (access_token, uri) => {
+
+    const deviceId = window.localStorage.getItem("deviceId");
+    const apiUrl = "https://api.spotify.com/v1";
+    const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
+
+    axios
+        .put(URL_PLAY,
+            {
+              uris: [uri],
+
+            },{
+              headers: {
+                Authorization: "Bearer " + access_token,
+                "Content-Type": "application/json",
+              }
+
+            })
+        .catch((e) => console.log(e.response));
+  }
+
   redirToAlbum = (e) => {
     const albumId = e.target.parentNode.parentNode.id;
+    this.props.history(`/album?id=${albumId.split(":")[2]}`);
 
+  };
+
+  redirToPlaylist = (e) => {
+    const albumId = e.target.parentNode.parentNode.id;
     this.props.history(`/playlist?id=${albumId.split(":")[2]}`);
 
   };
@@ -183,6 +209,8 @@ class Dashboard extends Component {
                     image={album.images[1].url}
                     clickHandler={this.playSong}
                     uri={album.uri}
+                    albumId={album.id}
+                    albumRedir={this.redirToAlbum}
                   />
                 );
               })}
@@ -204,7 +232,7 @@ class Dashboard extends Component {
                       image={playlist.images[0].url}
                       uri={playlist.uri}
                       albumId={playlist.id}
-                      albumRedir={this.redirToAlbum}
+                      albumRedir={this.redirToPlaylist}
                     />
                   );
                 })}
@@ -227,7 +255,9 @@ class Dashboard extends Component {
                       id={songs.id}
                       heading={songs.name}
                       image={songs.album.images[1].url}
+
                       clickHandler={this.playSong}
+
                       uri={songs.uri}
                     />
                   );

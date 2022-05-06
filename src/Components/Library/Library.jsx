@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Card from "../Card/Card";
+
 import { NavLink, useNavigate } from "react-router-dom";
 import likedSongsImage from "../../images/liked-songs-300.png";
 import "./library.css";
+
 
 const Library = () => {
   const [loading, setLoading] = useState(true);
   const [playlists, setPlaylists] = useState(undefined);
   const [albums, setAlbums] = useState(undefined);
-  const [likedSongs, setLikedSongs] = useState(null);
+  const [likedSongsCount, setLikedSongsCount] = useState(null);
   const [artists, setArtists] = useState(null);
 
   let access_token = window.localStorage.getItem("access_token");
   let navigate = useNavigate();
+
 
   function fetchData() {
     if (access_token) {
@@ -33,10 +36,10 @@ const Library = () => {
           },
         })
         .then((res) => {
-          console.log(res.data);
-          setLikedSongs(res.data.total);
+          setLikedSongsCount(res.data.total);
         })
         .catch((e) => console.log(e.response));
+
 
       axios
         .get(URL_USER_PlAYLISTS, {
@@ -46,9 +49,8 @@ const Library = () => {
           },
         })
         .then((res) => {
-          // console.log(res.data);
+          console.log(res.data);
           setPlaylists(res.data.items);
-          // setLoading(false)
         })
         .catch((e) => console.log(e.response));
 
@@ -60,6 +62,7 @@ const Library = () => {
           },
         })
         .then((res) => {
+          console.log(res.data);
           setArtists(res.data.artists.items);
         })
         .catch((e) => console.log(e.response));
@@ -72,6 +75,7 @@ const Library = () => {
           },
         })
         .then((res) => {
+          console.log(res);
           setAlbums(res.data.items);
           setLoading(false);
         })
@@ -84,10 +88,12 @@ const Library = () => {
     else setLoading(false);
   }, [access_token]);
 
+
   const redirToPlaylist = (e) => {
     const albumId = e.target.parentNode.parentNode.id;
     navigate("/playlist?id=" + albumId.split(":")[2]);
   };
+
 
   const redirToAlbum = (e) => {
     const albumId = e.target.parentNode.parentNode.id;
@@ -98,6 +104,7 @@ const Library = () => {
     const albumId = e.target.id;
     navigate("/artist?id=" + albumId.split(":")[2]);
   };
+
 
   const redirToTracks = () => {
     navigate("/liked-songs");
@@ -111,99 +118,100 @@ const Library = () => {
         </div>
       </section>
     );
-  } else if (access_token) {
-    console.log(albums);
+  }
+
+  if (!access_token && !loading) {
     return (
+        <section id="library">
+          <div className="container">
+            <h1 className="header">Library</h1>
+            <p className="err-text">You are Not Connected to Spotify</p>
+            <NavLink to={"/me"} className="connect">
+              Connect to Spotify
+            </NavLink>
+          </div>
+        </section>
+    );
+  }
+
+  return (
       <section id="library">
         <div className="container">
           <h1 className="header">Library</h1>
 
-          {likedSongs && (
-            <>
-              <p className="title">Liked Songs</p>
-              <div className="card-list" id="albums">
-                <Card
-                  id={"liked-songs"}
-                  heading={`${likedSongs} Liked Songs`}
-                  image={likedSongsImage}
-                  albumId={"playlist.id"}
-                  albumRedir={redirToTracks}
-                />
-              </div>
-            </>
+          {likedSongsCount && (
+              <>
+                <p className="title">Liked Songs</p>
+                <div className="card-list" id="albums">
+                  <Card
+                      id={"liked-songs"}
+                      heading={`${likedSongsCount} Liked Songs`}
+                      image={likedSongsImage}
+                      albumId={"playlist.id"}
+                      albumRedir={redirToTracks}
+                  />
+                </div>
+              </>
           )}
 
           <p className="title">Playlist</p>
           <div className="card-list" id="albums">
             {playlists &&
-              playlists.map((playlist) => {
-                return (
+            playlists.map((playlist) => {
+              return (
                   <Card
-                    key={playlist.id}
-                    id={playlist.id}
-                    heading={playlist.name}
-                    image={playlist.images[0].url}
-                    // clickHandler={this.props.onPlaySong}
-                    uri={playlist.uri}
-                    albumId={playlist.id}
-                    albumRedir={redirToPlaylist}
+                      key={playlist.id}
+                      id={playlist.id}
+                      heading={playlist.name}
+                      image={playlist.images[0].url}
+                      // clickHandler={this.props.onPlaySong}
+                      uri={playlist.uri}
+                      albumId={playlist.id}
+                      albumRedir={redirToPlaylist}
                   />
-                );
-              })}
+              );
+            })}
           </div>
 
           <p className="title">Artists</p>
           <div className="card-list" id="albums">
             {artists &&
-              artists.map((artist) => {
-                return (
+            artists.map((artist) => {
+              return (
                   <Card
-                    key={artist.id}
-                    id={artist.id}
-                    heading={artist.name}
-                    image={artist.images[0].url}
-                    uri={artist.uri}
-                    clickHandler={redirToArtist}
+                      key={artist.id}
+                      id={artist.id}
+                      heading={artist.name}
+                      image={artist.images[0].url}
+                      uri={artist.uri}
+                      clickHandler={redirToArtist}
                   />
-                );
-              })}
+              );
+            })}
           </div>
 
           <p className="title">Albums</p>
           <div className="card-list" id="albums">
             {albums &&
-              albums.map((album) => {
-                return (
+            albums.map((album) => {
+              return (
                   <Card
-                    key={album.album.id}
-                    id={album.album.id}
-                    heading={album.album.name}
-                    image={album.album.images[0].url}
-                    // clickHandler={this.props.onPlaySong}
-                    uri={album.album.uri}
-                    albumId={album.album.id}
-                    albumRedir={redirToAlbum}
+                      key={album.album.id}
+                      id={album.album.id}
+                      heading={album.album.name}
+                      image={album.album.images[0].url}
+                      // clickHandler={this.props.onPlaySong}
+                      uri={album.album.uri}
+                      albumId={album.album.id}
+                      albumRedir={redirToAlbum}
                   />
-                );
-              })}
+              );
+            })}
           </div>
         </div>
       </section>
-    );
-  } else {
-    return (
-      <section id="library">
-        <div className="container">
-          <h1 className="header">Library</h1>
-          <p className="err-text">You are Not Connected to Spotify</p>
-          <NavLink to={"/me"} className="connect">
-            Connect to Spotify
-          </NavLink>
-          {/* <button onClick={routeChange}>Connect to Spotify</button> */}
-        </div>
-      </section>
-    );
-  }
+  );
+
 };
 
 export default Library;
