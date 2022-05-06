@@ -15,7 +15,8 @@ import { useSelector } from "react-redux";
 const Player = (props) => {
   // const playerState = useSelector((state) => state.player.connection);
   const authState = useSelector((state) => state.auth);
-  const [playerConnection, setPlayerConnection] = useState(props.connection);
+  // const [playerConnection, setPlayerConnection] = useState(props.connection);
+  // console.log("Player Connection in Player: ", playerConnection);
   const [player, setPlayer] = useState(undefined);
   const [deviceId, setDeviceId] = useState(undefined);
   const [playing, setPlaying] = useState(false);
@@ -44,9 +45,9 @@ const Player = (props) => {
   const URL_SEEK = `${apiUrl}/me/player/seek?device_id=${deviceId}&position_ms=`;
   const URL_SHUFFLE = `${apiUrl}/me/player/shuffle?device_id=${deviceId}&state=`;
 
-  useEffect(() => {
-    setPlayerConnection(props.connection);
-  }, [props]);
+  // useEffect(() => {
+  //   setPlayerConnection(props.connection);
+  // }, [props]);
 
   useEffect(() => {
     if (!window.localStorage.getItem("access_token")) return;
@@ -411,13 +412,13 @@ const Player = (props) => {
   ) {
     return null;
   } else {
-    if (!playerConnection) {
+    if (!props.connection) {
       return (
         <div className="bottom-player">
           <h1 className="spotify-err">Connect to Spotify</h1>
         </div>
       );
-    } else if (currentSong && playerConnection) {
+    } else if (currentSong) {
       return (
         <>
           <div className="bottom-player">

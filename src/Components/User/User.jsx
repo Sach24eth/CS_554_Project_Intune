@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { updateSpotifyPlayerState } from "../../Redux/Actions/Player";
 const Firestore = require("../../Firebase/Firestore");
 
-const User = () => {
+const User = ({ connection }) => {
   const [user, setUser] = useState({});
   const dispatch = useDispatch();
   const [isLoggedInWithSpotify, setIsLoggedInWithSpotify] = useState(undefined);
@@ -22,6 +22,7 @@ const User = () => {
 
     if (access_token) {
       setIsLoggedInWithSpotify(true);
+      connection(true);
       if (userLS) {
         setUser(userLS);
         return;
@@ -43,6 +44,7 @@ const User = () => {
         .catch((err) => console.log(err.response));
     } else {
       dispatch(updateSpotifyPlayerState(false));
+      connection(false);
       setIsLoggedInWithSpotify(false);
     }
   }, []);
