@@ -1,21 +1,25 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import "./search.css";
 
 const Search = () => {
-  let access_token = window.localStorage.getItem("access_token");
+  const access_token = window.localStorage.getItem("access_token");
+  const genricToken = window.localStorage.getItem("token");
   const [search, setSearch] = useState(undefined);
   const [searchTracks, setsearchTracks] = useState(null);
   const [searchAlbums, setSearchAlbums] = useState(null);
   const [searchPlaylist, setSearchPlaylist] = useState(null);
   const [searchArtists, setSearchArtists] = useState(null);
+  const [noSearchResult, setNoSearchResult] = useState(null);
+  const [error, setError] = useState(null);
 
-  let limit = 10;
+  const SEARCH_LIMIT = 10;
 
   useEffect(() => {
     if (!search) return;
-    if (!access_token) return;
+    if (!genricToken) return;
 
     let cancel = false;
     const apiUrl = "https://api.spotify.com/v1";
@@ -24,15 +28,21 @@ const Search = () => {
     axios
       .get(SEARCH, {
         headers: {
-          Authorization: "Bearer " + access_token,
+          Authorization: "Bearer " + genricToken,
           "Content-Type": "application/json",
         },
         params: {
-          limit: limit,
+          limit: SEARCH_LIMIT,
         },
       })
       .then((res) => {
-        setsearchTracks(
+
+        setNoSearchResult(
+            !res.data["tracks"].total && !res.data["albums"].total &&
+            !res.data["artists"].total && !res.data["playlists"].total ? true: null
+        )
+
+        setsearchTracks( res.data["tracks"].total ?
           res.data["tracks"].items.map((track) => {
             return {
               title: track.name,
@@ -44,10 +54,10 @@ const Search = () => {
                 .join(","),
               uri: track.uri,
             };
-          })
+          }) : null
         );
 
-        setSearchAlbums(
+        setSearchAlbums( res.data["albums"].total ?
           res.data["albums"].items.map((album) => {
             return {
               id: album.id,
@@ -60,10 +70,10 @@ const Search = () => {
                 .join(","),
               uri: album.uri,
             };
-          })
+          }) : null
         );
 
-        setSearchArtists(
+        setSearchArtists( res.data["artists"].total ?
           res.data["artists"].items.map((artist) => {
             return {
               id: artist.id,
@@ -71,10 +81,10 @@ const Search = () => {
               image: artist.images[0].url,
               uri: artist.uri,
             };
-          })
+          }) : null
         );
 
-        setSearchPlaylist(
+        setSearchPlaylist( res.data["playlists"].total ?
           res.data["playlists"].items.map((playlist) => {
             return {
               id: playlist.id,
@@ -83,15 +93,22 @@ const Search = () => {
               owner: playlist.owner.display_name,
               uri: playlist.uri,
             };
-          })
+          }) : null
         );
+        setError(null);
       })
-      .catch((e) => console.log(e.response));
+      .catch((e) => {
+        console.log(e.response)
+        setError(`Error ${e.response.data.error.status}: ${e.response.data.error.message}`);
+      });
 
     return () => (cancel = true);
-  }, [search, access_token, limit]);
+  }, [search, access_token, SEARCH_LIMIT]);
 
   const playSong = (uri) => {
+
+    if (!access_token) return toast.error('Connect to Spotify to Play Song');
+
     const deviceId = window.localStorage.getItem("deviceId");
     const apiUrl = "https://api.spotify.com/v1";
     const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
@@ -109,12 +126,15 @@ const Search = () => {
           },
         }
       )
-      .catch((e) => console.log(e.response));
+      .catch((e) => {
+        console.log(e.response)
+      });
   };
 
   return (
     <section id="search">
       <div className="container">
+        <Link to={'/me'}><ToastContainer /></Link>
         <div className="search-box">
           <label>
             <input
@@ -125,6 +145,15 @@ const Search = () => {
             />
           </label>
         </div>
+
+        <div className="small-cont" id="no-results-found">
+          {error && <h2 className="title">{error}</h2>}
+        </div>
+
+        <div className="small-cont" id="no-results-found">
+          {noSearchResult && <h2 className="title">Sorry, No Results Found !</h2>}
+        </div>
+
         <div className="small-cont">
           <div id="tracks-result">
             {searchTracks && <h2 className="title">Tracks</h2>}
