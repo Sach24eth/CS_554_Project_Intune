@@ -147,6 +147,11 @@ async function AppUserLogin(data) {
       signIn.user.photoURL
     );
 
+    updateProfile(auth.currentUser, {
+      displayName: redirStatus.displayName,
+    });
+
+    console.log(auth.currentUser);
     window.localStorage.setItem(
       "userDetails",
       JSON.stringify(auth.currentUser)

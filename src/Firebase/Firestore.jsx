@@ -39,7 +39,7 @@ async function createUsersInFirestore(id, displayName, email, photoURL) {
         genres: [],
       });
 
-      // console.log("docRef", docRef);
+      console.log("docRef", docRef);
 
       return { shouldRedirect: true, redirectURL: "/genres" };
       //   setTimeout(() => {
@@ -51,9 +51,17 @@ async function createUsersInFirestore(id, displayName, email, photoURL) {
   } else {
     console.log(userDetails, "userDetails");
     if (userDetails.genres.length === 0) {
-      return { shouldRedirect: true, redirectURL: "/genres" };
+      return {
+        shouldRedirect: true,
+        redirectURL: "/genres",
+        displayName: userDetails.displayName,
+      };
     } else {
-      return { shouldRedirect: true, redirectURL: "/home" };
+      return {
+        shouldRedirect: true,
+        redirectURL: "/home",
+        displayName: userDetails.displayName,
+      };
     }
   }
 }
