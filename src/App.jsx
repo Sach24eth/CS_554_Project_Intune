@@ -20,21 +20,21 @@ import Artist from "./Components/Artist";
 import ChangePassword from "./Components/User/ForgotPassword";
 import { useDispatch, useSelector } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
+import { updateSpotifyPlayerState } from "./Redux/Actions/Player";
 
 const App = () => {
   const [auth, setAuth] = useState(false);
   const dispatch = useDispatch();
-  const [connection, setConnection] = useState(undefined);
-  const state = useSelector((state) => state);
+  const [connection, setConnection] = useState(false);
+  // const state = useSelector((state) => state);
 
-  useEffect(() => {
-    console.log(state);
-    setConnection(state.player.connection);
-  }, [state]);
+  const connectionToSpotify = (state) => {
+    setConnection((connectionState) => state);
+  };
 
   useEffect(() => {
     const userDetails = JSON.parse(window.localStorage.getItem("userDetails"));
-
+    const hasAccessToken = window.localStorage.getItem("access_token");
     if (userDetails) {
       dispatch(
         authLogin(
@@ -44,6 +44,14 @@ const App = () => {
           userDetails.lastLoginAt
         )
       );
+    }
+
+    if (hasAccessToken) {
+      updateSpotifyPlayerState(true);
+      connectionToSpotify(true);
+    } else {
+      updateSpotifyPlayerState(false);
+      connectionToSpotify(false);
     }
   }, [dispatch]);
 
@@ -88,10 +96,6 @@ const App = () => {
       getToken();
   }, []);
 
-  // const auth = window.localStorage.getItem("auth") === "1" ? true : false;
-  const username =
-    JSON.parse(window.localStorage.getItem("userDetails"))?.displayName ||
-    "User";
   return (
     <>
       <Router>
@@ -105,7 +109,10 @@ const App = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/genres" element={<GenrePicker />} />
           <Route path="/library" element={<Library />} />
-          <Route path="/me" element={<User />} />
+          <Route
+            path="/me"
+            element={<User connection={connectionToSpotify} />}
+          />
           <Route path="/callback" element={<Callback />} />
           <Route path="/playlist" element={<PlaylistPage />} />
           <Route path="/album" element={<AlbumPage />} />
