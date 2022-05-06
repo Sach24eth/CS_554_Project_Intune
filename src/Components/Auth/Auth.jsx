@@ -87,9 +87,9 @@ const Auth = (props) => {
             displayName,
           });
 
-          if (create.status !== 200) {
-            setLoading(false);
-            toast.error(create.message.message);
+          if (!create.shouldRedirect || create.err) {
+            console.log(create.err);
+            toast.error(create.err.message);
           } else {
             const userDetails = JSON.parse(
               window.localStorage.getItem("userDetails")
@@ -105,7 +105,7 @@ const Auth = (props) => {
             );
 
             props.onLogin();
-            history("/genres");
+            history(create.redirectURL);
           }
         }
       }

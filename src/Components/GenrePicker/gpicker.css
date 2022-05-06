@@ -1,6 +1,6 @@
 #genrePicker {
   width: 100vw;
-  height: 90vh;
+  height: calc(100vh - 75px);
   position: relative;
   overflow: hidden;
 }
