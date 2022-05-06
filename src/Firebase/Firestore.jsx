@@ -62,26 +62,29 @@ async function updateGenre(genreList) {
   const auth = getAuth(app);
   const user = auth.currentUser;
   console.log("user", user);
-  let updated = false;
+  let updated;
   const querySnapshot = await getDocs(collection(db, "users"));
-  querySnapshot.forEach((docm) => {
+  querySnapshot.forEach(async (docm) => {
     if (docm.data().id === user.uid) {
       console.log("doc", docm);
       const userRef = doc(db, "users", docm.id);
-      updateDoc(userRef, {
+      const update = await updateDoc(userRef, {
         genres: genreList,
-      })
-        .then(() => {
-          console.log("genre updated");
-          updated = true;
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
+      });
+
+      console.log("Update");
+      console.log(update);
+      // .then(() => {
+      //   console.log("genre updated");
+      //   return { status: 200, updated: true };
+      // })
+      // .catch((error) => {
+      //   console.log("error", error);
+      //   updated = false;
+      //   return { status: 200, updated: false };
+      // });
     }
   });
-
-  return { status: 200, updated };
 }
 
 async function getGenreData(uid) {

@@ -88,10 +88,11 @@ const GenrePicker = () => {
 
   const submitGenre = async () => {
     setAdding(true);
-    const genres = await Firestore.updateGenre(selected);
-    console.log(genres);
+    await Firestore.updateGenre(selected);
+    const uid = JSON.parse(window.localStorage.getItem("userDetails")).uid;
+    const hasGenres = await Firestore.getGenreData(uid);
     setAdding(false);
-    if (genres.updated) history("/home");
+    if (hasGenres.hasData) history("/home");
     else toast.error("Error updating genres.");
   };
 

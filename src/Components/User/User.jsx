@@ -3,12 +3,14 @@ import { loginUrl } from "../../Services/spotify";
 import Spotify from "../../images/Spotify_White.png";
 import "./user.css";
 import axios from "axios";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updateSpotifyPlayerState } from "../../Redux/Actions/Player";
 const Firestore = require("../../Firebase/Firestore");
 
 const User = () => {
   const [user, setUser] = useState({});
-  const history = useNavigate();
+  const dispatch = useDispatch();
   const [isLoggedInWithSpotify, setIsLoggedInWithSpotify] = useState(undefined);
   const userEmail =
     JSON.parse(window.localStorage.getItem("userDetails")).email || null;
@@ -27,7 +29,7 @@ const User = () => {
       axios
         .post(`${process.env.REACT_APP_API_URL}/me`, { access_token })
         .then((res) => {
-          console.log("hah", res.data);
+          dispatch(updateSpotifyPlayerState(true));
           setUser(res.data);
           Firestore.createUsersInFirestore(
             res.data.id,
@@ -35,10 +37,14 @@ const User = () => {
             res.data.email,
             res.data.photoURL
           );
+
           window.localStorage.setItem("user", JSON.stringify(res.data));
         })
         .catch((err) => console.log(err.response));
-    } else setIsLoggedInWithSpotify(false);
+    } else {
+      dispatch(updateSpotifyPlayerState(false));
+      setIsLoggedInWithSpotify(false);
+    }
   }, []);
 
   const disconnectSpotify = (e) => {
@@ -48,6 +54,7 @@ const User = () => {
     window.localStorage.removeItem("refresh_token");
     window.localStorage.removeItem("expires_in");
     window.localStorage.removeItem("user");
+    dispatch(updateSpotifyPlayerState(false));
     setUser({});
     setIsLoggedInWithSpotify(false);
   };
