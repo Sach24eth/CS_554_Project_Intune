@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, updateDoc, doc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { collection, addDoc, getDocs } from "firebase/firestore";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -70,7 +70,6 @@ async function updateGenre(genreList) {
   const auth = getAuth(app);
   const user = auth.currentUser;
   console.log("user", user);
-  let updated;
   const querySnapshot = await getDocs(collection(db, "users"));
   querySnapshot.forEach(async (docm) => {
     if (docm.data().id === user.uid) {

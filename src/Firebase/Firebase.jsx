@@ -192,6 +192,9 @@ function ChangePassword(data){
       toast.success("Password Changed Successfully");
       console.log("updated password")
       res = true;
+      setTimeout(() => {
+        window.location.href = "/me";
+      }, 700);
     }
     ).catch((error) => {
       console.log("error", error);
