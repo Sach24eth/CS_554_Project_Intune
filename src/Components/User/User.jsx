@@ -3,17 +3,29 @@ import { loginUrl } from "../../Services/spotify";
 import Spotify from "../../images/Spotify_White.png";
 import "./user.css";
 import axios from "axios";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { NavLink, useNavigate } from "react-router-dom";
 const Firestore = require("../../Firebase/Firestore");
 
 const User = () => {
+  const auth = getAuth();
+  const [userAuth, setUserAuth] = useState([]);
   const [user, setUser] = useState({});
+  const history = useNavigate();
   const [isLoggedInWithSpotify, setIsLoggedInWithSpotify] = useState(undefined);
+  const userEmail =
+    JSON.parse(window.localStorage.getItem("userDetails")).email || null;
   window.history.pushState(null, document.title, "/me");
   useEffect(() => {
     let access_token = window.localStorage.getItem("access_token");
     let userLS = window.localStorage.getItem("user");
     userLS = JSON.parse(userLS) || null;
-
+    onAuthStateChanged(auth, (userAuthDetails) => {
+      if (userAuthDetails) {
+        console.log("usernamee", userAuthDetails);
+        setUserAuth(userAuthDetails);
+      }
+    });
     if (access_token) {
       setIsLoggedInWithSpotify(true);
       if (userLS) {
@@ -23,9 +35,14 @@ const User = () => {
       axios
         .post(`${process.env.REACT_APP_API_URL}/me`, { access_token })
         .then((res) => {
-          console.log("hah",res.data);
+          console.log("hah", res.data);
           setUser(res.data);
-          Firestore.createUsersInFirestore(res.data.id, res.data.displayName, res.data.email, res.data.photoURL)
+          // Firestore.createUsersInFirestore(
+          //   res.data.id,
+          //   res.data.displayName,
+          //   res.data.email,
+          //   res.data.photoURL
+          // );
           window.localStorage.setItem("user", JSON.stringify(res.data));
         })
         .catch((err) => console.log(err.response));
@@ -44,10 +61,12 @@ const User = () => {
   };
 
   return (
+    
     <section id="user">
       <div className="container">
         <div className="header">
           <h1>User Profile</h1>
+         
         </div>
         <div className="details">
           <div className="user">
@@ -79,13 +98,13 @@ const User = () => {
               <input
                 type={"email"}
                 placeholder="Email"
-                value={user.email ? user.email : "test@gmail.com"}
+                value={userEmail ? userEmail : "No Email"}
                 contentEditable={false}
                 disabled={true}
               />
-              <a href="/user/1" className="details-extra">
+              {/* <a href="/user/1" className="details-extra">
                 (Change)
-              </a>
+              </a> */}
             </div>
             <div className="details-container">
               <p className="details-title">Spotify Email</p>
@@ -108,7 +127,8 @@ const User = () => {
                 disabled={true}
               />
             </div>
-            <div className="details-container">
+            {userAuth.providerData && userAuth.providerData[0].providerId === "google.com" ? null:(
+              <div className="details-container">
               <p className="details-title">Change Password</p>
               <input
                 type={"password"}
@@ -117,10 +137,12 @@ const User = () => {
                 contentEditable={false}
                 disabled={true}
               />
-              <a href="/user/1" className="details-extra">
+              <NavLink to={"/me/forgot-password"} className="details-extra">
                 (Change)
-              </a>
+              </NavLink>
             </div>
+            )}
+            
           </div>
         </div>
         <div className="integration">

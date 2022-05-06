@@ -1,10 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import Discord from "../../images/Discord.svg";
-import Spotify from "../../images/Spotify.png";
+import Spotify from "../../images/Spotify_Full.png";
 import "./navbar.css";
 
-const Navbar = ({ auth, username }) => {
+const Navbar = ({ auth }) => {
+  const authState =
+    JSON.parse(window.localStorage.getItem("userDetails")) || undefined;
+  // console.log(authState);
+  // const isAuthenticated = authState?.isLoggedIn;
+  const username = authState?.displayName || "User";
+  // const [auth, setAuth] = useState(false);
+
+  // useEffect(() => {
+  //   console.log("Auth: " + isAuthenticated);
+  //   if (isAuthenticated) setAuth(true);
+  //   else setAuth(false);
+  // }, [authState, isAuthenticated]);
+
   const toggleNav = (e) => {
     const navbarLinks = document.getElementsByClassName("navbar-links")[0];
     navbarLinks.classList.toggle("active");
@@ -13,9 +27,9 @@ const Navbar = ({ auth, username }) => {
     <nav className="navbar">
       <div className="brand">
         <NavLink to="/" className="brand">
-          <img src={Spotify} width={32} height={32} alt="Spotify Logo" />
-          <span className="cross">X</span>
-          <img src={Discord} width={32} height={32} alt="Discord Logo" />
+          <img src={Spotify} height={32} alt="Spotify Logo" />
+          {/* <span className="cross">X</span>
+          <img src={Discord} width={32} height={32} alt="Discord Logo" /> */}
         </NavLink>
       </div>
       <div className="toggle-button" onClick={toggleNav}>
@@ -35,11 +49,14 @@ const Navbar = ({ auth, username }) => {
             <li>
               <NavLink to="/library">Library</NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to="/playlists">Playlists</NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink to="/me">{username}</NavLink>
+            </li>
+            <li>
+              <NavLink to="/auth/logout">Logout</NavLink>
             </li>
           </ul>
         ) : (

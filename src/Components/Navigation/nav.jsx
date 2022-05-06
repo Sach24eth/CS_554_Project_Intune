@@ -72,7 +72,7 @@ const Navbar = ({ auth, username }) => {
                 <NavLink to="/home">Home</NavLink>
                 <NavLink to="/search">Search</NavLink>
                 <NavLink to="/library">Library</NavLink>
-                <NavLink to="/playlists">Playlists</NavLink>
+                {/* <NavLink to="/playlists">Playlists</NavLink> */}
                 <NavLink to="/me">{username}</NavLink>
               </>
             )}

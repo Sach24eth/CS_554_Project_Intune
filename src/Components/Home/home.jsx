@@ -5,21 +5,33 @@ import SpotifyHome from "../SpotifyHome";
 import axios from "axios";
 import Player from "../Player";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+const Firebase = require("../../Firebase/Firebase");
+
 const Home = () => {
-  
   const auth = getAuth();
   const [greeting, setGreeting] = useState(undefined);
   const [username, setUsername] = useState(undefined);
-  const [loadingAuth, setLoadingAuth] = useState(true)
+  const [loadingAuth, setLoadingAuth] = useState(true);
+  const history = useNavigate();
   const refreshToken = window.localStorage.getItem("refresh_token") || null;
   const expiresIn = window.localStorage.getItem("expires_in") || null;
-  
-  
+
   let date = new Date();
   let currentTS = date.getTime();
   let accessTokenCreatedTime = window.localStorage.getItem(
     "accessTokenCreatedTime"
   );
+
+  useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 0) {
+      history("/auth/login");
+    }
+  }, []);
 
   const getAccessToken = (refreshToken) => {
     axios
@@ -33,8 +45,7 @@ const Home = () => {
       });
   };
 
-  if (Number(currentTS - accessTokenCreatedTime) > 3600 * 1000 && refreshToken)
-    getAccessToken(refreshToken);
+  if (refreshToken) getAccessToken(refreshToken);
 
   useEffect(() => {
     if (!refreshToken || !expiresIn) return;
@@ -57,18 +68,18 @@ const Home = () => {
     } else {
       setGreeting("Good Evening");
     }
-    onAuthStateChanged(auth,user => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        setLoadingAuth(false)
-        console.log("usernamee", user)
+        setLoadingAuth(false);
+        console.log("usernamee", user);
       }
     });
     //Temp store username
-    let userDetails = JSON.parse(window.localStorage.getItem("userDetails"))
-    setUsername(userDetails.displayName || "User")
+    let userDetails = JSON.parse(window.localStorage.getItem("userDetails"));
+    setUsername(userDetails?.displayName || "User");
   }, [auth]);
-  
-  return loadingAuth ? 'loading...' : (
+
+  return (
     <section id="home">
       <div className="grid">
         <div className="left">
@@ -77,7 +88,7 @@ const Home = () => {
         <div className="right">
           <Messages />
         </div>
-        <Player />
+        {/* <Player /> */}
       </div>
     </section>
   );

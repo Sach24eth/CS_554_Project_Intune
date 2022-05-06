@@ -44,7 +44,6 @@ class Playlist extends Component {
   }
 
   render() {
-    console.log(this.state);
     return (
       <section id="album-page">
         <div className="container">
@@ -60,6 +59,7 @@ class Playlist extends Component {
                   alt={this.state.playlist.name}
                 />
                 <div className="playlist-container">
+                  <p className="type">{this.state.playlist.type}</p>
                   <h1>{this.state.playlist.name}</h1>
                   {/* <p className="description">
                     {this.state.playlist.description}
@@ -77,6 +77,7 @@ class Playlist extends Component {
                         key={i}
                         track={track}
                         i={i}
+                        playlist={this.state.playlist}
                         fn={this.millisToMinutesAndSeconds}
                       />
                     );
