@@ -9,8 +9,11 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
-  onAuthStateChanged,
   browserLocalPersistence,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  sendPasswordResetEmail
 } from "firebase/auth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -59,6 +62,7 @@ function SpotifyFbLogin(data) {
 
 function AppUserCreation(data) {
   console.log("data", data);
+  var res=false;
   createUserWithEmailAndPassword(
     auth,
     data.email,
@@ -77,6 +81,7 @@ function AppUserCreation(data) {
           console.log("error", error);
         });
       toast.success("Account Created Successfully");
+      res = true;
       Firestore.createUsersInFirestore(
         userCredential.user.uid,
         userCredential.user.displayName,
@@ -92,6 +97,7 @@ function AppUserCreation(data) {
       console.log("error", error);
       toast.error(error.message);
     });
+  return res;
 }
 async function AppUserLogin(data) {
   let redirStatus;
@@ -136,6 +142,44 @@ function AppSignOut() {
     });
 }
 
+function ChangePassword(data){
+  const user = auth.currentUser;
+  const credential = EmailAuthProvider.credential(
+    user.email,
+    data.oldPassword
+   );
+  var res=false;
+  reauthenticateWithCredential(user, credential).then(() => {
+    updatePassword(user, data.newPassword).then(() => {
+      toast.success("Password Changed Successfully");
+      console.log("updated password")
+      res = true;
+    }
+    ).catch((error) => {
+      console.log("error", error);
+      toast.error(error.message);
+  
+    }
+    );
+  }).catch((error) => {
+    console.log("err", error);
+    toast.error(error.message);
+  }
+  );
+  return res;
+}
+
+function ResetPassword(){
+  sendPasswordResetEmail(auth, auth.currentUser.email).then(() => {
+    toast.success("Password Reset Email Sent");
+  }
+  ).catch((error) => {
+    console.log("err", error);
+    toast.error(error.message);
+  }
+  );
+
+}
 async function GoogleLogin() {
   const provider = new GoogleAuthProvider();
 
@@ -171,4 +215,6 @@ export {
   AppUserLogin,
   AppSignOut,
   GoogleLogin,
+  ChangePassword,
+  ResetPassword
 };

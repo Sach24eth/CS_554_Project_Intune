@@ -3,10 +3,13 @@ import { loginUrl } from "../../Services/spotify";
 import Spotify from "../../images/Spotify_White.png";
 import "./user.css";
 import axios from "axios";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { NavLink, useNavigate } from "react-router-dom";
 const Firestore = require("../../Firebase/Firestore");
 
 const User = () => {
+  const auth = getAuth();
+  const [userAuth, setUserAuth] = useState([]);
   const [user, setUser] = useState({});
   const history = useNavigate();
   const [isLoggedInWithSpotify, setIsLoggedInWithSpotify] = useState(undefined);
@@ -17,7 +20,12 @@ const User = () => {
     let access_token = window.localStorage.getItem("access_token");
     let userLS = window.localStorage.getItem("user");
     userLS = JSON.parse(userLS) || null;
-
+    onAuthStateChanged(auth, (userAuthDetails) => {
+      if (userAuthDetails) {
+        console.log("usernamee", userAuthDetails);
+        setUserAuth(userAuthDetails);
+      }
+    });
     if (access_token) {
       setIsLoggedInWithSpotify(true);
       if (userLS) {
@@ -29,12 +37,12 @@ const User = () => {
         .then((res) => {
           console.log("hah", res.data);
           setUser(res.data);
-          Firestore.createUsersInFirestore(
-            res.data.id,
-            res.data.displayName,
-            res.data.email,
-            res.data.photoURL
-          );
+          // Firestore.createUsersInFirestore(
+          //   res.data.id,
+          //   res.data.displayName,
+          //   res.data.email,
+          //   res.data.photoURL
+          // );
           window.localStorage.setItem("user", JSON.stringify(res.data));
         })
         .catch((err) => console.log(err.response));
@@ -53,10 +61,12 @@ const User = () => {
   };
 
   return (
+    
     <section id="user">
       <div className="container">
         <div className="header">
           <h1>User Profile</h1>
+         
         </div>
         <div className="details">
           <div className="user">
@@ -117,7 +127,8 @@ const User = () => {
                 disabled={true}
               />
             </div>
-            <div className="details-container">
+            {userAuth.providerData && userAuth.providerData[0].providerId === "google.com" ? null:(
+              <div className="details-container">
               <p className="details-title">Change Password</p>
               <input
                 type={"password"}
@@ -130,6 +141,8 @@ const User = () => {
                 (Change)
               </NavLink>
             </div>
+            )}
+            
           </div>
         </div>
         <div className="integration">

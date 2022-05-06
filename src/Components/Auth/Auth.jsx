@@ -88,6 +88,7 @@ const Auth = (props) => {
           });
 
           if (create.status !== 200) {
+            setLoading(false);
             toast.error(create.message.message);
           } else {
             const userDetails = JSON.parse(
