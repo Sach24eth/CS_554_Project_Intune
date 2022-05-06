@@ -7,12 +7,15 @@ import {
   FaVolumeUp,
   FaVolumeMute,
   FaRandom,
-  FaHeart,
   FaExpand,
 } from "react-icons/fa";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const Player = (props) => {
+  // const playerState = useSelector((state) => state.player.connection);
+  const authState = useSelector((state) => state.auth);
+  const [playerConnection, setPlayerConnection] = useState(props.connection);
   const [player, setPlayer] = useState(undefined);
   const [deviceId, setDeviceId] = useState(undefined);
   const [playing, setPlaying] = useState(false);
@@ -40,17 +43,10 @@ const Player = (props) => {
   const URL_TRANSFER = `${apiUrl}/me/player`;
   const URL_SEEK = `${apiUrl}/me/player/seek?device_id=${deviceId}&position_ms=`;
   const URL_SHUFFLE = `${apiUrl}/me/player/shuffle?device_id=${deviceId}&state=`;
-  const [renderPlayer, setRenderPlayer] = useState(true);
+
   useEffect(() => {
-    const path = window.location.pathname;
-    if (
-      path === "/" ||
-      path === "/auth/login" ||
-      path === "/auth/signup" ||
-      path === "/auth/logout"
-    )
-      setRenderPlayer((prev) => false);
-  }, [window.location.pathname]);
+    setPlayerConnection(props.connection);
+  }, [props]);
 
   useEffect(() => {
     if (!window.localStorage.getItem("access_token")) return;
@@ -311,7 +307,7 @@ const Player = (props) => {
     let list = "";
     for (let i = 0; i < artists.length; i++) {
       list = list + artists[i].name;
-      if (i != artists.length - 1) {
+      if (i !== artists.length - 1) {
         list = list + ", ";
       }
     }
@@ -409,139 +405,151 @@ const Player = (props) => {
     setShuffle((currentShuffle) => !currentShuffle);
   };
 
-  if (!renderPlayer) {
+  if (
+    Object.keys(authState).length === 0 ||
+    window.location.pathname === "/genres"
+  ) {
     return null;
-  } else if (currentSong) {
-    return (
-      <>
+  } else {
+    if (!playerConnection) {
+      return (
         <div className="bottom-player">
-          <div className="track-img">
-            <img src={currentSong.album.images[0].url} alt="track" />{" "}
-            <div className="track-name">
-              <p className="song">{currentSong.name}</p>
-              <p className="artistName">{writeArtists(currentSong.artists)}</p>
+          <h1 className="spotify-err">Connect to Spotify</h1>
+        </div>
+      );
+    } else if (currentSong && playerConnection) {
+      return (
+        <>
+          <div className="bottom-player">
+            <div className="track-img">
+              <img src={currentSong.album.images[0].url} alt="track" />{" "}
+              <div className="track-name">
+                <p className="song">{currentSong.name}</p>
+                <p className="artistName">
+                  {writeArtists(currentSong.artists)}
+                </p>
+              </div>
             </div>
-            {/* <FaHeart className="heart icon" /> */}
-          </div>
-          <div className="controls">
-            <div className="icons">
-              <FaBackward
-                className="icon"
-                onClick={() => {
-                  prevSong();
-                }}
-              />
-              {!playing && (
-                <FaPlay
-                  className="white icon"
+            <div className="controls">
+              <div className="icons">
+                <FaBackward
+                  className="icon"
                   onClick={() => {
-                    playSong();
+                    prevSong();
                   }}
                 />
-              )}
-              {playing && (
-                <FaPause
-                  className="white icon"
+                {!playing && (
+                  <FaPlay
+                    className="white icon"
+                    onClick={() => {
+                      playSong();
+                    }}
+                  />
+                )}
+                {playing && (
+                  <FaPause
+                    className="white icon"
+                    onClick={() => {
+                      pauseSong();
+                    }}
+                  />
+                )}
+                <FaForward
+                  className="icon"
                   onClick={() => {
-                    pauseSong();
+                    nextSong();
                   }}
                 />
-              )}
-              <FaForward
-                className="icon"
-                onClick={() => {
-                  nextSong();
-                }}
-              />
+              </div>
+              <div className="slider">
+                <p className="time-playing font-sm">{progress}</p>
+                <p className="slider-control">
+                  <input
+                    type={"range"}
+                    width={"100%"}
+                    className="slider-actual-pointer"
+                    max={duration}
+                    value={seek}
+                    onChange={seekSong}
+                    onMouseUp={seekTrack}
+                  />
+                </p>
+                <p className="time-total font-sm">{convertToTime(duration)}</p>
+              </div>
             </div>
-            <div className="slider">
-              <p className="time-playing font-sm">{progress}</p>
+            <div className="volume">
               <p className="slider-control">
                 <input
                   type={"range"}
                   width={"100%"}
                   className="slider-actual-pointer"
-                  max={duration}
-                  value={seek}
-                  onChange={seekSong}
-                  onMouseUp={seekTrack}
+                  max={100}
+                  value={volume}
+                  onChange={moveVolume}
+                  onMouseUp={changeVolume}
                 />
               </p>
-              <p className="time-total font-sm">{convertToTime(duration)}</p>
+              {!muted && (
+                <FaVolumeUp
+                  className="icon"
+                  onClick={() => {
+                    toggleMute();
+                  }}
+                />
+              )}
+              {muted && (
+                <FaVolumeMute
+                  className="icon"
+                  onClick={() => {
+                    toggleMute();
+                  }}
+                />
+              )}
+              {shuffle && (
+                <FaRandom
+                  className="icon"
+                  id="shuffleGreen"
+                  onClick={() => {
+                    toggleShuffle();
+                  }}
+                />
+              )}
+              {!shuffle && (
+                <FaRandom
+                  className="icon"
+                  onClick={() => {
+                    toggleShuffle();
+                  }}
+                />
+              )}
+              {!fullscreen && (
+                <FaExpand
+                  className="icon"
+                  onClick={() => {
+                    toggleFullscreen();
+                  }}
+                />
+              )}
+              {fullscreen && (
+                <FaExpand
+                  className="icon"
+                  id="expandGreen"
+                  onClick={() => {
+                    toggleFullscreen();
+                  }}
+                />
+              )}
             </div>
           </div>
-          <div className="volume">
-            <p className="slider-control">
-              <input
-                type={"range"}
-                width={"100%"}
-                className="slider-actual-pointer"
-                max={100}
-                value={volume}
-                onChange={moveVolume}
-                onMouseUp={changeVolume}
-              />
-            </p>
-            {!muted && (
-              <FaVolumeUp
-                className="icon"
-                onClick={() => {
-                  toggleMute();
-                }}
-              />
-            )}
-            {muted && (
-              <FaVolumeMute
-                className="icon"
-                onClick={() => {
-                  toggleMute();
-                }}
-              />
-            )}
-            {shuffle && (
-              <FaRandom
-                className="icon"
-                id="shuffleGreen"
-                onClick={() => {
-                  toggleShuffle();
-                }}
-              />
-            )}
-            {!shuffle && (
-              <FaRandom
-                className="icon"
-                onClick={() => {
-                  toggleShuffle();
-                }}
-              />
-            )}
-            {!fullscreen && (
-              <FaExpand
-                className="icon"
-                onClick={() => {
-                  toggleFullscreen();
-                }}
-              />
-            )}
-            {fullscreen && (
-              <FaExpand
-                className="icon"
-                id="expandGreen"
-                onClick={() => {
-                  toggleFullscreen();
-                }}
-              />
-            )}
-          </div>
+        </>
+      );
+    } else {
+      return (
+        <div className="bottom-player">
+          <h1 className="spotify-err">Refresh to start spotify player</h1>
         </div>
-      </>
-    );
-  } else {
-    return (
-      <div className="bottom-player">
-        <h1 className="spotify-err">Refresh to start spotify player</h1>
-      </div>
-    );
+      );
+    }
   }
 };
 

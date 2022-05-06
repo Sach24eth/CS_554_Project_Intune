@@ -18,13 +18,19 @@ import Player from "./Components/Player";
 import SpacePage from "./Pages/Space";
 import Artist from "./Components/Artist";
 import ChangePassword from "./Components/User/ForgotPassword";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
 import ChatRoom from "./Components/Chatrooms/Chatrooms"
 const App = () => {
   const [auth, setAuth] = useState(false);
-  const [loadPlayer, setLoadPlayer] = useState(undefined);
   const dispatch = useDispatch();
+  const [connection, setConnection] = useState(undefined);
+  const state = useSelector((state) => state);
+
+  useEffect(() => {
+    console.log(state);
+    setConnection(state.player.connection);
+  }, [state]);
 
   useEffect(() => {
     const userDetails = JSON.parse(window.localStorage.getItem("userDetails"));
@@ -39,23 +45,7 @@ const App = () => {
         )
       );
     }
-  }, []);
-
-  useEffect(() => {
-    const path = window.location.pathname;
-    if (
-      path === "/" ||
-      path === "/auth/login" ||
-      path === "/auth/signup" ||
-      path === "/auth/logout"
-    ) {
-      setLoadPlayer((prev) => false);
-    } else {
-      setLoadPlayer((prev) => true);
-    }
-  }, []);
-
-  console.log(loadPlayer);
+  }, [dispatch]);
 
   //Sets auth state based on local storage to keep user logged in
   useEffect(() => {
@@ -128,7 +118,7 @@ const App = () => {
           <Route path="/album" element={<AlbumPage />} />
           <Route path ="/chatrooms" element={<ChatRoom />} />
         </Routes>
-        <Player shouldLoad={loadPlayer} />
+        <Player connection={connection} />
       </Router>
     </>
   );
