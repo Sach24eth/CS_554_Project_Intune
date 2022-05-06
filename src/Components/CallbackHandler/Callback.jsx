@@ -1,9 +1,12 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-const Firebase = require("../../Firebase/Firebase")
+
+const Firebase = require("../../Firebase/Firebase");
+
 const Callback = () => {
   const history = useNavigate();
+
   useEffect(() => {
     const code = new URLSearchParams(window.location.search).get("code");
     async function getAccessToken() {
@@ -23,7 +26,7 @@ const Callback = () => {
             accessTokenCreatedTime
           );
           console.log("res", res);
-          Firebase.SpotifyFbLogin(res.data)
+          Firebase.SpotifyFbLogin(res.data);
           history(`/me`);
         })
         .catch((err) => console.log(err.response));

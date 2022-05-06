@@ -57,41 +57,77 @@ function SpotifyFbLogin(data) {
   return "SpotifyLogin";
 }
 
-function AppUserCreation(data) {
+async function AppUserCreation(data) {
   console.log("data", data);
-  createUserWithEmailAndPassword(
-    auth,
-    data.email,
-    data.password,
-    data.displayName
-  )
-    .then((userCredential) => {
-      updateProfile(auth.currentUser, {
-        displayName: data.displayName,
-      })
-        .then(() => {
-          console.log("display name updated");
-          console.log("userCredential", userCredential);
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
-      toast.success("Account Created Successfully");
-      Firestore.createUsersInFirestore(
-        userCredential.user.uid,
-        userCredential.user.displayName,
-        userCredential.user.email,
-        userCredential.user.photoURL
+  let redirectStatus;
+  let user;
+  try {
+    user = await createUserWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password,
+      data.displayName
+    );
+  } catch (error) {
+    return { err: error };
+  }
+
+  console.log(user.user);
+
+  if (user.user) {
+    updateProfile(auth.currentUser, {
+      displayName: data.displayName,
+    });
+
+    toast.success("Account Created Successfully");
+
+    try {
+      redirectStatus = await Firestore.createUsersInFirestore(
+        user.user.uid,
+        user.user.displayName,
+        user.user.email,
+        user.user.photoURL
       );
       window.localStorage.setItem(
         "userDetails",
         JSON.stringify(auth.currentUser)
       );
-    })
-    .catch((error) => {
-      console.log("error", error);
-      toast.error(error.message);
-    });
+    } catch (error) {
+      return error;
+    }
+
+    return redirectStatus;
+  } else {
+    toast.error("Cannot Login");
+    return { err: true };
+  }
+  // .then((userCredential) => {
+  //   updateProfile(auth.currentUser, {
+  //     displayName: data.displayName,
+  //   })
+  //     .then(() => {
+  //       console.log("display name updated");
+  //       console.log("userCredential", userCredential);
+  //     })
+  //     .catch((error) => {
+  //       console.log("error", error);
+  //     });
+  //   toast.success("Account Created Successfully");
+  //   Firestore.createUsersInFirestore(
+  //     userCredential.user.uid,
+  //     userCredential.user.displayName,
+  //     userCredential.user.email,
+  //     userCredential.user.photoURL
+  //   );
+  //   window.localStorage.setItem(
+  //     "userDetails",
+  //     JSON.stringify(auth.currentUser)
+  //   );
+  // })
+  // .catch((error) => {
+  //   console.log("error", error);
+  //   toast.error(error.message);
+  // });
 }
 async function AppUserLogin(data) {
   let redirStatus;
@@ -111,6 +147,11 @@ async function AppUserLogin(data) {
       signIn.user.photoURL
     );
 
+    updateProfile(auth.currentUser, {
+      displayName: redirStatus.displayName,
+    });
+
+    console.log(auth.currentUser);
     window.localStorage.setItem(
       "userDetails",
       JSON.stringify(auth.currentUser)
