@@ -35,7 +35,6 @@ const Messages = () => {
             .then((res) => {
                 //console.log("All Genres data",res.data.genres);
                 setGenres(res.data.genres);
-                
             })
             .catch((err) => console.log(err.response));
       onAuthStateChanged(auth,user => {
