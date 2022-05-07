@@ -1,0 +1,63 @@
+#cardChat {
+	padding: 1rem 1rem 0 1rem;
+	height: calc(100% - 200px);
+	background-color: var(--card-bg);
+	border-radius: 6px;
+
+}
+/* #messageSubmit{
+	width: auto;
+	border-radius: 5px;
+	padding: 40rem 1rem 0 1rem;
+} */
+
+#msgBtn{
+    color: white;
+	background-color:#179643 ;
+	margin-top: 30px;
+	padding: 10px;
+	border-radius: 20px;
+	position:relative;
+
+}
+
+#render-chat {
+	padding: 1rem 1rem 0 1rem;
+	height: 500px;
+	width: 100%;
+	overflow-y: scroll;
+	/* display: flex; */
+	background-color: var(--card-bg);
+	border-radius: 6px;
+	
+}
+.messageBox{
+	width: auto;
+  	height: 35px;
+  	margin-top: 1rem;
+}
+
+#message{
+	width: 100%;
+  	height: 2%;
+  	border-radius: 6px;
+  	background-color: var(--card-hover);
+  	border: none;
+  	color: var(--text-color);
+  	padding-left: 10px;
+  	margin-left: -5px;
+	margin-top: 5px;
+  	font-size: var(--link-font);
+	position:absolute;
+}
+h3 {
+	color: #179643;
+}
+
+h4{
+	color: rgba(20, 20, 223, 0.795)
+}
+
+span {
+	color: white;
+}
