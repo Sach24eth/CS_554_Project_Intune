@@ -8,6 +8,7 @@ import Home from "./Components/Home";
 import Library from "./Components/Library";
 import User from "./Components/User/User";
 import Callback from "./Components/CallbackHandler/Callback";
+import ChatRoom from "./Components/Chatrooms/Chatrooms"
 import PlaylistPage from "./Pages/Playlist";
 import AlbumPage from "./Pages/Album";
 import LikedSongsPage from "./Pages/LikedSongs";
@@ -123,6 +124,7 @@ const App = () => {
           <Route path="/me/forgot-password" element={<ChangePassword />} />
           <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/album" element={<AlbumPage />} />
+          <Route path ="/chatrooms" element={<ChatRoom />} />
         </Routes>
         <Player connection={connection} />
       </Router>
