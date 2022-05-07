@@ -13,6 +13,7 @@ const Search = () => {
   const [searchPlaylist, setSearchPlaylist] = useState(null);
   const [searchArtists, setSearchArtists] = useState(null);
   const [noSearchResult, setNoSearchResult] = useState(null);
+  const [loading, setLoading] = useState(null);
   const [error, setError] = useState(null);
 
   const SEARCH_LIMIT = 10;
@@ -28,6 +29,14 @@ const Search = () => {
     const apiUrl = "https://api.spotify.com/v1";
     const SEARCH = `${apiUrl}/search?q=${search}&type=track%2Cartist%2Calbum%2Cplaylist`;
 
+    /* Clear results while searching */
+    setSearchPlaylist(null);
+    setSearchAlbums(null);
+    setsearchTracks(null);
+    setSearchArtists(null);
+    setError(null);
+    setLoading(true);
+
     axios
       .get(SEARCH, {
         headers: {
@@ -39,7 +48,7 @@ const Search = () => {
         },
       })
       .then((res) => {
-
+        setLoading(null);
         setNoSearchResult(
             !res.data["tracks"].total && !res.data["albums"].total &&
             !res.data["artists"].total && !res.data["playlists"].total ? true: null
@@ -98,10 +107,11 @@ const Search = () => {
             };
           }) : null
         );
-        setError(null);
+
       })
       .catch((e) => {
         console.log(e.response)
+        setLoading(null);
         setError(`Error ${e.response.data.error.status}: ${e.response.data.error.message}`);
       });
 
@@ -150,11 +160,15 @@ const Search = () => {
         </div>
 
         <div className="small-cont" id="no-results-found">
+          {loading && <h2 className="title">Loading ...</h2>}
+        </div>
+
+        <div className="small-cont" id="no-results-found">
           {error && <h2 className="title">{error}</h2>}
         </div>
 
         <div className="small-cont" id="no-results-found">
-          {noSearchResult && <h2 className="title">Sorry, No Results Found !</h2>}
+          {noSearchResult && !loading && <h2 className="title">Sorry, No Results Found !</h2>}
         </div>
 
         <div className="small-cont">
