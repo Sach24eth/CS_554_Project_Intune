@@ -4,7 +4,15 @@ const app = express();
 //const http = require("http").createServer(app);
 //var io = require("socket.io")(http);
 //console.log(io);
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+
+app.use("/", (req, res) => {
+  res.json({ msg: "sever running" });
+});
 
 //socket connect
 const http = require("http").createServer(app);
