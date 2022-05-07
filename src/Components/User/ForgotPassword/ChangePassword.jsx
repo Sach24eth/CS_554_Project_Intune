@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import Spinner from "../../Spinner";
-
+import { ToastContainer } from "react-toastify";
 import "./password.css";
-
+const Firebase = require("../../../Firebase/Firebase");
 const ChangePassword = () => {
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState(undefined);
+  const [displayReset, setDisplayReset] = useState(false);
   const onFormChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     console.log(formData);
   };
-
+ const resetPassword = async () => {
+    Firebase.ResetPassword();
+    setDisplayReset(false);
+ }
   const onSubmitForm = async (e) => {
     setIsLoading(true);
     console.log("hello");
@@ -22,6 +26,13 @@ const ChangePassword = () => {
     } else if (formData.newPassword !== formData.repeatPassword) {
       setIsLoading(false);
       return setErr("Passwords do not match");
+    }else{
+      setIsLoading(false);
+      const checkIfUpdated=Firebase.ChangePassword(formData)
+      console.log("updated?",checkIfUpdated);
+      if(!checkIfUpdated){
+        setDisplayReset(true);
+      }
     }
   };
 
@@ -57,8 +68,13 @@ const ChangePassword = () => {
           <div className="submit" onClick={onSubmitForm}>
             {isLoading ? <Spinner /> : "Submit"}
           </div>
+          <ToastContainer />
         </div>
         <p>{err}</p>
+        <br></br>
+        {displayReset && (
+          <p className="reset-password" onClick={resetPassword}>Click to reset your password</p>
+        )}
       </div>
     </section>
   );
