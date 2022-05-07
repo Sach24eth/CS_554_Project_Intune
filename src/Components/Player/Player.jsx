@@ -402,7 +402,6 @@ const Player = (props) => {
     }
     setShuffle((currentShuffle) => !currentShuffle);
   };
-  console.log(window.location.pathname);
   if (
     Object.keys(authState).length === 0 ||
     window.location.pathname === "/genres"

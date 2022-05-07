@@ -4,7 +4,6 @@ import Dashboard from "./Dashboard/Dashboard";
 import "./spotify.css";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const firestore = require("../../Firebase/Firestore");
-const Firebase = require("../../Firebase/Firebase");
 
 const SpotifyHome = ({ greeting, username }) => {
   const auth = getAuth();
@@ -12,14 +11,11 @@ const SpotifyHome = ({ greeting, username }) => {
   const history = useNavigate();
   useEffect(() => {
     async function getGenre() {
-      // const id =JSON.parse(window.localStorage.getItem("userDetails")).uid || null;
-      // console.log(id)
       let id = null;
-      onAuthStateChanged(auth,user => {
+      onAuthStateChanged(auth, (user) => {
         if (user) {
-          //setLoadingAuth(false)
           id = user.uid;
-          console.log("user id", user.uid)
+          console.log("user id", user.uid);
         }
       });
       if (id) {
@@ -34,7 +30,7 @@ const SpotifyHome = ({ greeting, username }) => {
     }
 
     getGenre();
-  }, [history]);
+  }, [history, auth]);
 
   useEffect(() => {
     setTemplateToLoad(

@@ -55,7 +55,7 @@ class Dashboard extends Component {
         },
       })
       .then((res) => {
-        console.log(res)
+        console.log(res);
         this.setState({
           albums: res.data.albums.items,
         });
@@ -125,37 +125,35 @@ class Dashboard extends Component {
     //   .catch((e) => console.log(e.response));
   }
 
-   playSong = (access_token, uri) => {
-
+  /* playSong = (access_token, uri) => {
     const deviceId = window.localStorage.getItem("deviceId");
     const apiUrl = "https://api.spotify.com/v1";
     const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
 
     axios
-        .put(URL_PLAY,
-            {
-              uris: [uri],
-
-            },{
-              headers: {
-                Authorization: "Bearer " + access_token,
-                "Content-Type": "application/json",
-              }
-
-            })
-        .catch((e) => console.log(e.response));
-  }
+      .put(
+        URL_PLAY,
+        {
+          uris: [uri],
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + access_token,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .catch((e) => console.log(e.response));
+  }; */
 
   redirToAlbum = (e) => {
     const albumId = e.target.parentNode.parentNode.id;
     this.props.history(`/album?id=${albumId.split(":")[2]}`);
-
   };
 
   redirToPlaylist = (e) => {
     const albumId = e.target.parentNode.parentNode.id;
     this.props.history(`/playlist?id=${albumId.split(":")[2]}`);
-
   };
 
   redirToArtist = (e) => {
@@ -255,9 +253,7 @@ class Dashboard extends Component {
                       id={songs.id}
                       heading={songs.name}
                       image={songs.album.images[1].url}
-
                       clickHandler={this.playSong}
-
                       uri={songs.uri}
                     />
                   );
