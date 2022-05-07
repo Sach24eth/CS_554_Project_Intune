@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { generateCode } from "../../../Services/generateCode";
 import Spinner from "../../Spinner";
-import "./welcome.css";
 
+import "./welcome.css";
 const Welcome = (props) => {
   const typography = [
     "Quality checks in progress",
@@ -12,12 +13,13 @@ const Welcome = (props) => {
 
   const [create, setCreate] = useState(false);
   const [typo, setTypo] = useState(undefined);
+
   const createSpace = () => {
     const length = typography.length;
     let index = 0;
     setTypo(typography[index]);
     setCreate(true);
-
+    console.log(props.socket);
     const typoInterval = setInterval(() => {
       index += 1;
       if (index >= length) {
@@ -28,6 +30,14 @@ const Welcome = (props) => {
       }
       setTypo(typography[index]);
     }, 2000);
+
+    const inviteCode = generateCode();
+    window.localStorage.setItem("code", inviteCode);
+    props.socket.emit("user-space-create", {
+      username: props.user.displayName,
+      uid: props.user.uid,
+      inviteCode,
+    });
   };
   return (
     <div className="welcomeModal">
@@ -37,8 +47,6 @@ const Welcome = (props) => {
       </div>
       <div className="faq">
         <p>
-          {/* Listen to your favourite music together. Add up-to 6 Spotify Premium
-          users. */}
           A place to chill, relax and enjoy your favorite songs with your
           friends.
           <br /> Add up-to 6 Spotify Premium users.

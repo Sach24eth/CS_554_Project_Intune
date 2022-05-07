@@ -417,7 +417,11 @@ const Player = (props) => {
     } else if (currentSong) {
       return (
         <>
-          <div className="bottom-player">
+          <div
+            className="bottom-player"
+            id="player"
+            style={props.hide && { visibility: "hidden" }}
+          >
             <div className="track-img">
               <img src={currentSong.album.images[0].url} alt="track" />{" "}
               <div className="track-name">

@@ -31,6 +31,50 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("Disconnect Fired");
   });
+
+  socket.on("user-space-create", ({ username, uid, inviteCode }) => {
+    //Add user into db first
+    //Join the socket room
+    socket.join(inviteCode);
+    console.log(username, uid, inviteCode);
+    //Notify the client
+    io.to(inviteCode).emit("user-space-connected", { username, inviteCode });
+  });
+
+  socket.on("user-space-connect", ({ username, uid, inviteCode }) => {
+    socket.join(inviteCode);
+    console.log(username, uid, inviteCode);
+    io.to(inviteCode).emit("user-space-connected", { username, inviteCode });
+  });
+
+  socket.on("user-space-disconnect", ({ username, uid, inviteCode }) => {
+    //Remove user from the socket db collection
+    //Remove user from room
+    socket.leave(inviteCode);
+    //Notify client
+    io.to(inviteCode).emit("user-space-disconnected", {
+      username,
+      inviteCode,
+    });
+  });
+
+  socket.on("user-space-owner-disconnect", ({ inviteCode, uid }) => {
+    //Remove the entire document from db
+    //Remove users from room
+    socket.leave(inviteCode);
+    //Notify client
+    io.to(inviteCode).emit("user-space-owner-disconnected", {
+      inviteCode,
+    });
+  });
+
+  socket.on("user-space-play", ({ uri, inviteCode }) => {
+    console.log(uri, inviteCode);
+    //Sync song to the clients
+    io.to(inviteCode).emit("play", {
+      uri,
+    });
+  });
 });
 
 http.listen(4000, () => {
