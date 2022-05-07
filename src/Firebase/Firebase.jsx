@@ -9,8 +9,11 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
-  onAuthStateChanged,
   browserLocalPersistence,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  sendPasswordResetEmail
 } from "firebase/auth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -177,6 +180,47 @@ function AppSignOut() {
     });
 }
 
+function ChangePassword(data){
+  const user = auth.currentUser;
+  const credential = EmailAuthProvider.credential(
+    user.email,
+    data.oldPassword
+   );
+  var res=false;
+  reauthenticateWithCredential(user, credential).then(() => {
+    updatePassword(user, data.newPassword).then(() => {
+      toast.success("Password Changed Successfully");
+      console.log("updated password")
+      res = true;
+      setTimeout(() => {
+        window.location.href = "/me";
+      }, 700);
+    }
+    ).catch((error) => {
+      console.log("error", error);
+      toast.error(error.message);
+  
+    }
+    );
+  }).catch((error) => {
+    console.log("err", error);
+    toast.error(error.message);
+  }
+  );
+  return res;
+}
+
+function ResetPassword(){
+  sendPasswordResetEmail(auth, auth.currentUser.email).then(() => {
+    toast.success("Password Reset Email Sent");
+  }
+  ).catch((error) => {
+    console.log("err", error);
+    toast.error(error.message);
+  }
+  );
+
+}
 async function GoogleLogin() {
   const provider = new GoogleAuthProvider();
 
@@ -212,4 +256,6 @@ export {
   AppUserLogin,
   AppSignOut,
   GoogleLogin,
+  ChangePassword,
+  ResetPassword
 };
