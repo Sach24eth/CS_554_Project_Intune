@@ -3,10 +3,8 @@ import "./home.css";
 import Messages from "../Messages";
 import SpotifyHome from "../SpotifyHome";
 import axios from "axios";
-import Player from "../Player";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-const Firebase = require("../../Firebase/Firebase");
 
 const Home = () => {
   const auth = getAuth();

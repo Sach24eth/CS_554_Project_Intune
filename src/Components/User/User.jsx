@@ -9,8 +9,6 @@ import { useDispatch } from "react-redux";
 
 import { updateSpotifyPlayerState } from "../../Redux/Actions/Player";
 
-
-
 const User = ({ connection }) => {
   const auth = getAuth();
   const [user, setUser] = useState({});
@@ -26,7 +24,7 @@ const User = ({ connection }) => {
     userLS = JSON.parse(userLS) || null;
     onAuthStateChanged(auth, (userAuthDetails) => {
       if (userAuthDetails) {
-        console.log("usernamee", userAuthDetails);
+        // console.log("usernamee", userAuthDetails);
         setUserAuth(userAuthDetails);
       }
     });
@@ -68,16 +66,16 @@ const User = ({ connection }) => {
     dispatch(updateSpotifyPlayerState(false));
     setUser({});
     setIsLoggedInWithSpotify(false);
-    connection(false);
+
+    window.location.reload();
+
   };
 
   return (
-    
     <section id="user">
       <div className="container">
         <div className="header">
           <h1>User Profile</h1>
-         
         </div>
         <div className="details">
           <div className="user">
@@ -138,22 +136,22 @@ const User = ({ connection }) => {
                 disabled={true}
               />
             </div>
-            {userAuth.providerData && userAuth.providerData[0].providerId === "google.com" ? null:(
+            {userAuth.providerData &&
+            userAuth.providerData[0].providerId === "google.com" ? null : (
               <div className="details-container">
-              <p className="details-title">Change Password</p>
-              <input
-                type={"password"}
-                placeholder="Password"
-                value={"*********************"}
-                contentEditable={false}
-                disabled={true}
-              />
-              <NavLink to={"/me/forgot-password"} className="details-extra">
-                (Change)
-              </NavLink>
-            </div>
+                <p className="details-title">Change Password</p>
+                <input
+                  type={"password"}
+                  placeholder="Password"
+                  value={"*********************"}
+                  contentEditable={false}
+                  disabled={true}
+                />
+                <NavLink to={"/me/forgot-password"} className="details-extra">
+                  (Change)
+                </NavLink>
+              </div>
             )}
-            
           </div>
         </div>
         <div className="integration">

@@ -13,10 +13,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 const Player = (props) => {
-  // const playerState = useSelector((state) => state.player.connection);
   const authState = useSelector((state) => state.auth);
-  // const [playerConnection, setPlayerConnection] = useState(props.connection);
-  // console.log("Player Connection in Player: ", playerConnection);
   const [player, setPlayer] = useState(undefined);
   const [deviceId, setDeviceId] = useState(undefined);
   const [playing, setPlaying] = useState(false);
@@ -406,7 +403,6 @@ const Player = (props) => {
     }
     setShuffle((currentShuffle) => !currentShuffle);
   };
-
   if (
     Object.keys(authState).length === 0 ||
     window.location.pathname === "/genres"
@@ -422,7 +418,11 @@ const Player = (props) => {
     } else if (currentSong) {
       return (
         <>
-          <div className="bottom-player">
+          <div
+            className="bottom-player"
+            id="player"
+            style={props.hide && { visibility: "hidden" }}
+          >
             <div className="track-img">
               <img src={currentSong.album.images[0].url} alt="track" />{" "}
               <div className="track-name">

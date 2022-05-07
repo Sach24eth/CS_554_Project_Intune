@@ -35,4 +35,5 @@
 .chat-info-card .chat-title {
   font-size: calc(var(--body-font) - 3px) !important;
   font-weight: 500;
+  text-transform: capitalize !important;
 }
