@@ -5,8 +5,10 @@ import "./user.css";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
+
 import { updateSpotifyPlayerState } from "../../Redux/Actions/Player";
 const Firestore = require("../../Firebase/Firestore");
+
 
 const User = ({ connection }) => {
   const [user, setUser] = useState({});
@@ -59,6 +61,7 @@ const User = ({ connection }) => {
     dispatch(updateSpotifyPlayerState(false));
     setUser({});
     setIsLoggedInWithSpotify(false);
+    connection(false);
   };
 
   return (

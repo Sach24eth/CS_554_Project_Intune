@@ -5,8 +5,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "./search.css";
 
 const Search = () => {
-  const access_token = window.localStorage.getItem("access_token");
-  const genricToken = window.localStorage.getItem("token");
+
+
   const [search, setSearch] = useState(undefined);
   const [searchTracks, setsearchTracks] = useState(null);
   const [searchAlbums, setSearchAlbums] = useState(null);
@@ -18,6 +18,9 @@ const Search = () => {
   const SEARCH_LIMIT = 10;
 
   useEffect(() => {
+
+    const genricToken = window.localStorage.getItem("token");
+
     if (!search) return;
     if (!genricToken) return;
 
@@ -103,10 +106,10 @@ const Search = () => {
       });
 
     return () => (cancel = true);
-  }, [search, access_token, SEARCH_LIMIT]);
+  }, [search]);
 
   const playSong = (uri) => {
-
+    const access_token = window.localStorage.getItem("access_token");
     if (!access_token) return toast.error('Connect to Spotify to Play Song');
 
     const deviceId = window.localStorage.getItem("deviceId");
