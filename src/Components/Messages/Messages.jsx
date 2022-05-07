@@ -63,7 +63,7 @@ const Messages = () => {
     async function searchRooms() {
       try {
         let searchResults = [];
-        if ((searchTerm.length!== 0 && searchTerm)) {
+        if (searchTerm.length!== 0) {
           console.log("Searching this:",searchTerm.length)
           for (let i = 0; i < genres.length; i++) {
             //console.log("Genre:", genres[i], "searchTerm", searchTerm.toLowerCase())
@@ -76,7 +76,7 @@ const Messages = () => {
               // setNoRes('false')
             }
           }
-          //console.log("not on state results:", searchResults.length);
+          console.log("not on state results:", searchResults.length);
           if (searchResults.length > 0) {
             setUsrGenres(searchResults)
           }
