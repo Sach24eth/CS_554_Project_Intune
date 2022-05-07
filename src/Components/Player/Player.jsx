@@ -13,10 +13,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 const Player = (props) => {
-  // const playerState = useSelector((state) => state.player.connection);
   const authState = useSelector((state) => state.auth);
-  // const [playerConnection, setPlayerConnection] = useState(props.connection);
-  // console.log("Player Connection in Player: ", playerConnection);
   const [player, setPlayer] = useState(undefined);
   const [deviceId, setDeviceId] = useState(undefined);
   const [playing, setPlaying] = useState(false);
@@ -405,7 +402,7 @@ const Player = (props) => {
     }
     setShuffle((currentShuffle) => !currentShuffle);
   };
-
+  console.log(window.location.pathname);
   if (
     Object.keys(authState).length === 0 ||
     window.location.pathname === "/genres"

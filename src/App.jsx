@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import generateToken from "./Services/generateToken";
-import "./app.css";
 import GenrePicker from "./Components/GenrePicker";
 import Navbar from "./Components/Navigation";
 import Home from "./Components/Home";
@@ -18,15 +17,15 @@ import Player from "./Components/Player";
 import SpacePage from "./Pages/Space";
 import Artist from "./Components/Artist";
 import ChangePassword from "./Components/User/ForgotPassword";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
 import { updateSpotifyPlayerState } from "./Redux/Actions/Player";
+import "./app.css";
 
 const App = () => {
   const [auth, setAuth] = useState(false);
   const dispatch = useDispatch();
   const [connection, setConnection] = useState(false);
-  // const state = useSelector((state) => state);
 
   const connectionToSpotify = (state) => {
     setConnection((connectionState) => state);
