@@ -3,71 +3,64 @@ import Welcome from "./Welcome/welcome";
 import { io } from "socket.io-client";
 import "./space.css";
 import Spaceship from "./Spaceship";
-import { toast, ToastContainer } from "react-toastify";
 
 let socket;
 
 const Space = ({ hide, hideStatus }) => {
   const [spaceCreated, setSpaceCreated] = useState(false);
   const user = JSON.parse(window.localStorage.getItem("userDetails"));
-  const [spaceOwner, setSpaceOwner] = useState(true);
-  const playerState =
-    JSON.parse(window?.localStorage?.getItem("user"))?.accountType ===
-      "premium" || false;
-  console.log(playerState);
+
+  const [isCreating, setIsCreating] = useState(undefined);
+  const [player, setPlayer] = useState(undefined);
   const inviteCode = new URLSearchParams(window.location.search).get(
     "inviteCode"
   );
 
   useEffect(() => {
-    if (!playerState) return toast.error("Connect to Spotify to start Space");
-    socket = io(process.env.REACT_APP_API_URL);
-
+    socket = io(process.env.REACT_APP_SOCKET_URL);
+    // let playerRef = document.getElementsByClassName("bottom-player");
+    // setPlayer((prev) => playerRef);
+    console.log(player);
     if (socket && inviteCode) joinSpace();
     return () => {
       hide();
       socket.disconnect();
     };
   }, []);
+  console.log(socket);
 
   const joinSpace = () => {
-    if (!playerState) return toast.error("Connect to Spotify to start Space");
+    setIsCreating(false);
+    // const player = document.getElementsByClassName("bottom-player");
+    // console.log(player[0]);
+
     socket.emit("user-space-connect", {
       username: user.displayName,
       uid: user.uid,
       inviteCode,
     });
-    setSpaceOwner(false);
-    console.log("joining space: " + inviteCode);
-    //Join the room
+    hide();
     created();
+
+    console.log("joining space: " + inviteCode);
+
+    //Join the room
   };
 
   const created = () => {
-    hide();
     setSpaceCreated(true);
   };
-
   return (
     <section id="space">
-      <ToastContainer />
       {!spaceCreated && (
         <Welcome
           socket={socket}
           user={user}
           className="container"
           onCreated={created}
-          setSpaceOwner={setSpaceOwner}
-          playerState={playerState}
         />
       )}
-      {spaceCreated && (
-        <Spaceship
-          socket={socket}
-          hideStatus={hideStatus}
-          spaceOwner={spaceOwner}
-        />
-      )}
+      {spaceCreated && <Spaceship socket={socket} hideStatus={hideStatus} />}
       {/* <div>Test</div> */}
     </section>
   );
