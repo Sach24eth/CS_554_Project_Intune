@@ -24,9 +24,10 @@ const Spaceship = ({ socket, hideStatus }) => {
     });
 
     socket.on("play", ({ uri }) => {
+      console.log("play");
       if (hideStatus) {
-        playUri(uri);
         getTrackData(uri.split(":")[2]);
+        playUri(uri);
       }
     });
   });
@@ -47,7 +48,7 @@ const Spaceship = ({ socket, hideStatus }) => {
         },
       })
         .then((res) => setPlaying((prev) => !prev))
-        .catch((err) => console.log(err.response));
+        .catch((err) => console.log(err));
     } catch (e) {
       console.log(e.response);
     }
