@@ -25,12 +25,13 @@ const Album = () => {
         setAlbum(res.data);
         setErr(false);
         console.log(res);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err.response);
         setErr(true);
+        setLoading(false);
       });
-    setLoading(false);
   }, [id]);
 
   if (loading) {

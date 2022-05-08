@@ -3,7 +3,6 @@ import Welcome from "./Welcome/welcome";
 import { io } from "socket.io-client";
 import "./space.css";
 import Spaceship from "./Spaceship";
-import { useSelector } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 
 let socket;
@@ -22,7 +21,7 @@ const Space = ({ hide, hideStatus }) => {
 
   useEffect(() => {
     if (!playerState) return toast.error("Connect to Spotify to start Space");
-    socket = io(process.env.REACT_APP_SOCKET_URL);
+    socket = io(process.env.REACT_APP_API_URL);
 
     if (socket && inviteCode) joinSpace();
     return () => {
