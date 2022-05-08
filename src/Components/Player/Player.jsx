@@ -9,10 +9,13 @@ import {
   FaRandom,
   FaExpand,
 } from "react-icons/fa";
+import { BsBroadcast } from "react-icons/bs";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Player = (props) => {
+  const history = useNavigate();
   const authState = useSelector((state) => state.auth);
   const [player, setPlayer] = useState(undefined);
   const [deviceId, setDeviceId] = useState(undefined);
@@ -41,7 +44,7 @@ const Player = (props) => {
   const URL_TRANSFER = `${apiUrl}/me/player`;
   const URL_SEEK = `${apiUrl}/me/player/seek?device_id=${deviceId}&position_ms=`;
   const URL_SHUFFLE = `${apiUrl}/me/player/shuffle?device_id=${deviceId}&state=`;
-  const user_access_token = window.localStorage.getItem("access_token")
+  const user_access_token = window.localStorage.getItem("access_token");
 
   // useEffect(() => {
   //   setPlayerConnection(props.connection);
@@ -52,7 +55,7 @@ const Player = (props) => {
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
     script.async = true;
-    
+
     document.body.appendChild(script);
 
     window.onSpotifyWebPlaybackSDKReady = () => {
@@ -83,6 +86,7 @@ const Player = (props) => {
 
   useEffect(() => {
     if (!token) return;
+    console.log("loadinf");
     let isMounted = true;
     const timeout = setInterval(async () => {
       try {
@@ -541,6 +545,15 @@ const Player = (props) => {
                   }}
                 />
               )}
+              <NavLink to={"/space"}>
+                <BsBroadcast className="icon" />
+              </NavLink>
+              {/* <BsBroadcast
+                onClick={() => {
+                  history("/space");
+                }}
+                className="icon"
+              /> */}
             </div>
           </div>
         </>
