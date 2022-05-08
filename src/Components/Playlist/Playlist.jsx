@@ -17,10 +17,13 @@ class Playlist extends Component {
 
   componentDidMount() {
     const id = new URLSearchParams(window.location.search).get("id");
-    const access_token = window.localStorage.getItem("access_token");
+    const user_access_token = window.localStorage.getItem("access_token");
+    const genricToken = window.localStorage.getItem("token");
+
+    const token = user_access_token ? user_access_token : genricToken;
     this.setState({
       id: id,
-      access_token: access_token,
+      access_token: token,
       playlist: null,
     });
 
@@ -29,7 +32,7 @@ class Playlist extends Component {
     axios
       .get(URL_ALBUM, {
         headers: {
-          Authorization: "Bearer " + access_token,
+          Authorization: "Bearer " + token,
           "Content-Type": "application/json",
         },
       })

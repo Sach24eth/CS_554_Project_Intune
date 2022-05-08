@@ -13,10 +13,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 
 const Player = (props) => {
-  // const playerState = useSelector((state) => state.player.connection);
   const authState = useSelector((state) => state.auth);
-  // const [playerConnection, setPlayerConnection] = useState(props.connection);
-  // console.log("Player Connection in Player: ", playerConnection);
   const [player, setPlayer] = useState(undefined);
   const [deviceId, setDeviceId] = useState(undefined);
   const [playing, setPlaying] = useState(false);
@@ -44,6 +41,7 @@ const Player = (props) => {
   const URL_TRANSFER = `${apiUrl}/me/player`;
   const URL_SEEK = `${apiUrl}/me/player/seek?device_id=${deviceId}&position_ms=`;
   const URL_SHUFFLE = `${apiUrl}/me/player/shuffle?device_id=${deviceId}&state=`;
+  const user_access_token = window.localStorage.getItem("access_token")
 
   // useEffect(() => {
   //   setPlayerConnection(props.connection);
@@ -54,7 +52,7 @@ const Player = (props) => {
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
     script.async = true;
-
+    
     document.body.appendChild(script);
 
     window.onSpotifyWebPlaybackSDKReady = () => {
@@ -405,7 +403,6 @@ const Player = (props) => {
     }
     setShuffle((currentShuffle) => !currentShuffle);
   };
-
   if (
     Object.keys(authState).length === 0 ||
     window.location.pathname === "/genres"
@@ -421,7 +418,11 @@ const Player = (props) => {
     } else if (currentSong) {
       return (
         <>
-          <div className="bottom-player">
+          <div
+            className="bottom-player"
+            id="player"
+            style={props.hide && { visibility: "hidden" }}
+          >
             <div className="track-img">
               <img src={currentSong.album.images[0].url} alt="track" />{" "}
               <div className="track-name">

@@ -6,9 +6,8 @@ import axios from "axios";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const firestore = require("../../Firebase/Firestore");
-const Firebase = require("../../Firebase/Firebase");
 const TOKEN = window.localStorage.getItem("token");
-//console.log(TOKEN);
+
 const URL = "https://api.spotify.com/v1";
 const Messages = () => {
   const auth = getAuth();
@@ -17,27 +16,27 @@ const Messages = () => {
   const [usrData, setUsrData] = useState();
   const [usrgenres, setUsrGenres] = useState([]);
   const [searchTerm, setSearchTerm] = useState();
-  const [genres,setGenres]=useState([]);
-  const [noRes, setNoRes] = useState('false');
-  
+  const [genres, setGenres] = useState([]);
+  const [noRes, setNoRes] = useState("false");
+
   useEffect(() => {
     async function getGenre() {
       // const id =JSON.parse(window.localStorage.getItem("userDetails")).uid || null;
       // console.log(id)
       let id = null;
       axios
-            .get(URL + "/recommendations/available-genre-seeds", {
-              headers: {
-                Authorization: "Bearer " + TOKEN,
-                "Content-Type": "application/json",
-              },
-            })
-            .then((res) => {
-                //console.log("All Genres data",res.data.genres);
-                setGenres(res.data.genres);
-            })
-            .catch((err) => console.log(err.response));
-      onAuthStateChanged(auth,user => {
+        .get(URL + "/recommendations/available-genre-seeds", {
+          headers: {
+            Authorization: "Bearer " + TOKEN,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          //console.log("All Genres data",res.data.genres);
+          setGenres(res.data.genres);
+        })
+        .catch((err) => console.log(err.response));
+      onAuthStateChanged(auth, (user) => {
         if (user.uid || user) {
           //console.log("userData:", user.displayName);
           setUsrData(user.displayName);
@@ -45,7 +44,7 @@ const Messages = () => {
             .getGenreData(user.uid)
             .then((res) => {
               for (let i = 0; i < res.genres.length; i++) {
-                tempMessagesRoom[i] = {id:i,title:res.genres[i]}
+                tempMessagesRoom[i] = { id: i, title: res.genres[i] };
               }
               setUsrGenres(tempMessagesRoom);
               if (!res.hasData) history("/genres");
@@ -58,32 +57,30 @@ const Messages = () => {
   }, []);
 
   useEffect(() => {
-   
     async function searchRooms() {
       try {
         let searchResults = [];
-        if (searchTerm.length!== 0) {
-          console.log("Searching this:",searchTerm.length)
+        if (searchTerm.length !== 0) {
+          console.log("Searching this:", searchTerm.length);
           for (let i = 0; i < genres.length; i++) {
             //console.log("Genre:", genres[i], "searchTerm", searchTerm.toLowerCase())
             let tfFlag = genres[i].includes(searchTerm.toLowerCase());
             //console.log("TF Flag:", tfFlag);
             if (tfFlag === true) {
               // console.log("True vals", genres[i]);
-              let objRoom = {id:i,title:genres[i].toUpperCase()}
+              let objRoom = { id: i, title: genres[i].toUpperCase() };
               searchResults.push(objRoom);
               // setNoRes('false')
             }
           }
           console.log("not on state results:", searchResults.length);
           if (searchResults.length > 0) {
-            setUsrGenres(searchResults)
-          }
-          else if (searchResults.length === 0 ) {
-            console.log("Searching this searchRes:")
-            setNoRes('true')
+            setUsrGenres(searchResults);
+          } else if (searchResults.length === 0) {
+            console.log("Searching this searchRes:");
+            setNoRes("true");
             const auth = getAuth();
-            onAuthStateChanged(auth,user => {
+            onAuthStateChanged(auth, (user) => {
               if (user.uid || user) {
                 //console.log("userData:", user.displayName);
                 setUsrData(user.displayName);
@@ -91,7 +88,7 @@ const Messages = () => {
                   .getGenreData(user.uid)
                   .then((res) => {
                     for (let i = 0; i < res.genres.length; i++) {
-                      tempMessagesRoom[i] = {id:i,title:res.genres[i]}
+                      tempMessagesRoom[i] = { id: i, title: res.genres[i] };
                     }
                     setUsrGenres(tempMessagesRoom);
                     //console.log("Genre data",tempMessagesRoom);
@@ -125,22 +122,22 @@ const Messages = () => {
           });
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     }
     searchRooms();
-  }, [searchTerm])
+  }, [searchTerm]);
   //console.log("Results:", searchRes);
   //console.log("flag: ",noRes);
   //console.log("All Genres:", genres);
   //console.log("Outside: ", usrgenres)
   const resultText = (noResFlag) => {
-    console.log("Functions",noResFlag)
+    console.log("Functions", noResFlag);
     if (noRes === false) {
-      console.log("Triggered if true")
+      console.log("Triggered if true");
       return null;
     }
-  }
+  };
 
   return (
     <div className="header">
@@ -153,7 +150,7 @@ const Messages = () => {
             name="search-chat"
             onChange={(event) => {
               setSearchTerm(event.target.value);
-            } }
+            }}
           />
         </label>
       </div>
@@ -161,13 +158,11 @@ const Messages = () => {
       <div className="messageContainer">
         {/* need to figure out how to display No results found in the window itself */}
         {usrgenres.map((room, i) => {
-          return <MessageChatCard key={i} chat={room} userName={usrData}/>;
+          return <MessageChatCard key={i} chat={room} userName={usrData} />;
         })}
       </div>
     </div>
   );
-
-
 };
 
 export default Messages;

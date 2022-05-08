@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import generateToken from "./Services/generateToken";
-import "./app.css";
 import GenrePicker from "./Components/GenrePicker";
 import Navbar from "./Components/Navigation";
 import Home from "./Components/Home";
 import Library from "./Components/Library";
 import User from "./Components/User/User";
 import Callback from "./Components/CallbackHandler/Callback";
-import ChatRoom from "./Components/Chatrooms/Chatrooms"
+import ChatRoom from "./Components/Chatrooms/Chatrooms";
 import PlaylistPage from "./Pages/Playlist";
 import AlbumPage from "./Pages/Album";
 import LikedSongsPage from "./Pages/LikedSongs";
@@ -19,18 +18,23 @@ import Player from "./Components/Player";
 import SpacePage from "./Pages/Space";
 import Artist from "./Components/Artist";
 import ChangePassword from "./Components/User/ForgotPassword";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
 import { updateSpotifyPlayerState } from "./Redux/Actions/Player";
+import "./app.css";
 
 const App = () => {
   const [auth, setAuth] = useState(false);
   const dispatch = useDispatch();
   const [connection, setConnection] = useState(false);
-  // const state = useSelector((state) => state);
+  const [hidePlayer, setHidePlayer] = useState(false);
 
   const connectionToSpotify = (state) => {
     setConnection((connectionState) => state);
+  };
+
+  const hideSpotifyPlayer = () => {
+    setHidePlayer((prev) => !prev);
   };
 
   useEffect(() => {
@@ -117,16 +121,25 @@ const App = () => {
           <Route path="/callback" element={<Callback />} />
           <Route path="/playlist" element={<PlaylistPage />} />
           <Route path="/album" element={<AlbumPage />} />
-          <Route path="/space" element={<SpacePage />} />
+          <Route
+            path="/space"
+            element={
+              <SpacePage hide={hideSpotifyPlayer} hideStatus={hidePlayer} />
+            }
+          />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/artist" element={<Artist />} />
           <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/me/forgot-password" element={<ChangePassword />} />
           <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/album" element={<AlbumPage />} />
-          <Route path ="/chatrooms" element={<ChatRoom />} />
+          <Route path="/chatrooms" element={<ChatRoom />} />
         </Routes>
-        <Player connection={connection} />
+        {hidePlayer ? (
+          <Player connection={connection} hide={hidePlayer} />
+        ) : (
+          <Player connection={connection} />
+        )}
       </Router>
     </>
   );
