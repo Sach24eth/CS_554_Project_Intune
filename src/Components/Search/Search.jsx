@@ -5,25 +5,37 @@ import { ToastContainer, toast } from "react-toastify";
 import "./search.css";
 
 const Search = () => {
-  const access_token = window.localStorage.getItem("access_token");
-  const genricToken = window.localStorage.getItem("token");
+
+
   const [search, setSearch] = useState(undefined);
   const [searchTracks, setsearchTracks] = useState(null);
   const [searchAlbums, setSearchAlbums] = useState(null);
   const [searchPlaylist, setSearchPlaylist] = useState(null);
   const [searchArtists, setSearchArtists] = useState(null);
   const [noSearchResult, setNoSearchResult] = useState(null);
+  const [loading, setLoading] = useState(null);
   const [error, setError] = useState(null);
 
   const SEARCH_LIMIT = 10;
 
   useEffect(() => {
+
+    const genricToken = window.localStorage.getItem("token");
+
     if (!search) return;
     if (!genricToken) return;
 
     let cancel = false;
     const apiUrl = "https://api.spotify.com/v1";
     const SEARCH = `${apiUrl}/search?q=${search}&type=track%2Cartist%2Calbum%2Cplaylist`;
+
+    /* Clear results while searching */
+    setSearchPlaylist(null);
+    setSearchAlbums(null);
+    setsearchTracks(null);
+    setSearchArtists(null);
+    setError(null);
+    setLoading(true);
 
     axios
       .get(SEARCH, {
@@ -36,7 +48,7 @@ const Search = () => {
         },
       })
       .then((res) => {
-
+        setLoading(null);
         setNoSearchResult(
             !res.data["tracks"].total && !res.data["albums"].total &&
             !res.data["artists"].total && !res.data["playlists"].total ? true: null
@@ -95,18 +107,19 @@ const Search = () => {
             };
           }) : null
         );
-        setError(null);
+
       })
       .catch((e) => {
         console.log(e.response)
+        setLoading(null);
         setError(`Error ${e.response.data.error.status}: ${e.response.data.error.message}`);
       });
 
     return () => (cancel = true);
-  }, [search, access_token, SEARCH_LIMIT]);
+  }, [search]);
 
   const playSong = (uri) => {
-
+    const access_token = window.localStorage.getItem("access_token");
     if (!access_token) return toast.error('Connect to Spotify to Play Song');
 
     const deviceId = window.localStorage.getItem("deviceId");
@@ -147,11 +160,15 @@ const Search = () => {
         </div>
 
         <div className="small-cont" id="no-results-found">
+          {loading && <h2 className="title">Loading ...</h2>}
+        </div>
+
+        <div className="small-cont" id="no-results-found">
           {error && <h2 className="title">{error}</h2>}
         </div>
 
         <div className="small-cont" id="no-results-found">
-          {noSearchResult && <h2 className="title">Sorry, No Results Found !</h2>}
+          {noSearchResult && !loading && <h2 className="title">Sorry, No Results Found !</h2>}
         </div>
 
         <div className="small-cont">

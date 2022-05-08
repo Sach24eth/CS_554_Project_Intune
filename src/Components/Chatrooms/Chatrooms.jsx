@@ -51,6 +51,7 @@ function ChatroomMaker() {
         }
         getGenre();
     }, [auth]);
+    
     const userjoin = (name) => {
         if (name !== undefined) {
             console.log("defined")
