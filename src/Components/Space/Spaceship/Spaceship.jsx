@@ -1,10 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FaBackward, FaPlay, FaForward, FaPause } from "react-icons/fa";
+import { FaPlay, FaPause } from "react-icons/fa";
 import "./spaceship.css";
 import NoSongHolder from "../../../images/nosong.png";
 
-const Spaceship = ({ socket, hideStatus }) => {
+const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
+  console.log(spaceOwner);
   const [search, setSearch] = useState(undefined);
   const [result, setResult] = useState([]);
   const [playing, setPlaying] = useState(false);
@@ -25,8 +26,8 @@ const Spaceship = ({ socket, hideStatus }) => {
 
     socket.on("play", ({ uri }) => {
       if (hideStatus) {
-        playUri(uri);
         getTrackData(uri.split(":")[2]);
+        playUri(uri);
       }
     });
   });
@@ -46,8 +47,12 @@ const Spaceship = ({ socket, hideStatus }) => {
           "Content-Type": "application/json",
         },
       })
-        .then((res) => setPlaying((prev) => !prev))
-        .catch((err) => console.log(err.response));
+        .then((res) => {
+          console.log("play");
+          setPlaying((prev) => true);
+          setResult([]);
+        })
+        .catch((err) => console.log(err));
     } catch (e) {
       console.log(e.response);
     }
@@ -90,20 +95,6 @@ const Spaceship = ({ socket, hideStatus }) => {
       console.log(error);
     }
   };
-  useEffect(() => {
-    console.log("hey ");
-    // const access_token = window.localStorage.getItem("access_token");
-    // axios({
-    //   method: "GET",
-    //   url: `${apiUrl}/me/top/tracks`,
-    //   headers: {
-    //     Authorization: "Bearer " + access_token,
-    //     "Content-Type": "application/json",
-    //   },
-    // })
-    //   .then((res) => res.data)
-    //   .catch((err) => console.log(err.response));
-  }, []);
 
   const onImageLoadErr = (e) => {
     e.target.src = NoSongHolder;
@@ -126,7 +117,7 @@ const Spaceship = ({ socket, hideStatus }) => {
   }, [search, SEARCH_URL, genricToken]);
 
   const onSearchTextChange = (e) => {
-    // if (e.target.value === "") setResult([]);
+    if (e.target.value === "") setResult([]);
     setSearch(e.target.value);
   };
 
@@ -148,7 +139,7 @@ const Spaceship = ({ socket, hideStatus }) => {
           <div className="invite">Invite Code: {inviteCode}</div>
         </div>
         <div className="space-body">
-          {!hideStatus && (
+          {spaceOwner && (
             <div className="search-music">
               <label>
                 <input
@@ -159,7 +150,7 @@ const Spaceship = ({ socket, hideStatus }) => {
               </label>
             </div>
           )}
-          {hideStatus && (
+          {hideStatus && result.length === 0 && (
             <div className="player">
               <img
                 width={200}
@@ -174,13 +165,11 @@ const Spaceship = ({ socket, hideStatus }) => {
                   <p>{song ? writeArtists(song.artists) : ""}</p>
                 </div>
                 <div className="controls">
-                  {/* <FaBackward className="icon" size={20} /> */}
                   {playing ? (
                     <FaPause className="icon" size={30} />
                   ) : (
                     <FaPlay className="icon" size={30} />
                   )}
-                  {/* <FaForward className="icon" size={20} /> */}
                 </div>
               </div>
             </div>
@@ -202,6 +191,7 @@ const Spaceship = ({ socket, hideStatus }) => {
                     });
 
                     playUri(song.uri);
+                    getTrackData(song.uri.split(":")[2]);
                   }}
                 >
                   <div>
