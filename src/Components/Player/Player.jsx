@@ -41,6 +41,7 @@ const Player = (props) => {
   const URL_TRANSFER = `${apiUrl}/me/player`;
   const URL_SEEK = `${apiUrl}/me/player/seek?device_id=${deviceId}&position_ms=`;
   const URL_SHUFFLE = `${apiUrl}/me/player/shuffle?device_id=${deviceId}&state=`;
+  const user_access_token = window.localStorage.getItem("access_token")
 
   // useEffect(() => {
   //   setPlayerConnection(props.connection);
@@ -51,7 +52,7 @@ const Player = (props) => {
     const script = document.createElement("script");
     script.src = "https://sdk.scdn.co/spotify-player.js";
     script.async = true;
-
+    
     document.body.appendChild(script);
 
     window.onSpotifyWebPlaybackSDKReady = () => {

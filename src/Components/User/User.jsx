@@ -6,6 +6,7 @@ import axios from "axios";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
+
 import { updateSpotifyPlayerState } from "../../Redux/Actions/Player";
 
 const User = ({ connection }) => {
@@ -65,7 +66,9 @@ const User = ({ connection }) => {
     dispatch(updateSpotifyPlayerState(false));
     setUser({});
     setIsLoggedInWithSpotify(false);
+
     window.location.reload();
+
   };
 
   return (
