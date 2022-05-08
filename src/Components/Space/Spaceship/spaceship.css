@@ -33,7 +33,7 @@
 
 #spaceship .space-cont .space-body .search-music {
   width: 75%;
-  height: 75px;
+  height: 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -56,27 +56,17 @@
   color: var(--text);
 }
 #spaceship .space-cont .space-body .player {
-  width: 50%;
+  width: auto;
   display: flex;
   margin-top: 1rem;
 }
 
 #spaceship .space-cont .space-body .player .song-details {
-  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
   margin-left: 1rem;
-}
-
-#spaceship .space-cont .space-body .player .song-details .song > h1 {
-  font-size: 2rem;
-}
-
-#spaceship .space-cont .space-body .player .song-details .song > p {
-  font-size: 1.25rem;
-  color: grey;
 }
 
 #spaceship .space-cont .space-body .player .song-details .controls {
@@ -88,7 +78,7 @@
 
 #spaceship .space-cont .space-body .search-container {
   width: 75%;
-  height: 100%;
+  height: calc(100% - 175px);
   overflow: scroll;
 }
 
@@ -165,16 +155,5 @@
 
   #spaceship .space-cont .space-body .player .song-details .controls {
     margin-top: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  #spaceship .space-cont .space-body .player .song-details .song > h1 {
-    font-size: 2rem;
-  }
-
-  #spaceship .space-cont .space-body .player .song-details .song > p {
-    font-size: 1rem;
-    color: grey;
   }
 }

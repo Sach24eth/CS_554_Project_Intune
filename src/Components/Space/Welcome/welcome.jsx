@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
 import { generateCode } from "../../../Services/generateCode";
 import Spinner from "../../Spinner";
 
@@ -16,10 +15,7 @@ const Welcome = (props) => {
   const [typo, setTypo] = useState(undefined);
 
   const createSpace = () => {
-    if (!props.playerState)
-      return toast.error("Connect to Spotify to start Space");
     const length = typography.length;
-    props.setSpaceOwner(true);
     let index = 0;
     setTypo(typography[index]);
     setCreate(true);
@@ -30,7 +26,6 @@ const Welcome = (props) => {
         console.log("hey");
         clearInterval(typoInterval);
         setCreate(false);
-
         props.onCreated();
       }
       setTypo(typography[index]);
@@ -46,7 +41,6 @@ const Welcome = (props) => {
   };
   return (
     <div className="welcomeModal">
-      <ToastContainer />
       <div className="welc_msg_header">
         <span className="top">Welcome to</span>
         <span className="space">Spotify Space</span>
