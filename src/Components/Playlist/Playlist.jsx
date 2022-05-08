@@ -12,7 +12,6 @@ class Playlist extends Component {
       access_token: "",
       playlist: null,
       loading: true,
-      err: false,
     };
   }
 
@@ -38,7 +37,7 @@ class Playlist extends Component {
         },
       })
       .then((res) => this.setState({ playlist: res.data, loading: false }))
-      .catch((e) => this.setState({ err: true }));
+      .catch((e) => console.log(e.response));
   }
 
   millisToMinutesAndSeconds(millis) {
@@ -50,52 +49,46 @@ class Playlist extends Component {
   render() {
     return (
       <section id="album-page">
-        {this.state.err ? (
-          <div className="container">
-            <h1>Error loading playlist</h1>
-          </div>
-        ) : (
-          <div className="container">
-            {this.state.loading ? (
-              <h1>Loading Data...</h1>
-            ) : (
-              <div className="playlist">
-                <div className="playlist-info">
-                  <img
-                    width={200}
-                    height={200}
-                    src={this.state.playlist.images[0].url}
-                    alt={this.state.playlist.name}
-                  />
-                  <div className="playlist-container">
-                    <p className="type">{this.state.playlist.type}</p>
-                    <h1>{this.state.playlist.name}</h1>
-                    {/* <p className="description">
+        <div className="container">
+          {this.state.loading ? (
+            <h1>Loading Data...</h1>
+          ) : (
+            <div className="playlist">
+              <div className="playlist-info">
+                <img
+                  width={200}
+                  height={200}
+                  src={this.state.playlist.images[0].url}
+                  alt={this.state.playlist.name}
+                />
+                <div className="playlist-container">
+                  <p className="type">{this.state.playlist.type}</p>
+                  <h1>{this.state.playlist.name}</h1>
+                  {/* <p className="description">
                     {this.state.playlist.description}
                   </p> */}
-                    {/* <p className="followers">
+                  {/* <p className="followers">
                     Followers: {this.state.playlist.followers.total}
                   </p> */}
-                  </div>
-                </div>
-                <div className="playlist-tracks">
-                  {this.state.playlist.tracks &&
-                    this.state.playlist.tracks.items.map((track, i) => {
-                      return (
-                        <Table
-                          key={i}
-                          track={track}
-                          i={i}
-                          playlist={this.state.playlist}
-                          fn={this.millisToMinutesAndSeconds}
-                        />
-                      );
-                    })}
                 </div>
               </div>
-            )}
-          </div>
-        )}
+              <div className="playlist-tracks">
+                {this.state.playlist.tracks &&
+                  this.state.playlist.tracks.items.map((track, i) => {
+                    return (
+                      <Table
+                        key={i}
+                        track={track}
+                        i={i}
+                        playlist={this.state.playlist}
+                        fn={this.millisToMinutesAndSeconds}
+                      />
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+        </div>
       </section>
     );
   }

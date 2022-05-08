@@ -1,13 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { storePrevSearchRes } from "../../Redux/Actions/Search";
 import "./search.css";
 
 const Search = () => {
-  const searchRedux = useSelector((state) => state.searchResults);
+
+
   const [search, setSearch] = useState(undefined);
   const [searchTracks, setsearchTracks] = useState(null);
   const [searchAlbums, setSearchAlbums] = useState(null);
@@ -16,20 +15,11 @@ const Search = () => {
   const [noSearchResult, setNoSearchResult] = useState(null);
   const [loading, setLoading] = useState(null);
   const [error, setError] = useState(null);
-  const dispatch = useDispatch();
 
   const SEARCH_LIMIT = 10;
 
   useEffect(() => {
-    if (searchRedux) {
-      setsearchTracks(searchRedux.tracks);
-      setSearchAlbums(searchRedux.album);
-      setSearchArtists(searchRedux.artist);
-      setSearchPlaylist(searchRedux.playlist);
-    }
-  }, []);
 
-  useEffect(() => {
     const genricToken = window.localStorage.getItem("token");
 
     if (!search) return;
@@ -60,88 +50,69 @@ const Search = () => {
       .then((res) => {
         setLoading(null);
         setNoSearchResult(
-          !res.data["tracks"].total &&
-            !res.data["albums"].total &&
-            !res.data["artists"].total &&
-            !res.data["playlists"].total
-            ? true
-            : null
+            !res.data["tracks"].total && !res.data["albums"].total &&
+            !res.data["artists"].total && !res.data["playlists"].total ? true: null
+        )
+
+        setsearchTracks( res.data["tracks"].total ?
+          res.data["tracks"].items.map((track) => {
+            return {
+              title: track.name,
+              image: track.album.images[0].url,
+              artists: track.artists
+                .map((artist) => {
+                  return artist.name;
+                })
+                .join(","),
+              uri: track.uri,
+            };
+          }) : null
         );
 
-        const tracks = res.data["tracks"].total
-          ? res.data["tracks"].items.map((track) => {
-              return {
-                title: track.name,
-                image: track.album.images[0].url,
-                artists: track.artists
-                  .map((artist) => {
-                    return artist.name;
-                  })
-                  .join(","),
-                uri: track.uri,
-              };
-            })
-          : null;
-
-        const album = res.data["albums"].total
-          ? res.data["albums"].items.map((album) => {
-              return {
-                id: album.id,
-                title: album.name,
-                image: album.images[0].url,
-                artists: album.artists
-                  .map((artist) => {
-                    return artist.name;
-                  })
-                  .join(","),
-                uri: album.uri,
-              };
-            })
-          : null;
-
-        const artist = res.data["artists"].total
-          ? res.data["artists"].items.map((artist) => {
-              return {
-                id: artist.id,
-                name: artist.name,
-                image: artist.images[0].url,
-                uri: artist.uri,
-              };
-            })
-          : null;
-
-        const playlist = res.data["playlists"].total
-          ? res.data["playlists"].items.map((playlist) => {
-              return {
-                id: playlist.id,
-                title: playlist.name,
-                image: playlist.images[0].url,
-                owner: playlist.owner.display_name,
-                uri: playlist.uri,
-              };
-            })
-          : null;
-
-        setsearchTracks((prev) => tracks);
-        setSearchAlbums((prev) => album);
-        setSearchArtists((prev) => artist);
-        setSearchPlaylist((prev) => playlist);
-
-        dispatch(
-          storePrevSearchRes({
-            tracks,
-            album,
-            artist,
-            playlist,
-          })
+        setSearchAlbums( res.data["albums"].total ?
+          res.data["albums"].items.map((album) => {
+            return {
+              id: album.id,
+              title: album.name,
+              image: album.images[0].url,
+              artists: album.artists
+                .map((artist) => {
+                  return artist.name;
+                })
+                .join(","),
+              uri: album.uri,
+            };
+          }) : null
         );
+
+        setSearchArtists( res.data["artists"].total ?
+          res.data["artists"].items.map((artist) => {
+            return {
+              id: artist.id,
+              name: artist.name,
+              image: artist.images[0].url,
+              uri: artist.uri,
+            };
+          }) : null
+        );
+
+        setSearchPlaylist( res.data["playlists"].total ?
+          res.data["playlists"].items.map((playlist) => {
+            return {
+              id: playlist.id,
+              title: playlist.name,
+              image: playlist.images[0].url,
+              owner: playlist.owner.display_name,
+              uri: playlist.uri,
+            };
+          }) : null
+        );
+
       })
       .catch((e) => {
-        console.log(e.response);
+        console.log(e.response)
         setLoading(null);
-        setError(
-          `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
-        );
+        setError(`Error ${e.response.data.error.status}: ${e.response.data.error.message}`);
       });
 
     return () => (cancel = true);
@@ -149,7 +120,7 @@ const Search = () => {
 
   const playSong = (uri) => {
     const access_token = window.localStorage.getItem("access_token");
-    if (!access_token) return toast.error("Connect to Spotify to Play Song");
+    if (!access_token) return toast.error('Connect to Spotify to Play Song');
 
     const deviceId = window.localStorage.getItem("deviceId");
     const apiUrl = "https://api.spotify.com/v1";
@@ -169,16 +140,14 @@ const Search = () => {
         }
       )
       .catch((e) => {
-        console.log(e.response);
+        console.log(e.response)
       });
   };
 
   return (
     <section id="search">
       <div className="container">
-        <Link to={"/me"}>
-          <ToastContainer />
-        </Link>
+        <Link to={'/me'}><ToastContainer /></Link>
         <div className="search-box">
           <label>
             <input
@@ -199,9 +168,7 @@ const Search = () => {
         </div>
 
         <div className="small-cont" id="no-results-found">
-          {noSearchResult && !loading && (
-            <h2 className="title">Sorry, No Results Found !</h2>
-          )}
+          {noSearchResult && !loading && <h2 className="title">Sorry, No Results Found !</h2>}
         </div>
 
         <div className="small-cont">
