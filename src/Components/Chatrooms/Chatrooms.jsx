@@ -160,7 +160,7 @@ function ChatroomMaker() {
                 <div>
                   <input
                     name="message"
-                    placeholder="Say 'hi!'"
+                    placeholder="Say 'Hi!'"
                     id="message"
                     variant="outlined"
                     label="Message"
