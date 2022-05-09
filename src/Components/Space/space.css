@@ -11,3 +11,13 @@
   justify-content: center;
   align-items: center;
 }
+
+#space .container .loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#space .container .loader > h1 {
+  margin-left: 1rem;
+}

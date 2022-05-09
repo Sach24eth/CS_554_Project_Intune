@@ -33,13 +33,17 @@ const App = () => {
     setConnection((connectionState) => state);
   };
 
-  const hideSpotifyPlayer = () => {
-    setHidePlayer((prev) => !prev);
+  const hideSpotifyPlayer = (status) => {
+    console.log(status);
+    setHidePlayer(status);
   };
 
   useEffect(() => {
     const userDetails = JSON.parse(window.localStorage.getItem("userDetails"));
     const hasAccessToken = window.localStorage.getItem("access_token");
+    const premium =
+      JSON.parse(window?.localStorage?.getItem("user"))?.accountType ===
+        "premium" || false;
     if (userDetails) {
       dispatch(
         authLogin(
@@ -49,6 +53,10 @@ const App = () => {
           userDetails.lastLoginAt
         )
       );
+    }
+
+    if (premium) {
+      dispatch(updateSpotifyPlayerState(premium));
     }
 
     if (hasAccessToken) {
