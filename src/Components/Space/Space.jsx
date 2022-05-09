@@ -11,16 +11,12 @@ const Space = ({ hide, hideStatus }) => {
   const user = JSON.parse(window.localStorage.getItem("userDetails"));
 
   const [isCreating, setIsCreating] = useState(undefined);
-  const [player, setPlayer] = useState(undefined);
   const inviteCode = new URLSearchParams(window.location.search).get(
     "inviteCode"
   );
 
   useEffect(() => {
     socket = io(process.env.REACT_APP_SOCKET_URL);
-    // let playerRef = document.getElementsByClassName("bottom-player");
-    // setPlayer((prev) => playerRef);
-    console.log(player);
     if (socket && inviteCode) joinSpace();
     return () => {
       hide();

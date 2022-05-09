@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FaBackward, FaPlay, FaForward, FaPause } from "react-icons/fa";
+import { FaPlay, FaPause } from "react-icons/fa";
 import "./spaceship.css";
 import NoSongHolder from "../../../images/nosong.png";
 
@@ -22,14 +22,14 @@ const Spaceship = ({ socket, hideStatus }) => {
     socket.on("user-space-connected", ({ username, uid, code }) => {
       console.log(username, code);
     });
-
-    socket.on("play", ({ uri }) => {
-      if (hideStatus) {
-        playUri(uri);
-        getTrackData(uri.split(":")[2]);
-      }
-    });
   });
+
+  useEffect(() => {
+    socket.on("play", ({ uri }) => {
+      playUri(uri);
+      getTrackData(uri.split(":")[2]);
+    });
+  }, []);
 
   const playUri = async (uri) => {
     try {
@@ -90,20 +90,6 @@ const Spaceship = ({ socket, hideStatus }) => {
       console.log(error);
     }
   };
-  useEffect(() => {
-    console.log("hey ");
-    // const access_token = window.localStorage.getItem("access_token");
-    // axios({
-    //   method: "GET",
-    //   url: `${apiUrl}/me/top/tracks`,
-    //   headers: {
-    //     Authorization: "Bearer " + access_token,
-    //     "Content-Type": "application/json",
-    //   },
-    // })
-    //   .then((res) => res.data)
-    //   .catch((err) => console.log(err.response));
-  }, []);
 
   const onImageLoadErr = (e) => {
     e.target.src = NoSongHolder;
