@@ -137,6 +137,11 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("spotify-space-queue", ({ uri, room }) => {
+    console.log(uri, room);
+    io.to(room).emit("add-to-queue", { uri });
+  });
+
   socket.on("user-space-play", ({ uri, inviteCode }) => {
     console.log(uri, inviteCode);
     //Sync song to the clients

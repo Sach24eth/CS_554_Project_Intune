@@ -24,14 +24,17 @@ const Space = ({ hide, hideStatus }) => {
   );
 
   useEffect(() => {
-    if (!playerState) return toast.error("Connect to Spotify to start Space");
+    if (!playerState) {
+      setError("Connect to Spotify to start Space");
+      setLoading(false);
+      return toast.error("Connect to Spotify to start Space");
+    }
     let connectionAttempt;
     let socketConnected = false;
     const socketConnection = async () => {
       if (!socket) socket = io(process.env.REACT_APP_API_URL);
 
       socket.on("connect", () => {
-        console.log(socket.id);
         if (socket.id) {
           socketConnected = true;
           if (inviteCode) joinSpace();
@@ -53,7 +56,6 @@ const Space = ({ hide, hideStatus }) => {
 
           if (socketConnected) {
             clearInterval(connectionAttempt);
-            console.log("Connection Established");
             setError(undefined);
             setLoading(false);
           }
@@ -83,8 +85,6 @@ const Space = ({ hide, hideStatus }) => {
       inviteCode,
     });
     setSpaceOwner(false);
-    console.log("joining space: " + inviteCode);
-    //Join the room
     created();
   };
 
@@ -105,7 +105,13 @@ const Space = ({ hide, hideStatus }) => {
       </section>
     );
   } else if (error) {
-    return <h1>{error}</h1>;
+    return (
+      <section id="space">
+        <div className="container">
+          <h1>{error}</h1>
+        </div>
+      </section>
+    );
   } else
     return (
       <section id="space">

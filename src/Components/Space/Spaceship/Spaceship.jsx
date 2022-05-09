@@ -1,11 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FaPlay, FaPause } from "react-icons/fa";
+import { FaPlay } from "react-icons/fa";
+import { BiAddToQueue } from "react-icons/bi";
 import "./spaceship.css";
 import NoSongHolder from "../../../images/nosong.png";
+import { toast, ToastContainer } from "react-toastify";
 
 const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
-  console.log(spaceOwner);
   const [search, setSearch] = useState(undefined);
   const [result, setResult] = useState([]);
   const [playing, setPlaying] = useState(false);
@@ -14,7 +15,7 @@ const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
   const SEARCH_URL = `${apiUrl}/search`;
   const genricToken = window.localStorage.getItem("token");
   const token = window.localStorage.getItem("access_token");
-  const deviceId = window.localStorage.getItem("deviceId");
+  let deviceId = window.localStorage.getItem("deviceId");
   const inviteCode =
     window.localStorage.getItem("code") ||
     new URLSearchParams(window.location.search).get("inviteCode");
@@ -32,7 +33,55 @@ const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
     });
   }, []);
 
+  useEffect(() => {
+    async function playerStatus() {
+      const URL_STATUS = `${apiUrl}/me/player`;
+      let { data } = await axios({
+        method: "GET",
+        url: URL_STATUS,
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(data);
+      if (data) {
+        const URL_SONG = `${apiUrl}/tracks/`;
+        const url = URL_SONG + data.item.id;
+        console.log(data.item.id);
+        try {
+          let song = await axios({
+            method: "GET",
+            url: url,
+            headers: {
+              Authorization: "Bearer " + token,
+              "Content-Type": "application/json",
+            },
+          });
+          setSong(song.data);
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    }
+
+    const interval = setInterval(() => {
+      playerStatus();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [token]);
+
+  useEffect(() => {
+    socket.on("add-to-queue", ({ uri }) => {
+      console.log(uri);
+      addToQueue(uri);
+    });
+  }, []);
+
   const playUri = async (uri) => {
+    deviceId = window.localStorage.getItem("deviceId");
+
     try {
       const URL_PLAY = `${apiUrl}/me/player/play?device_id=${deviceId}`;
       axios({
@@ -40,7 +89,6 @@ const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
         url: URL_PLAY,
         data: {
           uris: [uri],
-          position_ms: 0,
         },
         headers: {
           Authorization: "Bearer " + token,
@@ -48,32 +96,34 @@ const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
         },
       })
         .then((res) => {
-          console.log("play");
           setPlaying((prev) => true);
           setResult([]);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          toast.error(err.response.message);
+        });
     } catch (e) {
       console.log(e.response);
+      toast.error(e.response);
     }
   };
 
-  const pauseSong = async () => {
-    try {
-      const URL_PAUSE = `${apiUrl}/me/player/pause?device_id=${deviceId}`;
-      await axios({
-        method: "PUT",
-        url: URL_PAUSE,
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-      });
-    } catch (e) {
-      console.log(e);
-    }
-    setPlaying(false);
-  };
+  // const pauseSong = async () => {
+  //   try {
+  //     const URL_PAUSE = `${apiUrl}/me/player/pause?device_id=${deviceId}`;
+  //     await axios({
+  //       method: "PUT",
+  //       url: URL_PAUSE,
+  //       headers: {
+  //         Authorization: "Bearer " + token,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  //   setPlaying(false);
+  // };
 
   const getTrackData = async (id) => {
     try {
@@ -131,9 +181,32 @@ const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
     }
     return list;
   };
+
+  const addToQueue = (uri) => {
+    const URL_QUEUE =
+      apiUrl + `/me/player/queue?uri=${uri}&device_id=${deviceId}`;
+    axios({
+      method: "POST",
+      url: URL_QUEUE,
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        toast.success("Added to queue");
+        setResult([]);
+        // setHasQueue(true);
+      })
+      .catch((err) => {
+        toast.error("Failed to add");
+      });
+  };
+
   return (
     <div id="spaceship">
       <div className="space-cont">
+        <ToastContainer />
         <div className="top">
           <div className="status">Spotify Space: Connected</div>
           <div className="invite">Invite Code: {inviteCode}</div>
@@ -164,13 +237,19 @@ const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
                   <h1>{song ? song.name : "Song not playing"}</h1>
                   <p>{song ? writeArtists(song.artists) : ""}</p>
                 </div>
-                <div className="controls">
+                {/* <div className="controls">
                   {playing ? (
-                    <FaPause className="icon" size={30} />
+                    <FaPause className="icon" size={30} onClick={pauseSong} />
                   ) : (
-                    <FaPlay className="icon" size={30} />
+                    <FaPlay
+                      className="icon"
+                      size={30}
+                      onClick={() => {
+                        playUri(song.uri);
+                      }}
+                    />
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
           )}
@@ -181,28 +260,42 @@ const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
                 artists.push(artist.name);
               });
               return (
-                <div
-                  className="search-res"
-                  id={song.uri}
-                  onClick={async () => {
-                    socket.emit("user-space-play", {
-                      uri: song.uri,
-                      inviteCode,
-                    });
+                <div className="search-res" id={song.uri}>
+                  <div
+                    onClick={async (e) => {
+                      socket.emit("user-space-play", {
+                        uri: song.uri,
+                        inviteCode,
+                      });
 
-                    playUri(song.uri);
-                    getTrackData(song.uri.split(":")[2]);
-                  }}
-                >
-                  <div>
+                      playUri(song.uri);
+                      getTrackData(song.uri.split(":")[2]);
+                    }}
+                  >
                     <img src={song.album.images[2].url} alt={song.name} />
                     <div className="artist-info">
                       <p className="song-name">{song.name}</p>
                       <p className="artists">{artists.join(", ")}</p>
                     </div>
                   </div>
-                  <div className="play">
-                    <FaPlay size={20} />
+                  <div className="right">
+                    <div className="play">
+                      <FaPlay size={20} />
+                    </div>
+                    <div
+                      className="queue"
+                      title="Add to Queue"
+                      id="queue"
+                      onClick={() => {
+                        socket.emit("spotify-space-queue", {
+                          uri: song.uri,
+                          room: inviteCode,
+                        });
+                        addToQueue(song.uri);
+                      }}
+                    >
+                      <BiAddToQueue size={20} title="Add to Queue" />
+                    </div>
                   </div>
                 </div>
               );

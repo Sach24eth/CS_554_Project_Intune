@@ -86,7 +86,6 @@ const Player = (props) => {
 
   useEffect(() => {
     if (!token) return;
-    console.log("loadinf");
     let isMounted = true;
     const timeout = setInterval(async () => {
       try {
