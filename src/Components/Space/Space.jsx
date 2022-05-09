@@ -3,67 +3,139 @@ import Welcome from "./Welcome/welcome";
 import { io } from "socket.io-client";
 import "./space.css";
 import Spaceship from "./Spaceship";
+import { toast, ToastContainer } from "react-toastify";
+import Spinner from "../Spinner";
 
-let socket;
-
+let socket = null;
+let attempts = 0;
+let maxConnectionAttempts = 5;
 const Space = ({ hide, hideStatus }) => {
   const [spaceCreated, setSpaceCreated] = useState(false);
   const user = JSON.parse(window.localStorage.getItem("userDetails"));
+  const [spaceOwner, setSpaceOwner] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(undefined);
+  const playerState =
+    JSON.parse(window?.localStorage?.getItem("user"))?.accountType ===
+      "premium" || false;
 
-  const [isCreating, setIsCreating] = useState(undefined);
-  const [player, setPlayer] = useState(undefined);
   const inviteCode = new URLSearchParams(window.location.search).get(
     "inviteCode"
   );
 
   useEffect(() => {
-    socket = io(process.env.REACT_APP_SOCKET_URL);
-    // let playerRef = document.getElementsByClassName("bottom-player");
-    // setPlayer((prev) => playerRef);
-    console.log(player);
-    if (socket && inviteCode) joinSpace();
+    if (!playerState) {
+      setError("Connect to Spotify to start Space");
+      setLoading(false);
+      return toast.error("Connect to Spotify to start Space");
+    }
+    let connectionAttempt;
+    let socketConnected = false;
+    const socketConnection = async () => {
+      if (!socket) socket = io(process.env.REACT_APP_API_URL);
+
+      socket.on("connect", () => {
+        if (socket.id) {
+          socketConnected = true;
+          if (inviteCode) joinSpace();
+          setLoading(false);
+        }
+      });
+
+      if (!socketConnected && !error) {
+        if (attempts === maxConnectionAttempts) {
+          clearInterval(connectionAttempt);
+          setError("Unable to establish socket connection.");
+        }
+        connectionAttempt = setInterval(async () => {
+          attempts++;
+          socket = io(process.env.REACT_APP_API_URL);
+          socket.on("connect", () => {
+            if (socket.id) socketConnected = true;
+          });
+
+          if (socketConnected) {
+            clearInterval(connectionAttempt);
+            setError(undefined);
+            setLoading(false);
+          }
+
+          if (attempts >= maxConnectionAttempts) {
+            clearInterval(connectionAttempt);
+            setError("Unable to establish socket connection.");
+            setLoading(false);
+          }
+        }, 1000);
+      }
+    };
+
+    socketConnection();
     return () => {
-      hide();
+      hide(false);
       socket.disconnect();
+      clearInterval(connectionAttempt);
     };
   }, []);
-  console.log(socket);
 
   const joinSpace = () => {
-    setIsCreating(false);
-    // const player = document.getElementsByClassName("bottom-player");
-    // console.log(player[0]);
-
+    if (!playerState) return toast.error("Connect to Spotify to start Space");
     socket.emit("user-space-connect", {
       username: user.displayName,
       uid: user.uid,
       inviteCode,
     });
-    hide();
+    setSpaceOwner(false);
     created();
-
-    console.log("joining space: " + inviteCode);
-
-    //Join the room
   };
 
   const created = () => {
+    hide(true);
     setSpaceCreated(true);
   };
-  return (
-    <section id="space">
-      {!spaceCreated && (
-        <Welcome
-          socket={socket}
-          user={user}
-          className="container"
-          onCreated={created}
-        />
-      )}
-      {spaceCreated && <Spaceship socket={socket} hideStatus={hideStatus} />}
-      {/* <div>Test</div> */}
-    </section>
-  );
+
+  if (loading) {
+    return (
+      <section id="space">
+        <div className="container">
+          <div className="loader">
+            <Spinner />
+            <h1>Establishing socket connection. Please wait...</h1>
+          </div>
+        </div>
+      </section>
+    );
+  } else if (error) {
+    return (
+      <section id="space">
+        <div className="container">
+          <h1>{error}</h1>
+        </div>
+      </section>
+    );
+  } else
+    return (
+      <section id="space">
+        <ToastContainer />
+        {!spaceCreated && (
+          <Welcome
+            socket={socket}
+            user={user}
+            className="container"
+            onCreated={created}
+            setSpaceOwner={setSpaceOwner}
+            playerState={playerState}
+          />
+        )}
+        {spaceCreated && (
+          <Spaceship
+            socket={socket}
+            hideStatus={hideStatus}
+            spaceOwner={spaceOwner}
+          />
+        )}
+        {/* <div>Test</div> */}
+      </section>
+    );
 };
 
 export default Space;
