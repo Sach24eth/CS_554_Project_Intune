@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState, useMemo  } from "react";
-import { io } from "socket.io-client"
+import React, { useEffect, useRef, useState, useMemo } from "react";
+import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import "./Chatrooms.css"
+import "./Chatrooms.css";
 import axios from "axios";
 const TOKEN = window.localStorage.getItem("token");
 //console.log(TOKEN);
@@ -10,25 +10,29 @@ const URL = "https://api.spotify.com/v1";
 
 let socket;
 function ChatroomMaker() {
-    const auth = getAuth();
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const roomnumber = urlParams.get("room");
-    //console.log("Htting the route chatrooms", roomnumber);
-    //
-    const rooms = [];
-    const [room, setRoom] = useState();
-    const [usrData, setUsrData] = useState();
-    const [genres,setGenres]=useState([]);
-    const [state, setState] = useState({ message: "", name: "" });
-    const [chat, setChat] = useState([]); 
-    //const socketRef = useRef();
-    
-    // Use effect to get chatroom userDetails
-    useEffect(() => {
-        async function getGenre() {
+  const auth = getAuth();
+  //console.log(auth)
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const roomnumber = urlParams.get("room");
+  //console.log("Htting the route chatrooms", roomnumber);
+  //
+  const rooms = [];
+  const [room, setRoom] = useState();
+  const [usrData, setUsrData] = useState();
+  const [genres, setGenres] = useState([]);
+  const [state, setState] = useState({ message: "", name: "" });
+  const [chat, setChat] = useState([]);
+  //const socketRef = useRef();
+  let userData=JSON.parse(window.localStorage.getItem("userDetails"));
+
+  //Server setup
+  useEffect(() => {
+    socket = io(process.env.REACT_APP_API_URL);
+    console.log("Socket:", socket)
+    async function getGenre() {
           //let id = null;
-          axios
+          await axios
             .get(URL + "/recommendations/available-genre-seeds", {
               headers: {
                 Authorization: "Bearer " + TOKEN,
@@ -36,143 +40,129 @@ function ChatroomMaker() {
               },
             })
             .then((res) => {
-              //console.log("All Genres data",res.data.genres);
-                setGenres(res.data.genres);
-                
+              console.log("Setting rooms and doing genre check");
+              let genreList = res.data.genres;
+              if (genreList.includes(roomnumber.toLowerCase())) {
+                console.log("Set room:",roomnumber)
+                setRoom(roomnumber);
+              }
             })
-            .catch((err) => console.log(err.response));
-          
-          onAuthStateChanged(auth,user => {
-            if (user.uid || user) {
-              //console.log("userData:", user.displayName);
-                setUsrData(user.displayName);
-            }
-          });
-        }
-        getGenre();
-    }, [auth]);
-    
-    const userjoin = (name) => {
-        if (name !== undefined) {
-            console.log("defined")
-            //socketRef.current.emit("user_join", { name, room: room });
-            socket.emit("user_join", { name, room: room });
-            return () => {
-              //socketRef.current.off("receiveMsg");
-              socket.off("receiveMsg");
-            };
-        }
+        .catch((err) => console.log(err.response));
+        onAuthStateChanged(auth, (user) => {
+          if (user.uid || user) {
+            console.log("Set user data:", user.displayName, roomnumber);
+            setUsrData(user.displayName)
+            setState({ name: user.displayName,room: roomnumber})
+            console.log("Display statements")
+            userjoin(user.displayName,roomnumber)
+            // userjoin(user.displayName,roomnumber);
+          }
+        });
+    }
+    getGenre();
+    // console.log("UsrData: ", usrData)
+    // console.log("Room", room)
+    return () => {
+      socket.disconnect();
     };
-    useEffect(() => {
-        const genresUpper = genres.map(element => {
-            return element.toUpperCase();
-          });
-        let findFlag = genresUpper.includes(roomnumber);
-        if (findFlag) {
-            setRoom(roomnumber)
-        }
-        setState({ name: usrData })
-        userjoin(usrData)
-        //setState({ message: "", name: usrData });
-    },[genres,roomnumber,usrData])
-    
-    //Server setup
-    useEffect(() => {
-        socket= io("http://localhost:4000/");
-        //socketRef.current = io("/");
-        //console.log("hello server: ", socketRef.current)
-        return () => {
-        //socketRef.current.disconnect();
-          socket.disconnect();
-        };  
-    }, []);
-    //console.log("Room number is set: ", room)
-    // Use effect for setting chat status
-    useEffect(() => {
-        //console.log("Message start",socketRef.current);
-        //socketRef.current
-        socket.on("message", ({ name, message, room }) => {
-            //console.log(`Setting Chat.... Name: ${name} Message: ${message} Room: ${room}`)
-          setChat((chat)=>[...chat, { name, message, room }]);
-          //setChat([{ name, message, room }]);
-        });
-        //socketRef.current
-        socket.on("user_join", function (data) {
-        //console.log("user_join",data.name)
-        setChat((chat)=>[
-                ...chat,
-                {
-                    name: "SpotBot",
-                    message: `${data.name} has joined the chat`,
-                    room: data.room,
-                },
-            ]);
-        });
+  }, [auth,roomnumber]);
+  
+  const userjoin = (name,room) => {
+    if (name !== undefined ||name) {
+      console.log("defined:",name);
+      socket.emit("user_join", { name, room });
       return () => {
-          //socketRef.current
-          socket.off("receiveMsg");
-        };
-    }, []);
-    //console.log("Chat:", chat);
-    //console.log("Room:", room);
+        //socketRef.current.off("receiveMsg");
+        socket.off("receiveMsg");
+      };
+    }
+  };
+  // Use effect for setting chat status
+  useEffect(() => {
+    socket.on("message", ({ name, message, room }) => {
+      setChat((chat) => [...chat, { name, message, room }]);
+    });
+    return () => {
+      socket.off("receiveMsg");
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log("is this firing")
+    socket.on("user_join", function (data) {
+      console.log("user_join",data)
+      setChat((chat) => [
+        ...chat,
+        {
+          name: "SpotBot",
+          message: `${data.name} has joined the chat`,
+          room: data.room,
+        },
+      ]);
+      console.log("Chat stuff", chat)
+    });
+  },[])
+  // console.log("Chat:", chat);
+  // console.log("state outside:", state)
+  // console.log("Room:", room);
+
+  const onMessageSubmit = (e) => {
+    let msgEle = document.getElementById("message");
+    console.log([msgEle.name], msgEle.value);
     
-
-    const onMessageSubmit = (e) => {
-        let msgEle = document.getElementById("message");
-        //console.log([msgEle.name], msgEle.value);
-        setState({ ...state, [msgEle.name]: msgEle.value });
-        //socketRef.current
-        socket.emit("message", {
-            name: state.name,
-            message: msgEle.value,
-            room: room,
-        });
-        e.preventDefault();
-        setState({ message: "", name: state.name });
-        msgEle.value = "";
-        msgEle.focus();
-        return () => {
-          //socketRef.current.off("receiveMsg");
-          socket.off("receiveMsg");
-        };
+    setState({ ...state, [msgEle.name]: msgEle.value });
+    //socketRef.current
+    console.log('state name', state.name, "message elem: ", msgEle.value, "room:", room)
+    socket.emit("message", {
+      name: state.name,
+      message: msgEle.value,
+      room: room,
+    });
+    e.preventDefault();
+    setState({ message: msgEle.value, name: state.name });
+    msgEle.value = "";
+    msgEle.focus();
+    return () => {
+      socket.off("receiveMsg");
     };
+  };
 
-    const renderChat = () => {
-        return chat.map(({ name, message }, index) => (
-        <div key={index}>
-            <h3>
-                {name}: <span>{message}</span>
-            </h3>
-        </div>
-        ));
-    };
+  const renderChat = () => {
+    return chat.map(({ name, message }, index) => (
+      <div key={index}>
+        <h3>
+          {name}: <span>{message}</span>
+        </h3>
+      </div>
+    ));
+  };
 
-    //console.log(room);
-    return (
-        <div>
-        <h1>Current room: {room}</h1>
-        {state.name && (
-            <div id="cardChat">
-              <div id="render-chat">
-                <h1>Chat Log</h1>
-                {renderChat()}
-              </div >
-              <form id= "messageSubmit"  onSubmit={onMessageSubmit}>
-                <div>
-                  <input
-                    name="message"
-                    placeholder="Say 'hi!'"
-                    id="message"
-                    variant="outlined"
-                    label="Message"
-                  />
-                </div>
-              <button id="msgBtn">Send Message</button>
-              </form>
+  //console.log(room);
+  return (
+    <div>
+      <h1>Current room: {room}</h1>
+      {/* {state.name && ( */}
+        <div id="cardChat">
+          <div id="render-chat">
+            <h1>Chat Log</h1>
+            {renderChat()}
+          </div>
+          <form id="messageSubmit" onSubmit={onMessageSubmit}>
+            <div>
+              <input
+                name="message"
+                placeholder="Say 'hi!'"
+                id="message"
+                variant="outlined"
+                label="Message"
+              />
             </div>
-          )}
+            <button id="msgBtn">Send Message</button>
+          </form>
         </div>
-      );
+      {/* )} */}
+    </div>
+  );
 }
 
 export default ChatroomMaker;
