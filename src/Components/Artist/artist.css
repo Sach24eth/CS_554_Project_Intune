@@ -15,16 +15,6 @@
   height: 100%;
 }
 
-#artist .container .loading {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-#artist .container .loading > h1 {
-  margin-left: 1rem;
-}
-
 #artist .container .artist {
   display: flex;
   flex-direction: row;
