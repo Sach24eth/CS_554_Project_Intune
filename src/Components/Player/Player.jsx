@@ -99,6 +99,7 @@ const Player = (props) => {
           },
         });
         if (data) {
+          if (!active) setActive(true);
           if (data.progress_ms < previousTime || currentUri != data.item.id) {
             getData();
           }
