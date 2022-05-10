@@ -21,8 +21,8 @@ function ChatroomMaker() {
   const rooms = [];
   const [room, setRoom] = useState();
   const [usrData, setUsrData] = useState();
-  const [genres, setGenres] = useState([]);
-  const [state, setState] = useState({ message: "", name: "" });
+  // const [genres, setGenres] = useState([]);
+  const [state, setState] = useState({ message: "", uid:"",name: "",});
   const [chat, setChat] = useState([]);
 
   //Server setup
@@ -51,9 +51,9 @@ function ChatroomMaker() {
           if (user.uid || user) {
             console.log("Set user data:", user.displayName, roomnumber);
             setUsrData(user.displayName)
-            setState({ name: user.displayName,room: roomnumber})
+            setState({ name: user.displayName,userId: user.uid,room: roomnumber})
             console.log("Display statements")
-            userjoin(user.displayName,roomnumber)
+            userjoin(user.displayName,user.uid,roomnumber)
             // userjoin(user.displayName,roomnumber);
           }
         });
@@ -66,10 +66,10 @@ function ChatroomMaker() {
     };
   }, [auth,roomnumber]);
   
-  const userjoin = (name,room) => {
+  const userjoin = (name,uid,room) => {
     if (name !== undefined ||name) {
       console.log("defined:",name);
-      socket.emit("user_join", { name, room });
+      socket.emit("user_join", { name,uid, room });
       return () => {
         //socketRef.current.off("receiveMsg");
         socket.off("receiveMsg");
@@ -82,8 +82,8 @@ function ChatroomMaker() {
   }, [chat]);
   // Use effect for setting chat status
   useEffect(() => {
-    socket.on("message", ({ name, message, room }) => {
-      setChat((chat) => [...chat, { name, message, room }]);
+    socket.on("message", ({ name,uid, message, room }) => {
+      setChat((chat) => [...chat, { name,uid, message, room }]);
     });
     return () => {
       socket.off("receiveMsg");
@@ -105,7 +105,7 @@ function ChatroomMaker() {
       console.log("Chat stuff", chat)
     });
   },[])
-  // console.log("Chat:", chat);
+  //console.log("Chat:", chat);
   // console.log("state outside:", state)
   // console.log("Room:", room);
 
@@ -122,6 +122,7 @@ function ChatroomMaker() {
       console.log('state name', state.name, "message elem: ", msgEle.value, "room:", room)
       socket.emit("message", {
         name: state.name,
+        uid:state.userId,
         message: msgEle.value,
         room: room,
       });

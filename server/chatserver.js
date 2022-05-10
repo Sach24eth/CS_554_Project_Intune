@@ -87,14 +87,14 @@ app.post("/me", async (req, res) => {
 io.on("connection", (socket) => {
   console.log("new client connected", socket.id);
 
-  socket.on("user_join", ({ name, room }) => {
+  socket.on("user_join", ({ name, uid, room }) => {
     socket.join(room);
-    io.to(room).emit("user_join", { name, room });
+    io.to(room).emit("user_join", { name, uid, room });
   });
 
-  socket.on("message", ({ name, message, room }) => {
+  socket.on("message", ({ name, uid, message, room }) => {
     console.log(name, message, socket.id);
-    io.to(room).emit("message", { name, message });
+    io.to(room).emit("message", { name, uid, message });
   });
 
   socket.on("disconnect", () => {
