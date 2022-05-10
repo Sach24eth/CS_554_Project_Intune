@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState, } from "react";
 import { io } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -11,6 +11,7 @@ const URL = "https://api.spotify.com/v1";
 let socket;
 function ChatroomMaker() {
   const auth = getAuth();
+  let scrollRef = useRef();
   //console.log(auth)
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -23,8 +24,6 @@ function ChatroomMaker() {
   const [genres, setGenres] = useState([]);
   const [state, setState] = useState({ message: "", name: "" });
   const [chat, setChat] = useState([]);
-  //const socketRef = useRef();
-  let userData=JSON.parse(window.localStorage.getItem("userDetails"));
 
   //Server setup
   useEffect(() => {
@@ -77,6 +76,10 @@ function ChatroomMaker() {
       };
     }
   };
+  useEffect(() => {
+    // console.log("scroll effects")
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chat]);
   // Use effect for setting chat status
   useEffect(() => {
     socket.on("message", ({ name, message, room }) => {
@@ -88,7 +91,7 @@ function ChatroomMaker() {
   }, []);
 
   useEffect(() => {
-    console.log("is this firing")
+    //console.log("is this firing")
     socket.on("user_join", function (data) {
       console.log("user_join",data)
       setChat((chat) => [
@@ -109,15 +112,20 @@ function ChatroomMaker() {
   const onMessageSubmit = (e) => {
     let msgEle = document.getElementById("message");
     console.log([msgEle.name], msgEle.value);
-    
-    setState({ ...state, [msgEle.name]: msgEle.value });
-    //socketRef.current
-    console.log('state name', state.name, "message elem: ", msgEle.value, "room:", room)
-    socket.emit("message", {
-      name: state.name,
-      message: msgEle.value,
-      room: room,
-    });
+    if (msgEle.value === undefined || msgEle.value.trim() === '') {
+      console.log("msgEle.value", msgEle.value)
+      //alert("Message is empty!")
+    } 
+    else {
+      setState({ ...state, [msgEle.name]: msgEle.value });
+      //socketRef.current
+      console.log('state name', state.name, "message elem: ", msgEle.value, "room:", room)
+      socket.emit("message", {
+        name: state.name,
+        message: msgEle.value,
+        room: room,
+      });
+    }
     e.preventDefault();
     setState({ message: msgEle.value, name: state.name });
     msgEle.value = "";
@@ -126,10 +134,10 @@ function ChatroomMaker() {
       socket.off("receiveMsg");
     };
   };
-
+  
   const renderChat = () => {
     return chat.map(({ name, message }, index) => (
-      <div key={index}>
+      <div ref={scrollRef} key={index}>
         <h3>
           {name}: <span>{message}</span>
         </h3>
@@ -142,22 +150,22 @@ function ChatroomMaker() {
     <div>
       <h1>Current room: {room}</h1>
       {/* {state.name && ( */}
-        <div id="cardChat">
+      <div id="cardChat">
+        <h1>Chat Log</h1>
           <div id="render-chat">
-            <h1>Chat Log</h1>
             {renderChat()}
           </div>
           <form id="messageSubmit" onSubmit={onMessageSubmit}>
             <div>
               <input
-                name="message"
-                placeholder="Say 'hi!'"
-                id="message"
-                variant="outlined"
-                label="Message"
+              name="message"
+              placeholder="Say 'hi!'"
+              id="message"
+              variant="outlined"
+              label="Message"
               />
             </div>
-            <button id="msgBtn">Send Message</button>
+            <button id="msgBtn" >Send Message</button>
           </form>
         </div>
       {/* )} */}

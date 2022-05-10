@@ -21,8 +21,6 @@ const Messages = () => {
 
   useEffect(() => {
     async function getGenre() {
-      // const id =JSON.parse(window.localStorage.getItem("userDetails")).uid || null;
-      // console.log(id)
       let id = null;
       axios
         .get(URL + "/recommendations/available-genre-seeds", {
@@ -127,10 +125,6 @@ const Messages = () => {
     }
     searchRooms();
   }, [searchTerm]);
-  //console.log("Results:", searchRes);
-  //console.log("flag: ",noRes);
-  //console.log("All Genres:", genres);
-  //console.log("Outside: ", usrgenres)
   const resultText = (noResFlag) => {
     console.log("Functions", noResFlag);
     if (noRes === false) {
@@ -141,7 +135,7 @@ const Messages = () => {
 
   return (
     <div className="header">
-      <h1>Messages</h1>
+      <h1>Chatrooms</h1>
       <div className="search-chat">
         <label>
           <input

@@ -5,11 +5,6 @@
 	border-radius: 6px;
 
 }
-/* #messageSubmit{
-	width: auto;
-	border-radius: 5px;
-	padding: 40rem 1rem 0 1rem;
-} */
 
 #msgBtn{
     color: white;
@@ -26,10 +21,8 @@
 	height: 500px;
 	width: 100%;
 	overflow-y: scroll;
-	/* display: flex; */
 	background-color: var(--card-bg);
-	border-radius: 6px;
-	
+	border-radius: 2px;
 }
 .messageBox{
 	width: auto;
