@@ -101,7 +101,7 @@ const Messages = () => {
         if (searchTerm.length === 0) {
           console.log("clear Triggers");
           searchResults = [];
-          onAuthStateChanged(auth,user => {
+          onAuthStateChanged(auth, (user) => {
             if (user.uid || user) {
               //console.log("userData:", user.displayName);
               setUsrData(user.displayName);
@@ -109,7 +109,7 @@ const Messages = () => {
                 .getGenreData(user.uid)
                 .then((res) => {
                   for (let i = 0; i < res.genres.length; i++) {
-                    tempMessagesRoom[i] = {id:i,title:res.genres[i]}
+                    tempMessagesRoom[i] = { id: i, title: res.genres[i] };
                   }
                   setUsrGenres(tempMessagesRoom);
                   //console.log("Genre data",tempMessagesRoom);

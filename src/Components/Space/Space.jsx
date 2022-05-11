@@ -72,6 +72,11 @@ const Space = ({ hide, hideStatus }) => {
     socketConnection();
     return () => {
       hide(false);
+      socket.emit("user-space-disconnect", {
+        username: user.displayName,
+        uid: user.uid,
+        inviteCode,
+      });
       socket.disconnect();
       clearInterval(connectionAttempt);
     };
