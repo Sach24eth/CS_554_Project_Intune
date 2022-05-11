@@ -4,6 +4,7 @@ import "./artist.css";
 import Bubble from "../ArtistGenreBubble/buble";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../Spinner";
+import { toast, ToastContainer } from "react-toastify";
 
 const Artist = () => {
   const id = new URLSearchParams(window.location.search).get("id");
@@ -13,6 +14,7 @@ const Artist = () => {
   const [artistAlbum, setArtistAlbum] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(false);
+  const access_token = window.localStorage.getItem("access_token") || null;
 
   const history = useNavigate();
   const redirToAlbum = (e) => {
@@ -97,6 +99,7 @@ const Artist = () => {
   } else
     return (
       <section id="artist">
+        <ToastContainer />
         {err ? (
           <div className="container">
             <h1>Error loading artist.</h1>
@@ -131,7 +134,8 @@ const Artist = () => {
                     return (
                       <div
                         onClick={async () => {
-                          console.log(track.uri);
+                          if (!access_token)
+                            return toast.error("Connect to spotify to play");
                           try {
                             const token =
                               window.localStorage.getItem("access_token");

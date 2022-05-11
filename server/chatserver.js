@@ -5,6 +5,8 @@ const { Server } = require("socket.io");
 const http = require("http");
 const spotifyWebApi = require("spotify-web-api-node");
 var cookieParser = require("cookie-parser");
+const data = require("./data");
+const space = data.space;
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
@@ -25,6 +27,10 @@ const credentials = {
   clientSecret: process.env.CLIENT_SECRET,
   redirectUri: process.env.REDIRECT_URI,
 };
+
+app.get("/test", (req, res) => {
+  res.send("Working...");
+});
 
 app.post("/login", async (req, res) => {
   let spotifyApi = new spotifyWebApi(credentials);
@@ -101,30 +107,44 @@ io.on("connection", (socket) => {
     console.log("Disconnect Fired");
   });
 
-  socket.on("user-space-create", ({ username, uid, inviteCode }) => {
+  socket.on("user-space-create", async ({ username, uid, inviteCode }) => {
     //Add user into db first
+    const createSpace = await space.createSpace(inviteCode, username, uid);
+    console.log(createSpace);
     //Join the socket room
     socket.join(inviteCode);
-    console.log(username, uid, inviteCode);
     //Notify the client
-    io.to(inviteCode).emit("user-space-connected", { username, inviteCode });
+    // io.to(inviteCode).emit("user-space-connected", { username, inviteCode });
   });
 
-  socket.on("user-space-connect", ({ username, uid, inviteCode }) => {
+  socket.on("user-space-connect", async ({ username, uid, inviteCode }) => {
+    const joinSpace = await space.addUserToSpace(inviteCode, username, uid);
+    console.log(joinSpace);
     socket.join(inviteCode);
-    console.log(username, uid, inviteCode);
-    io.to(inviteCode).emit("user-space-connected", { username, inviteCode });
-  });
-
-  socket.on("user-space-disconnect", ({ username, uid, inviteCode }) => {
-    //Remove user from the socket db collection
-    //Remove user from room
-    socket.leave(inviteCode);
-    //Notify client
-    io.to(inviteCode).emit("user-space-disconnected", {
+    io.to(inviteCode).emit("user-space-connected", {
       username,
+      uid,
       inviteCode,
     });
+  });
+
+  socket.on("user-space-disconnect", async ({ username, uid, inviteCode }) => {
+    //Remove user from the socket db collection
+
+    console.log(username, uid, inviteCode);
+    try {
+      const remove = await space.removeUserFromSpace(inviteCode, username, uid);
+      if (remove.status !== 200) return;
+      //Remove user from room
+      socket.leave(inviteCode);
+      //Notify client
+      io.to(inviteCode).emit("user-space-disconnected", {
+        username,
+        inviteCode,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
   });
 
   socket.on("user-space-owner-disconnect", ({ inviteCode, uid }) => {

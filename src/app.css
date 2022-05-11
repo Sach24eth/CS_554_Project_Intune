@@ -144,6 +144,13 @@ input:focus {
 #expandGreen {
   color: #1db954;
 }
+
+.floating {
+  position: absolute;
+  bottom: 175px;
+  right: 20px;
+}
+
 /* 
 .bottom-player
   .controls
