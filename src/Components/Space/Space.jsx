@@ -5,6 +5,8 @@ import "./space.css";
 import Spaceship from "./Spaceship";
 import { toast, ToastContainer } from "react-toastify";
 import Spinner from "../Spinner";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 let socket = null;
 let attempts = 0;
@@ -15,13 +17,17 @@ const Space = ({ hide, hideStatus }) => {
   const [spaceOwner, setSpaceOwner] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(undefined);
+  const [joinErr, setJoinErr] = useState(false);
+  const [joiningViaInvite, setJoiningViaInvite] = useState(false);
+  const dispatch = useDispatch();
   const playerState =
     JSON.parse(window?.localStorage?.getItem("user"))?.accountType ===
       "premium" || false;
-
-  const inviteCode = new URLSearchParams(window.location.search).get(
+  let inviteCode = new URLSearchParams(window.location.search).get(
     "inviteCode"
   );
+
+  const history = useNavigate();
 
   useEffect(() => {
     if (!playerState) {
@@ -37,7 +43,7 @@ const Space = ({ hide, hideStatus }) => {
       socket.on("connect", () => {
         if (socket.id) {
           socketConnected = true;
-          if (inviteCode) joinSpace();
+          if (inviteCode) joinSpace(inviteCode);
           setLoading(false);
         }
       });
@@ -72,30 +78,60 @@ const Space = ({ hide, hideStatus }) => {
     socketConnection();
     return () => {
       hide(false);
-      socket.emit("user-space-disconnect", {
-        username: user.displayName,
-        uid: user.uid,
-        inviteCode,
-      });
+      socket.emit(
+        "user-space-disconnect",
+        {
+          username: user.displayName,
+          uid: user.uid,
+          inviteCode,
+        },
+        (err) => {
+          toast.error(err.message);
+        }
+      );
       socket.disconnect();
       clearInterval(connectionAttempt);
     };
   }, []);
 
-  const joinSpace = () => {
+  useEffect(() => {
+    if (joiningViaInvite) {
+      let code = new URLSearchParams(window.location.search).get("inviteCode");
+
+      joinSpace(code);
+    } else {
+      created(false);
+    }
+  }, [joiningViaInvite]);
+
+  const joinSpace = (code) => {
     if (!playerState) return toast.error("Connect to Spotify to start Space");
-    socket.emit("user-space-connect", {
-      username: user.displayName,
-      uid: user.uid,
-      inviteCode,
-    });
-    setSpaceOwner(false);
-    created();
+    socket.emit(
+      "user-space-connect",
+      {
+        username: user.displayName,
+        uid: user.uid,
+        inviteCode: code,
+      },
+      (err) => {
+        console.log(err);
+        setJoinErr((prev) => true);
+        history("/space");
+        setJoiningViaInvite(false);
+        return toast.error(err.message);
+      }
+    );
+    if (!joinErr) {
+      setSpaceOwner(false);
+      created(false);
+    } else {
+      created(true);
+    }
   };
 
-  const created = () => {
-    hide(true);
-    setSpaceCreated(true);
+  const created = (value) => {
+    hide(value);
+    setSpaceCreated(value);
   };
 
   if (loading) {
@@ -129,6 +165,7 @@ const Space = ({ hide, hideStatus }) => {
             onCreated={created}
             setSpaceOwner={setSpaceOwner}
             playerState={playerState}
+            joiningViaInvite={setJoiningViaInvite}
           />
         )}
         {spaceCreated && (

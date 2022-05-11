@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { storePrevSearchRes } from "../../Redux/Actions/Search";
 import "./search.css";
+import noImageAvailable from "../../images/no-image-available.jpg";
 
 const Search = () => {
   const searchRedux = useSelector((state) => state.searchResults);
@@ -58,6 +59,7 @@ const Search = () => {
         },
       })
       .then((res) => {
+        console.log(res)
         setLoading(null);
         setNoSearchResult(
           !res.data["tracks"].total &&
@@ -72,7 +74,7 @@ const Search = () => {
           ? res.data["tracks"].items.map((track) => {
               return {
                 title: track.name,
-                image: track.album.images[0].url,
+                image: track.album.images.length ? track.album.images[0].url : noImageAvailable,
                 artists: track.artists
                   .map((artist) => {
                     return artist.name;
@@ -88,7 +90,7 @@ const Search = () => {
               return {
                 id: album.id,
                 title: album.name,
-                image: album.images[0].url,
+                image: album.images.length ? album.images[0].url : noImageAvailable,
                 artists: album.artists
                   .map((artist) => {
                     return artist.name;
@@ -104,7 +106,7 @@ const Search = () => {
               return {
                 id: artist.id,
                 name: artist.name,
-                image: artist.images[0].url,
+                image: artist.images.length ? artist.images[0].url : noImageAvailable,
                 uri: artist.uri,
               };
             })
@@ -115,7 +117,7 @@ const Search = () => {
               return {
                 id: playlist.id,
                 title: playlist.name,
-                image: playlist.images[0].url,
+                image: playlist.images.length ? playlist.images[0].url : noImageAvailable,
                 owner: playlist.owner.display_name,
                 uri: playlist.uri,
               };
@@ -137,8 +139,9 @@ const Search = () => {
         );
       })
       .catch((e) => {
-        console.log(e.response);
+        console.log('here');
         setLoading(null);
+        console.log(e)
         setError(
           `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
         );
