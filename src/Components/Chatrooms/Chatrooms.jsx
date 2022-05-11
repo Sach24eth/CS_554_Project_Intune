@@ -11,6 +11,7 @@ const URL = "https://api.spotify.com/v1";
 let socket;
 function ChatroomMaker() {
   const auth = getAuth();
+  const history = useNavigate();
   let scrollRef = useRef();
   //console.log(auth)
   const queryString = window.location.search;
@@ -21,7 +22,7 @@ function ChatroomMaker() {
   const rooms = [];
   const [room, setRoom] = useState();
   const [usrData, setUsrData] = useState();
-  // const [genres, setGenres] = useState([]);
+  const [genres, setGenres] = useState([]);
   const [state, setState] = useState({ message: "", uid:"",name: "",});
   const [chat, setChat] = useState([]);
 
@@ -41,6 +42,8 @@ function ChatroomMaker() {
             .then((res) => {
               console.log("Setting rooms and doing genre check");
               let genreList = res.data.genres;
+              console.log(genreList)
+              setGenres(genreList)
               if (genreList.includes(roomnumber.toLowerCase())) {
                 console.log("Set room:",roomnumber)
                 setRoom(roomnumber);
@@ -93,7 +96,7 @@ function ChatroomMaker() {
   useEffect(() => {
     //console.log("is this firing")
     socket.on("user_join", function (data) {
-      console.log("user_join",data)
+      //console.log("user_join",data)
       setChat((chat) => [
         ...chat,
         {
@@ -145,12 +148,19 @@ function ChatroomMaker() {
       </div>
     ));
   };
-
+  const leaveRoom = () => {
+    console.log("leaving..")
+    //console.log("args",userId,roomId);
+    socket.emit("room-disconnect", { uid: state.userId, room: state.room });
+    socket.disconnect();
+    history(`/home`);
+  }
   //console.log(room);
   return (
     <div>
       <h1>Current room: {room}</h1>
       {/* {state.name && ( */}
+      <button id="leaveBtn" onClick={leaveRoom}> Leave Room</button>
       <div id="cardChat">
         <h1>Chat Log</h1>
           <div id="render-chat">

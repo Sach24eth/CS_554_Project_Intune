@@ -18,4 +18,5 @@ const getCollectionFn = (collection) => {
 /* Now, you can list your collections here: */
 module.exports = {
   space: getCollectionFn("space"),
+  chatroom: getCollectionFn("chatroom"),
 };

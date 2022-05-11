@@ -7,7 +7,7 @@ const spotifyWebApi = require("spotify-web-api-node");
 var cookieParser = require("cookie-parser");
 const data = require("./data");
 const space = data.space;
-
+const chat = data.chatroom;
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -93,16 +93,46 @@ app.post("/me", async (req, res) => {
 io.on("connection", (socket) => {
   console.log("new client connected", socket.id);
 
-  socket.on("user_join", ({ name, uid, room }) => {
-    socket.join(room);
-    io.to(room).emit("user_join", { name, uid, room });
+  socket.on("user_join", async ({ name, uid, room }) => {
+    //need to seed
+    try {
+      const chatmsgs = await chat.fetchAllMessages(room);
+      console.log("message Test:", chatmsgs.msg);
+      for (let i = 0; i <= chatmsgs.msg; i++) {
+        let msgObj = chatmsgs.msg[i];
+        let tempName = msgObj.userName;
+        let tempUid = msgObj.userId;
+        let tempMsg = msgObj.messageText;
+        io.to(room).emit("message", { tempName, tempUid, tempMsg });
+      }
+      io.to(room).emit("user_join", { name, uid, room });
+      socket.join(room);
+      const userJoin = await chat.addUsertoRoom(uid, room);
+      console.log("userjoin:", userJoin);
+    } catch (e) {
+      console.log(e);
+    }
   });
 
-  socket.on("message", ({ name, uid, message, room }) => {
+  socket.on("message", async ({ name, uid, message, room }) => {
     console.log(name, message, socket.id);
-    io.to(room).emit("message", { name, uid, message });
+    try {
+      io.to(room).emit("message", { name, uid, message });
+      const addMsg = await chat.addMessagesToRoom(name, uid, message, room);
+      console.log("message add:", addMsg);
+    } catch (e) {
+      console.log(e);
+    }
   });
-
+  socket.on("room-disconnect", async ({ uid, room }) => {
+    try {
+      io.to(room).emit("room-disconnect", { uid, room });
+      const delUsr = await chat.leaveChatroom(uid, room);
+      console.log("delUsr:", delUsr);
+    } catch (e) {
+      console.log(e);
+    }
+  });
   socket.on("disconnect", () => {
     console.log("Disconnect Fired");
   });
