@@ -1,8 +1,9 @@
 import React from "react";
 import axios from "axios";
 import "./table.css";
+import { toast } from "react-toastify";
 
-export const Table = ({ track, i, fn, playlist }) => {
+export const Table = ({ track, i, fn, playlist, token }) => {
   let artists = [];
   track.track.artists.forEach((artist) => {
     artists.push(artist.name);
@@ -26,6 +27,7 @@ export const Table = ({ track, i, fn, playlist }) => {
     <div
       className="max-width"
       onClick={async () => {
+        if (!token) toast.error("Connect to spotify to play");
         try {
           const token = window.localStorage.getItem("access_token");
           const deviceId = window.localStorage.getItem("deviceId");

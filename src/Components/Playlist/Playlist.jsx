@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { Component } from "react";
+import { useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
 import { Table } from "../Table/table";
 import "./playlist.css";
 
@@ -18,9 +20,9 @@ class Playlist extends Component {
 
   componentDidMount() {
     const id = new URLSearchParams(window.location.search).get("id");
-    const user_access_token = window.localStorage.getItem("access_token");
+    const user_access_token =
+      window.localStorage.getItem("access_token") || null;
     const genricToken = window.localStorage.getItem("token");
-
     const token = user_access_token ? user_access_token : genricToken;
     this.setState({
       id: id,
@@ -50,6 +52,7 @@ class Playlist extends Component {
   render() {
     return (
       <section id="album-page">
+        <ToastContainer />
         {this.state.err ? (
           <div className="container">
             <h1>Error loading playlist</h1>
@@ -70,12 +73,6 @@ class Playlist extends Component {
                   <div className="playlist-container">
                     <p className="type">{this.state.playlist.type}</p>
                     <h1>{this.state.playlist.name}</h1>
-                    {/* <p className="description">
-                    {this.state.playlist.description}
-                  </p> */}
-                    {/* <p className="followers">
-                    Followers: {this.state.playlist.followers.total}
-                  </p> */}
                   </div>
                 </div>
                 <div className="playlist-tracks">
@@ -88,6 +85,9 @@ class Playlist extends Component {
                           i={i}
                           playlist={this.state.playlist}
                           fn={this.millisToMinutesAndSeconds}
+                          token={
+                            window.localStorage.getItem("access_token") || null
+                          }
                         />
                       );
                     })}
