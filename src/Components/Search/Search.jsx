@@ -71,7 +71,7 @@ const Search = () => {
         },
       })
       .then((res) => {
-        console.log(res)
+
         setLoading(null);
         setNoSearchResult(
           !res.data["tracks"].total &&
@@ -151,6 +151,8 @@ const Search = () => {
         );
       })
       .catch((e) => {
+
+        console.log(e);
         setLoading(null);
 
         if (e.response) {
