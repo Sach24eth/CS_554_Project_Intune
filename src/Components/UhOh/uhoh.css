@@ -1,0 +1,33 @@
+#ohno {
+  width: 100vw;
+  height: calc(100vh - 175px);
+}
+
+#ohno .container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#ohno .container .heading {
+  font-size: 3rem;
+  font-weight: bolder;
+  font-family: "Prompt", sans-serif;
+}
+
+#ohno .container .not-found {
+  font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  #ohno .container .heading {
+    font-size: 1.5rem;
+  }
+
+  #ohno .container .not-found {
+    font-size: 1.25rem;
+  }
+}

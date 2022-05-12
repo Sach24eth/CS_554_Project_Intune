@@ -20,19 +20,13 @@ const Space = ({ hide, hideStatus }) => {
   const [error, setError] = useState(undefined);
   const [joinErr, setJoinErr] = useState(false);
   const [joiningViaInvite, setJoiningViaInvite] = useState(false);
-  const [invCode, setInvCode] = useState(undefined);
   const dispatch = useDispatch();
   const playerState =
     JSON.parse(window?.localStorage?.getItem("user"))?.accountType ===
       "premium" || false;
-  let inviteCode = new URLSearchParams(window.location.search).get(
-    "inviteCode"
-  );
-  const code = useSelector((state) => state.space.inviteCode);
-
-  useEffect(() => {
-    setInvCode(code);
-  }, [code]);
+  let inviteCode =
+    new URLSearchParams(window.location.search).get("inviteCode") ||
+    window.localStorage.getItem("code");
 
   const history = useNavigate();
 
@@ -85,18 +79,26 @@ const Space = ({ hide, hideStatus }) => {
     socketConnection();
     return () => {
       hide(false);
+      console.log({
+        username: user.displayName,
+        uid: user.uid,
+        inviteCode: inviteCode,
+      });
       socket.emit(
         "user-space-disconnect",
         {
           username: user.displayName,
           uid: user.uid,
-          inviteCode: inviteCode || invCode,
+          inviteCode: inviteCode,
         },
         (err) => {
           toast.error(err.message);
         }
       );
+
       socket.disconnect();
+      // window.localStorage.removeItem("code");
+      // dispatch(setInvCode(null));
       clearInterval(connectionAttempt);
     };
   }, []);

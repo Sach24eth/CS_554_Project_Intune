@@ -22,6 +22,7 @@ import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
 import { updateSpotifyPlayerState } from "./Redux/Actions/Player";
 import "./app.css";
+import UhOh from "./Components/UhOh/UhOh";
 
 const App = () => {
   const [auth, setAuth] = useState(false);
@@ -142,6 +143,7 @@ const App = () => {
           <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/album" element={<AlbumPage />} />
           <Route path="/chatrooms" element={<ChatRoom />} />
+          <Route path="*" element={<UhOh />} />
         </Routes>
         {hidePlayer ? (
           <Player connection={connection} hide={hidePlayer} />
