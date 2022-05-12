@@ -1,5 +1,5 @@
 #artist {
-  height: calc(100vh - 175px);
+  max-height: calc(100vh - 175px);
   width: auto;
   margin: 0 2rem;
   overflow-y: scroll;

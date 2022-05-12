@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Bubble from "../ArtistGenreBubble/buble";
 import "./album.css";
+import NoImage from "../../images/no-image-available.jpg";
 
 const Album = () => {
   const id = new URLSearchParams(window.location.search).get("id");
@@ -88,7 +89,7 @@ const Album = () => {
           </Link>
 
           <div className="album-cover">
-            <img src={album.images[1].url} alt={album.name} />
+            <img src={album.images[1].url || NoImage} alt={album.name} />
             <div className="album-info">
               <p className="type">{album.type}</p>
               <h1>{album.name}</h1>
