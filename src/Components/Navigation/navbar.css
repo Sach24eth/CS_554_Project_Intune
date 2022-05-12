@@ -5,6 +5,7 @@
   background-color: var(--bg-color);
   color: var(--text);
   overflow-x: hidden;
+  transition: height 100ms ease-in;
 }
 
 .brand {
@@ -22,7 +23,7 @@
 }
 
 .navbar-links {
-  transition: all 100ms ease-in;
+  transition: height 100ms ease-in;
 }
 .navbar-links ul {
   margin: 0;
@@ -83,6 +84,7 @@
   }
 
   .navbar {
+    height: auto;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;

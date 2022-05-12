@@ -126,28 +126,38 @@ io.on("connection", (socket) => {
     console.log("Disconnect Fired");
   });
 
-  socket.on("user-space-create", async ({ username, uid, inviteCode }) => {
+  socket.on("user-space-create", async (data, callback) => {
     //Add user into db first
-    const createSpace = await space.createSpace(inviteCode, username, uid);
-    console.log(createSpace);
-    //Join the socket room
-    socket.join(inviteCode);
+    try {
+      const { username, uid, inviteCode } = data;
+      const createSpace = await space.createSpace(inviteCode, username, uid);
+      //Join the socket room
+      socket.join(inviteCode);
+    } catch (error) {
+      callback(error);
+    }
     //Notify the client
     // io.to(inviteCode).emit("user-space-connected", { username, inviteCode });
   });
 
-  socket.on("user-space-connect", async ({ username, uid, inviteCode }) => {
-    const joinSpace = await space.addUserToSpace(inviteCode, username, uid);
-    console.log(joinSpace);
-    socket.join(inviteCode);
-    io.to(inviteCode).emit("user-space-connected", {
-      username,
-      uid,
-      inviteCode,
-    });
+  socket.on("user-space-connect", async (data, callback) => {
+    try {
+      const { username, uid, inviteCode } = data;
+      const joinSpace = await space.addUserToSpace(inviteCode, username, uid);
+      console.log(joinSpace.message);
+      socket.join(inviteCode);
+      io.to(inviteCode).emit("user-space-connected", {
+        username,
+        uid,
+        inviteCode,
+      });
+    } catch (error) {
+      callback(error);
+    }
   });
 
-  socket.on("user-space-disconnect", async ({ username, uid, inviteCode }) => {
+  socket.on("user-space-disconnect", async (data, callback) => {
+    const { username, uid, inviteCode } = data;
     //Remove user from the socket db collection
 
     console.log(username, uid, inviteCode);
@@ -163,6 +173,7 @@ io.on("connection", (socket) => {
       });
     } catch (error) {
       console.log(error.message);
+      callback(error);
     }
   });
 

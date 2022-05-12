@@ -36,8 +36,14 @@ const addUserToSpace = async (spaceId, username, uid) => {
     { $push: { users: user } }
   );
 
+  console.log("Add : " + add.modifiedCount === 0);
+
   if (add.modifiedCount === 0)
-    throw new Error({ status: 404, message: "Error joining space" });
+    // eslint-disable-next-line no-throw-literal
+    throw {
+      status: 404,
+      message: "Please check the invite code and try again",
+    };
 
   return { status: 200, message: `Joined space with id: ${spaceId}` };
 };
@@ -59,7 +65,8 @@ const removeUserFromSpace = async (spaceId, username, uid) => {
   console.log(remove);
 
   if (remove.modifiedCount === 0)
-    throw new Error({ status: 404, message: "Error leaving space" });
+    // eslint-disable-next-line no-throw-literal
+    throw { status: 404, message: "Error leaving space" };
 
   return { status: 200, message: `User left from space` };
 };
