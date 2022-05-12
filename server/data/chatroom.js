@@ -10,34 +10,42 @@ const createRooms = async (room) => {
     if (room[i] === undefined || room[i].trim() === "") {
       throw { status: 400, msg: "RoomName is required" };
     }
-    let roomName = room[i];
+    let roomName = room[i].toUpperCase();
 
     const chatroomObj = {
       roomName,
       users: [],
-      messages: [{}],
+      messages: [],
     };
     const addRoom = await chatroom.insertOne(chatroomObj);
     if (addRoom.insertCount == 0)
       throw { status: 500, msg: "Error creating room in db" };
   }
+  return { status: 200, msg: "Rooms added" };
 };
 const addUsertoRoom = async (uid, room) => {
   if (!uid || !room) {
     throw { status: 400, msg: "RoomName is required" };
   }
   const chatroom = await chatroomCollection();
-  const addUsr = await chatroom.updateOne(
-    { roomName: room },
-    { $push: { users: uid } }
-  );
-  if (addUsr.modifiedCount === 0)
-    throw { status: 500, msg: "Could not add any user" };
-  return { status: 200, msg: "user added" };
+  const flagCheck = await chatroom.findOne({ roomName: room, users: uid });
+  //console.log("Exist Flag Check:", flagCheck);
+  if (!flagCheck) {
+    const addUsr = await chatroom.updateOne(
+      { roomName: room },
+      { $push: { users: uid } }
+    );
+    if (addUsr.modifiedCount === 0)
+      throw { status: 500, msg: "Could not add any user" };
+    return { status: 200, msg: "user added" };
+  } else {
+    return { status: 200, msg: "user already present!" };
+  }
 };
 const addMessagesToRoom = async (name, uid, message, room) => {
-  if (name === null || !uid || !message || !room) {
-    throw { status: 400, msg: "RoomName is required" };
+  console.log(name, uid, message, room);
+  if (!name || !uid || !message || !room) {
+    throw { status: 400, msg: "Details are missing" };
   }
   const chatroom = await chatroomCollection();
   const ts = new Date();

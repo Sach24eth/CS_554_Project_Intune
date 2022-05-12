@@ -8,12 +8,12 @@ var cookieParser = require("cookie-parser");
 const data = require("./data");
 const space = data.space;
 const chat = data.chatroom;
+const constructor = require("./routes");
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 require("dotenv").config();
-
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -89,35 +89,24 @@ app.post("/me", async (req, res) => {
     })
     .catch((err) => res.status(400).json({ err: err }));
 });
-
+constructor(app);
 io.on("connection", (socket) => {
   console.log("new client connected", socket.id);
 
   socket.on("user_join", async ({ name, uid, room }) => {
-    //need to seed
-    try {
-      const chatmsgs = await chat.fetchAllMessages(room);
-      console.log("message Test:", chatmsgs.msg);
-      for (let i = 0; i <= chatmsgs.msg; i++) {
-        let msgObj = chatmsgs.msg[i];
-        let tempName = msgObj.userName;
-        let tempUid = msgObj.userId;
-        let tempMsg = msgObj.messageText;
-        io.to(room).emit("message", { tempName, tempUid, tempMsg });
-      }
-      io.to(room).emit("user_join", { name, uid, room });
-      socket.join(room);
-      const userJoin = await chat.addUsertoRoom(uid, room);
-      console.log("userjoin:", userJoin);
-    } catch (e) {
-      console.log(e);
-    }
+    socket.join(room);
+    io.to(room).emit("user_join", { name, uid, room });
+    const userJoin = await chat.addUsertoRoom(uid, room);
+    console.log("userjoin:", userJoin);
+    // } catch (e) {
+    //   console.log(e);
+    // }
   });
 
   socket.on("message", async ({ name, uid, message, room }) => {
-    console.log(name, message, socket.id);
+    console.log(name, uid, message, room);
     try {
-      io.to(room).emit("message", { name, uid, message });
+      io.to(room).emit("message", { name, uid, message, room });
       const addMsg = await chat.addMessagesToRoom(name, uid, message, room);
       console.log("message add:", addMsg);
     } catch (e) {

@@ -54,7 +54,8 @@ function ChatroomMaker() {
           if (user.uid || user) {
             console.log("Set user data:", user.displayName, roomnumber);
             setUsrData(user.displayName)
-            setState({ name: user.displayName,userId: user.uid,room: roomnumber})
+            console.log("Setting UID:", user.uid)
+            setState({ name: user.displayName,uid: user.uid,room: roomnumber})
             console.log("Display statements")
             userjoin(user.displayName,user.uid,roomnumber)
             // userjoin(user.displayName,roomnumber);
@@ -67,11 +68,41 @@ function ChatroomMaker() {
     return () => {
       socket.disconnect();
     };
-  }, [auth,roomnumber]);
+  }, [auth, roomnumber]);
+  
+  useEffect(() => {
+    console.log("chat history Triggers")
+    async function getHistory() {
+      console.log("fetch start!", room)
+      if (room !== undefined) {
+        console.log("Room check:",room)
+        await axios.get(`http://localhost:5001/chatHistory/${room}`)
+          .then((res) => {
+          let msgs=res.data.chatHistory.msg
+            console.log("chatHistory", msgs);
+            for (let i = 0; i < msgs.length; i++){
+              let tempName = msgs[i].userName;
+              let tempUid = msgs[i].userId;
+              let tempMessage = msgs[i].messageText;
+              let tempRoom = room;
+              console.log("Message:",tempName, tempMessage, tempRoom);
+              setChat((prev) => [...prev, {
+                name: tempName,
+                message: tempMessage,
+                room:tempRoom
+              }]);
+            }
+        })
+        .catch((e) => console.log(e.response));
+      }
+      
+    }
+    getHistory();
+  }, [room])
   
   const userjoin = (name,uid,room) => {
     if (name !== undefined ||name) {
-      console.log("defined:",name);
+      console.log("defined:",name,uid,room);
       socket.emit("user_join", { name,uid, room });
       return () => {
         //socketRef.current.off("receiveMsg");
@@ -79,6 +110,8 @@ function ChatroomMaker() {
       };
     }
   };
+  
+
   useEffect(() => {
     // console.log("scroll effects")
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -109,7 +142,7 @@ function ChatroomMaker() {
     });
   },[])
   //console.log("Chat:", chat);
-  // console.log("state outside:", state)
+  //console.log("state outside:", state)
   // console.log("Room:", room);
 
   const onMessageSubmit = (e) => {
@@ -120,18 +153,18 @@ function ChatroomMaker() {
       //alert("Message is empty!")
     } 
     else {
-      setState({ ...state, [msgEle.name]: msgEle.value });
+      setState({ ...state, message: msgEle.value });
       //socketRef.current
-      console.log('state name', state.name, "message elem: ", msgEle.value, "room:", room)
+      console.log('state name', state.name,"state.uid:",state.uid, "message elem: ", msgEle.value, "room:", room)
       socket.emit("message", {
         name: state.name,
-        uid:state.userId,
+        uid:state.uid,
         message: msgEle.value,
         room: room,
       });
     }
     e.preventDefault();
-    setState({ message: msgEle.value, name: state.name });
+    setState({ message: msgEle.value, name: state.name,uid:state.uid });
     msgEle.value = "";
     msgEle.focus();
     return () => {
