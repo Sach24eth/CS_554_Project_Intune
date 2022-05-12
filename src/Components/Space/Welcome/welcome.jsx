@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import Spinner from "../../Spinner";
 import { toast, ToastContainer } from "react-toastify";
 import { generateCode } from "../../../Services/generateCode";
 import { GrFormClose } from "react-icons/gr";
-import Spinner from "../../Spinner";
-import "./welcome.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setInviteCode } from "../../../Redux/Actions/Space";
+import "./welcome.css";
 
 const Welcome = (props) => {
   const typography = [
@@ -19,6 +21,7 @@ const Welcome = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [code, setCode] = useState(undefined);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const setModalState = () => {
@@ -32,6 +35,7 @@ const Welcome = (props) => {
   const onJoin = (e) => {
     if (!code) return toast.error("Code cannot be empty");
 
+    dispatch(setInviteCode(code));
     setModalState();
     props.joiningViaInvite(true);
     navigate(`/space?inviteCode=${code}`);
@@ -57,6 +61,7 @@ const Welcome = (props) => {
     }, 2000);
 
     const inviteCode = generateCode();
+    dispatch(setInviteCode(inviteCode));
     window.localStorage.setItem("code", inviteCode);
     props.socket.emit(
       "user-space-create",
