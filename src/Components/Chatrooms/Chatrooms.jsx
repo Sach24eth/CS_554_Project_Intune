@@ -191,15 +191,16 @@ function ChatroomMaker() {
   //console.log(room);
   return (
     <div>
-      <h1>Current room: {room}</h1>
+      <h1 id="chatTitle">Current room: {room}</h1>
       {/* {state.name && ( */}
       <button id="leaveBtn" onClick={leaveRoom}> Leave Room</button>
       <div id="cardChat">
-        <h1>Chat Log</h1>
+        <h1 >Chat Log</h1>
           <div id="render-chat">
             {renderChat()}
           </div>
-          <form id="messageSubmit" onSubmit={onMessageSubmit}>
+      </div>
+      <form id="messageSubmit" onSubmit={onMessageSubmit}>
             <div>
               <input
               name="message"
@@ -211,7 +212,6 @@ function ChatroomMaker() {
             </div>
             <button id="msgBtn" >Send Message</button>
           </form>
-        </div>
       {/* )} */}
     </div>
   );

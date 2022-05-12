@@ -37,14 +37,14 @@ const Navbar = ({ auth }) => {
             <li onClick={toggleNav}>
               <NavLink to="/library">Library</NavLink>
             </li>
+            <li>
+              <NavLink to="/messages">Chatrooms</NavLink>
+            </li>
             <li onClick={toggleNav}>
               <NavLink to="/me">{username}</NavLink>
             </li>
             <li onClick={toggleNav}>
               <NavLink to="/auth/logout">Logout</NavLink>
-            </li>
-            <li>
-              <NavLink to="/messages">Chatrooms</NavLink>
             </li>
           </ul>
         ) : (

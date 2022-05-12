@@ -25,7 +25,7 @@ const createRooms = async (room) => {
 };
 const addUsertoRoom = async (uid, room) => {
   if (!uid || !room) {
-    throw { status: 400, msg: "RoomName is required" };
+    throw { status: 400, msg: "User and room details are required" };
   }
   const chatroom = await chatroomCollection();
   const flagCheck = await chatroom.findOne({ roomName: room, users: uid });
@@ -42,6 +42,7 @@ const addUsertoRoom = async (uid, room) => {
     return { status: 200, msg: "user already present!" };
   }
 };
+
 const addMessagesToRoom = async (name, uid, message, room) => {
   console.log(name, uid, message, room);
   if (!name || !uid || !message || !room) {
