@@ -75,7 +75,8 @@ const fetchAllMessages = async (room) => {
 };
 
 const leaveChatroom = async (uidRemove, room) => {
-  if (!uid || !room) throw { status: 400, msg: "Details of user required" };
+  if (!uidRemove || !room)
+    throw { status: 400, msg: "Details of user required" };
   const chatroom = await chatroomCollection();
   const removeUsr = await chatroom.updateOne(
     { roomName: room },

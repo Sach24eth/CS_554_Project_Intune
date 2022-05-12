@@ -183,8 +183,8 @@ function ChatroomMaker() {
   };
   const leaveRoom = () => {
     console.log("leaving..")
-    //console.log("args",userId,roomId);
-    socket.emit("room-disconnect", { uid: state.userId, room: state.room });
+    //console.log("args",state);
+    socket.emit("room-disconnect", { uid: state.uid, room: room });
     socket.disconnect();
     history(`/home`);
   }
