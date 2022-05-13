@@ -7,13 +7,14 @@ const spotifyWebApi = require("spotify-web-api-node");
 var cookieParser = require("cookie-parser");
 const data = require("./data");
 const space = data.space;
-
+const chat = data.chatroom;
+const users = data.users;
+const constructor = require("./routes");
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 require("dotenv").config();
-
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -89,20 +90,47 @@ app.post("/me", async (req, res) => {
     })
     .catch((err) => res.status(400).json({ err: err }));
 });
-
+constructor(app);
 io.on("connection", (socket) => {
   console.log("new client connected", socket.id);
 
-  socket.on("user_join", ({ name, room }) => {
-    socket.join(room);
-    io.to(room).emit("user_join", { name, room });
+  socket.on("user_join", async ({ name, uid, room }) => {
+    try {
+      socket.join(room);
+      io.to(room).emit("user_join", { name, uid, room });
+      const userJoin = await chat.addUsertoRoom(uid, room);
+      const addUsr = await users.addUser(uid);
+      console.log("userjoin:", userJoin);
+      console.log("userDB add:", addUsr);
+    } catch (e) {
+      console.log(e);
+    }
   });
 
-  socket.on("message", ({ name, message, room }) => {
-    console.log(name, message, socket.id);
-    io.to(room).emit("message", { name, message });
+  socket.on("message", async ({ name, uid, message, room }) => {
+    console.log(name, uid, message, room);
+    try {
+      io.to(room).emit("message", { name, uid, message, room });
+      const addMsg = await chat.addMessagesToRoom(name, uid, message, room);
+      console.log("message add:", addMsg);
+      const addRoom = await users.addRoomWithMsg(uid, room);
+      console.log("user db room add:", addRoom);
+    } catch (e) {
+      console.log(e);
+    }
   });
-
+  socket.on("room-disconnect", async ({ uid, room }) => {
+    console.log("rooms disconnect", uid, room);
+    try {
+      io.to(room).emit("room-disconnect", { uid, room });
+      const delUsr = await chat.leaveChatroom(uid, room);
+      console.log("delUsr:", delUsr);
+      const delRooom = await users.delRoomwithMessage(uid, room);
+      console.log("del Room:", delRooom);
+    } catch (e) {
+      console.log(e);
+    }
+  });
   socket.on("disconnect", () => {
     console.log("Disconnect Fired");
   });
