@@ -23,6 +23,7 @@ import Player from "./Components/Player";
 import SpacePage from "./Pages/Space";
 import Artist from "./Components/Artist";
 import ChangePassword from "./Components/User/ForgotPassword";
+import Messages from "./Components/Messages";
 import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
 import { updateSpotifyPlayerState } from "./Redux/Actions/Player";
@@ -148,6 +149,7 @@ const App = () => {
           <Route path="/album" element={<AlbumPage />} />
           <Route path="/chatrooms" element={<ChatRoom />} />
           <Route path="*" element={<UhOh />} />
+          <Route path="/messages" element={<Messages />} />
         </Routes>
         {hidePlayer ? (
           <Player connection={connection} hide={hidePlayer} />

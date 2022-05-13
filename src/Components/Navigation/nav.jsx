@@ -73,6 +73,7 @@ const Navbar = ({ auth, username }) => {
                 <NavLink to="/search">Search</NavLink>
                 <NavLink to="/library">Library</NavLink>
                 {/* <NavLink to="/playlists">Playlists</NavLink> */}
+                <NavLink to ="/messages">All Chatrooms</NavLink>
                 <NavLink to="/me">{username}</NavLink>
               </>
             )}
