@@ -174,7 +174,7 @@ const Artist = () => {
                             <p>{i + 1}</p>
                             <div className="image">
                               <img
-                                src={track.album.images[2].url}
+                                src={track.album.images[2].url || NoImage}
                                 alt={track.name}
                               />
                             </div>
@@ -209,7 +209,7 @@ const Artist = () => {
                           <p id={album.uri}>{i + 1}</p>
                           <div className="image" id={album.uri}>
                             <img
-                              src={album.images[2].url}
+                              src={album.images[2].url || NoImage}
                               id={album.uri}
                               alt={album.name}
                             />

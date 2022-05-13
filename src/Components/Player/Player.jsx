@@ -13,6 +13,7 @@ import { BsBroadcast } from "react-icons/bs";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
+import NoImage from "../../images/no-image-available.jpg";
 
 const Player = (props) => {
   const history = useNavigate();
@@ -428,7 +429,10 @@ const Player = (props) => {
             style={props.hide && { visibility: "hidden" }}
           >
             <div className="track-img">
-              <img src={currentSong.album.images[0].url} alt="track" />{" "}
+              <img
+                src={currentSong.album.images[0].url || NoImage}
+                alt="track"
+              />{" "}
               <div className="track-name">
                 <p className="song">{currentSong.name}</p>
                 <p className="artistName">
