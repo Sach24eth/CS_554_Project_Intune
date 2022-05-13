@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Card from "../Card/Card";
-
+import NoImage from "../../images/no-image-available.jpg";
 import { NavLink, useNavigate } from "react-router-dom";
 import likedSongsImage from "../../images/liked-songs-300.png";
 import "./library.css";
@@ -16,15 +16,6 @@ const Library = () => {
   let access_token = window.localStorage.getItem("access_token");
   let navigate = useNavigate();
 
-  useEffect(() => {
-    const authLocalStorage = parseInt(
-      window.localStorage.getItem("authentication")
-    );
-
-    if (authLocalStorage === 0) {
-      navigate("/auth/login");
-    }
-  }, []);
   function fetchData() {
     if (access_token) {
       const apiUrl = "https://api.spotify.com/v1";
@@ -166,7 +157,7 @@ const Library = () => {
                   key={playlist.id}
                   id={playlist.id}
                   heading={playlist.name}
-                  image={playlist.images[0].url}
+                  image={playlist.images[0].url || NoImage}
                   // clickHandler={this.props.onPlaySong}
                   uri={playlist.uri}
                   albumId={playlist.id}
@@ -185,7 +176,7 @@ const Library = () => {
                   key={artist.id}
                   id={artist.id}
                   heading={artist.name}
-                  image={artist.images[0].url}
+                  image={artist.images[0].url || NoImage}
                   uri={artist.uri}
                   clickHandler={redirToArtist}
                 />
@@ -202,8 +193,7 @@ const Library = () => {
                   key={album.album.id}
                   id={album.album.id}
                   heading={album.album.name}
-                  image={album.album.images[0].url}
-                  // clickHandler={this.props.onPlaySong}
+                  image={album.album.images[0].url || NoImage}
                   uri={album.album.uri}
                   albumId={album.album.id}
                   albumRedir={redirToAlbum}

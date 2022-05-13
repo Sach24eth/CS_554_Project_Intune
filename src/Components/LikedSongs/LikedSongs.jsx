@@ -38,8 +38,11 @@ class LikedSongs extends Component {
         },
       })
       .then((res) => {
-        this.setState({ playlist: res.data, loading: false });
-        console.log(res.data);
+        this.setState(
+            {
+              playlist: res.data,
+              loading: false
+            });
       })
       .catch((e) => {
         console.log(e.response);
