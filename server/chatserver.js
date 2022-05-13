@@ -7,9 +7,11 @@ const spotifyWebApi = require("spotify-web-api-node");
 var cookieParser = require("cookie-parser");
 const data = require("./data");
 const space = data.space;
+
 const chat = data.chatroom;
 const users = data.users;
 const constructor = require("./routes");
+
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -93,7 +95,6 @@ app.post("/me", async (req, res) => {
 constructor(app);
 io.on("connection", (socket) => {
   console.log("new client connected", socket.id);
-
   socket.on("user_join", async ({ name, uid, room }) => {
     try {
       socket.join(room);

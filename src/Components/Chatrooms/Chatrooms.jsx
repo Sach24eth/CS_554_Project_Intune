@@ -5,6 +5,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./Chatrooms.css";
 import axios from "axios";
 import Spinner from "../Spinner";
+const Firestore = require("../../Firebase/Firestore")
 const TOKEN = window.localStorage.getItem("token");
 //console.log(TOKEN);
 const URL = "https://api.spotify.com/v1";
@@ -139,7 +140,8 @@ function ChatroomMaker() {
   useEffect(() => {
     //console.log("is this firing")
     socket.on("user_join", function (data) {
-      //console.log("user_join",data)
+      console.log("user_join",data)
+      Firestore.addGenreToList(data.room);
       setLoading(false);
       setChat((chat) => [
         ...chat,

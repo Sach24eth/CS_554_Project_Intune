@@ -133,7 +133,8 @@ async function AppUserCreation(data) {
   // });
 }
 async function AppUserLogin(data) {
-  let redirStatus;
+  try {
+    let redirStatus;
   const signIn = await signInWithEmailAndPassword(
     auth,
     data.email,
@@ -165,6 +166,10 @@ async function AppUserLogin(data) {
     toast.error("Cannot Login");
     return { err: true };
   }
+  } catch (error) {
+    toast.error("Invalid Email or Password");
+  }
+  
 }
 function AppSignOut() {
   signOut(auth)

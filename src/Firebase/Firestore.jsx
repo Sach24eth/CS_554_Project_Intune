@@ -113,4 +113,25 @@ async function getGenreData(uid) {
   return hasGenre;
 }
 
-export { createUsersInFirestore, updateGenre, getGenreData };
+async function addGenreToList(genre) {
+  console.log("hit the addGenreToList", genre);
+  const auth = getAuth(app);
+  const user = auth.currentUser;
+  const querySnapshot = await getDocs(collection(db, "users"));
+  querySnapshot.forEach(async (docm) => {
+    if (docm.data().id === user.uid) {
+      const userRef = doc(db, "users", docm.id);
+      if(docm.data().genres.includes(genre)){
+        console.log("already exists");
+      }else{
+      const update = await updateDoc(userRef, {
+        genres: [...docm.data().genres, genre],
+      });
+      console.log("Update");
+      console.log(update);
+    }
+    }
+  });
+}
+
+export { createUsersInFirestore, updateGenre, getGenreData, addGenreToList };
