@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Card from "../Card/Card";
-
 import { NavLink, useNavigate } from "react-router-dom";
+
+import axios from "axios";
+
+import Card from "../Card/Card";
 import likedSongsImage from "../../images/liked-songs-300.png";
+import noImageAvailable from "../../images/no-image-available.jpg";
+
 import "./library.css";
 
 
 const Library = () => {
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [playlists, setPlaylists] = useState(undefined);
-  const [albums, setAlbums] = useState(undefined);
+  const [playlists, setPlaylists] = useState(null);
+  const [albums, setAlbums] = useState(null);
   const [likedSongsCount, setLikedSongsCount] = useState(null);
   const [artists, setArtists] = useState(null);
 
@@ -26,6 +30,7 @@ const Library = () => {
       const URL_USER_LIKED_SONGS = `${apiUrl}/me/tracks`;
       const URL_USER_FOLLOWING = `${apiUrl}/me/following?type=artist`;
 
+      setError(false);
       setLoading(true);
 
       axios
@@ -36,9 +41,16 @@ const Library = () => {
           },
         })
         .then((res) => {
-          setLikedSongsCount(res.data.total);
+          setLikedSongsCount(res.data.total ? res.data.total : null);
         })
-        .catch((e) => console.log(e.response));
+        .catch((e) => {
+          setLoading(false)
+          setError(e.response ?
+              `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
+              : "Error 500: Internal Server Error"
+          );
+          console.log(e)
+        });
 
 
       axios
@@ -49,10 +61,25 @@ const Library = () => {
           },
         })
         .then((res) => {
-          console.log(res.data);
-          setPlaylists(res.data.items);
+
+          setPlaylists(res.data.total ? res.data.items.map((playlist) => {
+            return {
+              id: playlist.id,
+              title: playlist.name,
+              image: playlist.images.length ? playlist.images[0].url : noImageAvailable,
+              owner: playlist.owner.display_name,
+              uri: playlist.uri,
+            }
+          }): null);
         })
-        .catch((e) => console.log(e.response));
+        .catch((e) => {
+          setLoading(false)
+          setError(e.response ?
+              `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
+              : "Error 500: Internal Server Error"
+          );
+          console.log(e)
+        });
 
       axios
         .get(URL_USER_FOLLOWING, {
@@ -62,10 +89,25 @@ const Library = () => {
           },
         })
         .then((res) => {
-          console.log(res.data);
-          setArtists(res.data.artists.items);
+
+          setArtists(res.data.artists.total ? res.data.artists.items.map((artist) => {
+            return {
+              id: artist.id,
+              name: artist.name,
+              image: artist.images.length ? artist.images[0].url : noImageAvailable,
+              uri: artist.uri,
+            };
+          }) : null);
+
         })
-        .catch((e) => console.log(e.response));
+        .catch((e) => {
+          setLoading(false)
+          setError(e.response ?
+              `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
+              : "Error 500: Internal Server Error"
+          );
+          console.log(e)
+        });
 
       axios
         .get(URL_ALBUMS, {
@@ -75,11 +117,30 @@ const Library = () => {
           },
         })
         .then((res) => {
-          console.log(res);
-          setAlbums(res.data.items);
+
+          setAlbums(res.data.total ? res.data.items.map((album) => {
+            return {
+              id: album.album.id,
+              title: album.album.name,
+              image: album.album.images.length ? album.album.images[0].url : noImageAvailable,
+              artists: album.album.artists
+                  .map((artist) => {
+                    return artist.name;
+                  })
+                  .join(","),
+              uri: album.album.uri,
+            };
+          }) : null);
           setLoading(false);
         })
-        .catch((e) => console.log(e.response));
+        .catch((e) => {
+          setLoading(false)
+          setError(e.response ?
+              `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
+              : "Error 500: Internal Server Error"
+          );
+          console.log(e)
+        });
     }
   }
 
@@ -120,6 +181,27 @@ const Library = () => {
     );
   }
 
+  if (error) {
+    return (
+        <section id="library">
+          <div className="container">
+            <h1 className="header">{error}</h1>
+          </div>
+        </section>
+    );
+  }
+
+  if (!likedSongsCount && !artists && !playlists && !albums && !error) {
+    return (
+        <section id="library">
+          <div className="container">
+            <h1 className="header">Library</h1>
+            <p className="err-text">Your Library is Empty</p>
+          </div>
+        </section>
+    );
+  }
+
   if (!access_token && !loading) {
     return (
         <section id="library">
@@ -136,11 +218,13 @@ const Library = () => {
 
   return (
       <section id="library">
+
         <div className="container">
+
           <h1 className="header">Library</h1>
 
           {likedSongsCount && (
-              <>
+              <div id="liked-songs">
                 <p className="title">Liked Songs</p>
                 <div className="card-list" id="albums">
                   <Card
@@ -151,10 +235,10 @@ const Library = () => {
                       albumRedir={redirToTracks}
                   />
                 </div>
-              </>
+              </div>
           )}
 
-          <p className="title">Playlist</p>
+          {playlists && <p className="title">Playlist</p>}
           <div className="card-list" id="albums">
             {playlists &&
             playlists.map((playlist) => {
@@ -162,8 +246,8 @@ const Library = () => {
                   <Card
                       key={playlist.id}
                       id={playlist.id}
-                      heading={playlist.name}
-                      image={playlist.images[0].url}
+                      heading={playlist.title}
+                      image={playlist.image}
                       // clickHandler={this.props.onPlaySong}
                       uri={playlist.uri}
                       albumId={playlist.id}
@@ -173,7 +257,7 @@ const Library = () => {
             })}
           </div>
 
-          <p className="title">Artists</p>
+          {artists && <p className="title">Artists</p>}
           <div className="card-list" id="albums">
             {artists &&
             artists.map((artist) => {
@@ -182,7 +266,7 @@ const Library = () => {
                       key={artist.id}
                       id={artist.id}
                       heading={artist.name}
-                      image={artist.images[0].url}
+                      image={artist.image}
                       uri={artist.uri}
                       clickHandler={redirToArtist}
                   />
@@ -190,19 +274,19 @@ const Library = () => {
             })}
           </div>
 
-          <p className="title">Albums</p>
+          {albums && <p className="title">Albums</p>}
           <div className="card-list" id="albums">
             {albums &&
             albums.map((album) => {
               return (
                   <Card
-                      key={album.album.id}
-                      id={album.album.id}
-                      heading={album.album.name}
-                      image={album.album.images[0].url}
+                      key={album.id}
+                      id={album.id}
+                      heading={album.name}
+                      image={album.image}
                       // clickHandler={this.props.onPlaySong}
-                      uri={album.album.uri}
-                      albumId={album.album.id}
+                      uri={album.uri}
+                      albumId={album.id}
                       albumRedir={redirToAlbum}
                   />
               );
