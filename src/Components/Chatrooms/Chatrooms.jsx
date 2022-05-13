@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./Chatrooms.css";
 import axios from "axios";
+import Spinner from "../Spinner";
 const TOKEN = window.localStorage.getItem("token");
 //console.log(TOKEN);
 const URL = "https://api.spotify.com/v1";
@@ -23,9 +24,11 @@ function ChatroomMaker() {
   const [room, setRoom] = useState();
   const [usrData, setUsrData] = useState();
   const [genres, setGenres] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [state, setState] = useState({ message: "", uid:"",name: "",});
   const [chat, setChat] = useState([]);
-
+  let socketFlag=false;
   //Server setup
   useEffect(() => {
     socket = io(process.env.REACT_APP_API_URL);
@@ -60,6 +63,10 @@ function ChatroomMaker() {
             userjoin(user.displayName,user.uid,roomnumber)
             // userjoin(user.displayName,roomnumber);
           }
+          else {
+            setError(true);
+            console.log("Error")
+          }
         });
     }
     getGenre();
@@ -75,7 +82,8 @@ function ChatroomMaker() {
     async function getHistory() {
       console.log("fetch start!", room)
       if (room !== undefined) {
-        console.log("Room check:",room)
+        console.log("Room check:", room)
+        setLoading(false)
         await axios.get(`http://localhost:5001/chatHistory/${room}`)
           .then((res) => {
           let msgs=res.data.chatHistory.msg
@@ -93,15 +101,15 @@ function ChatroomMaker() {
               }]);
             }
         })
-        .catch((e) => console.log(e.response));
+          .catch((e) => console.log(e));
+          //setError(true) 
       }
-      
     }
     getHistory();
   }, [room])
   
   const userjoin = (name,uid,room) => {
-    if (name !== undefined ||name) {
+    if (name !== undefined ||name||!uid||!room) {
       console.log("defined:",name,uid,room);
       socket.emit("user_join", { name,uid, room });
       return () => {
@@ -109,9 +117,11 @@ function ChatroomMaker() {
         socket.off("receiveMsg");
       };
     }
+    else {
+      setError(true)
+    }
   };
   
-
   useEffect(() => {
     // console.log("scroll effects")
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -130,6 +140,7 @@ function ChatroomMaker() {
     //console.log("is this firing")
     socket.on("user_join", function (data) {
       //console.log("user_join",data)
+      setLoading(false);
       setChat((chat) => [
         ...chat,
         {
@@ -188,7 +199,29 @@ function ChatroomMaker() {
     socket.disconnect();
     history(`/home`);
   }
+
+  if (error === true) {
+    return (
+      <div>
+        <h1> Error: User not logged in</h1>
+      </div>
+    )
+  }
   //console.log(room);
+  if (loading === true) {
+    return (
+      <div>
+        <h1 id="chatTitle">Current room: {room}</h1>
+        <button id="leaveBtn" onClick={leaveRoom}> Leave Room</button>
+        <div id="cardChat">
+          <h1 >Chat Log</h1>
+          <div id="render-chat">
+            <Spinner />
+          </div>
+        </div>
+      </div>
+    )
+  }
   return (
     <div>
       <h1 id="chatTitle">Current room: {room}</h1>
@@ -196,7 +229,8 @@ function ChatroomMaker() {
       <button id="leaveBtn" onClick={leaveRoom}> Leave Room</button>
       <div id="cardChat">
         <h1 >Chat Log</h1>
-          <div id="render-chat">
+        <div id="render-chat">
+        {/* <Spinner /> */}
             {renderChat()}
           </div>
       </div>
