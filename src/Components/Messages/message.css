@@ -1,7 +1,11 @@
+#home .grid .right .header {
+  height: 80%;
+  overflow: scroll;
+}
 #home .grid .right .header .messageContainer {
   overflow-x: hidden;
   overflow-y: scroll;
-  height: 70vh;
+  height: 60%;
 }
 
 #home .grid .right .header .messageContainer::-webkit-scrollbar {
