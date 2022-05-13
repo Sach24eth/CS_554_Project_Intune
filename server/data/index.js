@@ -1,3 +1,4 @@
 const space = require("./space");
-
-module.exports = { space };
+const chatroom = require("./chatroom");
+const users = require("./users");
+module.exports = { space, chatroom, users };
