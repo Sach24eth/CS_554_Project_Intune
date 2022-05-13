@@ -148,8 +148,8 @@ const App = () => {
           <Route path="/me/forgot-password" element={<ChangePassword />} />
           <Route path="/album" element={<AlbumPage />} />
           <Route path="/chatrooms" element={<ChatRoom />} />
-          <Route path="*" element={<UhOh />} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="*" element={<UhOh />} />
         </Routes>
         {hidePlayer ? (
           <Player connection={connection} hide={hidePlayer} />

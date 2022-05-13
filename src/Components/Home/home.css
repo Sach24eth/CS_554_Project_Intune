@@ -9,11 +9,9 @@
   display: none;
 }
 
-#home .grid {
+#home .container {
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
 }
 
 #home .grid .right {
