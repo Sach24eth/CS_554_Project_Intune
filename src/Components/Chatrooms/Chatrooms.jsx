@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./Chatrooms.css";
 import axios from "axios";
+const Firestore = require("../../Firebase/Firestore")
 const TOKEN = window.localStorage.getItem("token");
 //console.log(TOKEN);
 const URL = "https://api.spotify.com/v1";
@@ -91,6 +92,7 @@ function ChatroomMaker() {
     console.log("is this firing")
     socket.on("user_join", function (data) {
       console.log("user_join",data)
+      Firestore.addGenreToList(data.room);
       setChat((chat) => [
         ...chat,
         {

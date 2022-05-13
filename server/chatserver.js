@@ -8,6 +8,7 @@ var cookieParser = require("cookie-parser");
 const data = require("./data");
 const space = data.space;
 
+
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -95,6 +96,8 @@ io.on("connection", (socket) => {
 
   socket.on("user_join", ({ name, room }) => {
     socket.join(room);
+    
+   // firestore.addGenreToList()
     io.to(room).emit("user_join", { name, room });
   });
 
