@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../Spinner";
+import { useSelector } from "react-redux";
 const Firestore = require("../../Firebase/Firestore");
 
 const GenrePicker = () => {
@@ -21,6 +22,17 @@ const GenrePicker = () => {
   let delay = 0;
   const TOKEN = window.localStorage.getItem("token");
   const URL = "https://api.spotify.com/v1";
+
+  useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 0) {
+      history("/auth/login");
+    }
+  }, []);
+
   useEffect(() => {
     setLoading(true);
 

@@ -18,6 +18,17 @@ const Artist = () => {
   const access_token = window.localStorage.getItem("access_token") || null;
 
   const history = useNavigate();
+
+  useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 0) {
+      history("/auth/login");
+    }
+  }, []);
+
   const redirToAlbum = (e) => {
     const id = e.target.id;
     history(`/album?id=${id.split(":")[2]}`);

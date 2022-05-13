@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 import generateToken from "./Services/generateToken";
 import GenrePicker from "./Components/GenrePicker";
 import Navbar from "./Components/Navigation";
@@ -140,7 +145,6 @@ const App = () => {
           <Route path="/artist" element={<Artist />} />
           <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/me/forgot-password" element={<ChangePassword />} />
-          <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/album" element={<AlbumPage />} />
           <Route path="/chatrooms" element={<ChatRoom />} />
           <Route path="*" element={<UhOh />} />
