@@ -251,7 +251,8 @@ function ChatroomMaker() {
     );
   }
   return (
-    <div>
+    <section id="chats">
+      <div className='container'>
       <h1 id="chatTitle">Current room: {room}</h1>
       {/* {state.name && ( */}
       <button id="leaveBtn" onClick={leaveRoom}>
@@ -279,6 +280,7 @@ function ChatroomMaker() {
       </form>
       {/* )} */}
     </div>
+    </section>
   );
 }
 

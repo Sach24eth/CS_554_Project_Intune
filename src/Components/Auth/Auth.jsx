@@ -112,7 +112,7 @@ const Auth = (props) => {
           }
         }
       }
-      setLoading(false);
+      // /setLoading(false);
     }
   };
   const googleLogin = async () => {
