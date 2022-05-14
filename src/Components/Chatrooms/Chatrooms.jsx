@@ -220,6 +220,7 @@ function ChatroomMaker() {
     console.log("leaving..");
     //console.log("args",state);
     socket.emit("room-disconnect", { uid: state.uid, room: room });
+    Firestore.removeGenreFromList(room);
     socket.disconnect();
     history(`/home`);
   };
