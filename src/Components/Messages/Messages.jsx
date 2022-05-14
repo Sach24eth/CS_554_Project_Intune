@@ -50,7 +50,7 @@ const Messages = () => {
       });
     }
     getGenre();
-  }, [TOKEN]); //
+  }, [TOKEN]); 
 
   useEffect(() => {
     async function searchRooms() {
