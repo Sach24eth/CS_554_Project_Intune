@@ -18,11 +18,12 @@ const Callback = () => {
 
     return;
   }, []);
+
   useEffect(() => {
     const code = new URLSearchParams(window.location.search).get("code");
     async function getAccessToken() {
       axios
-        .post(`${process.env.REACT_APP_API_URL}/login`, {
+        .post(`${process.env.REACT_APP_API_URL}login`, {
           code: code,
         })
         .then((res) => {

@@ -44,7 +44,6 @@ class Dashboard extends Component {
   fetchData(genricToken, user_access_token) {
     const apiUrl = "https://api.spotify.com/v1";
     const URL_RELEASES = `${apiUrl}/browse/new-releases?country=US`;
-    const URL_CATEGORY = `${apiUrl}/browse/categories`;
     const URL_USER_TOP = `${apiUrl}/me/top/tracks`;
     const URL_USER_FOLLOWING = `${apiUrl}/me/following?type=artist`;
 
@@ -56,7 +55,6 @@ class Dashboard extends Component {
         },
       })
       .then((res) => {
-        console.log(res);
         this.setState({
           albums: res.data.albums.items,
         });
