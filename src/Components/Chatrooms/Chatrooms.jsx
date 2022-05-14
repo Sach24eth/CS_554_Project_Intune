@@ -6,12 +6,13 @@ import axios from "axios";
 import Spinner from "../Spinner";
 import "./Chatrooms.css";
 const Firestore = require("../../Firebase/Firestore");
-const TOKEN = window.localStorage.getItem("token");
+
 //console.log(TOKEN);
 const URL = "https://api.spotify.com/v1";
 
 let socket;
 function ChatroomMaker() {
+  const TOKEN = window.localStorage.getItem("token");
   const auth = getAuth();
   const history = useNavigate();
   let scrollRef = useRef();
@@ -220,7 +221,6 @@ function ChatroomMaker() {
     console.log("leaving..");
     //console.log("args",state);
     socket.emit("room-disconnect", { uid: state.uid, room: room });
-    Firestore.removeGenreFromList(room);
     socket.disconnect();
     history(`/home`);
   };
