@@ -18,6 +18,17 @@ const Artist = () => {
   const access_token = window.localStorage.getItem("access_token") || null;
 
   const history = useNavigate();
+
+  useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 0) {
+      history("/auth/login");
+    }
+  }, []);
+
   const redirToAlbum = (e) => {
     const id = e.target.id;
     history(`/album?id=${id.split(":")[2]}`);
@@ -174,7 +185,7 @@ const Artist = () => {
                             <p>{i + 1}</p>
                             <div className="image">
                               <img
-                                src={track.album.images[2].url}
+                                src={track.album.images[2].url || NoImage}
                                 alt={track.name}
                               />
                             </div>
@@ -209,7 +220,7 @@ const Artist = () => {
                           <p id={album.uri}>{i + 1}</p>
                           <div className="image" id={album.uri}>
                             <img
-                              src={album.images[2].url}
+                              src={album.images[2].url || NoImage}
                               id={album.uri}
                               alt={album.name}
                             />

@@ -6,18 +6,31 @@ import axios from "axios";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
-
+import { useNavigate } from "react-router-dom";
 import { updateSpotifyPlayerState } from "../../Redux/Actions/Player";
 
 const User = ({ connection }) => {
+  const history = useNavigate();
+  useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 0) {
+      history("/auth/login");
+    }
+
+    return;
+  }, []);
   const auth = getAuth();
   const [user, setUser] = useState({});
   const [userAuth, setUserAuth] = useState([]);
   const dispatch = useDispatch();
   const [isLoggedInWithSpotify, setIsLoggedInWithSpotify] = useState(undefined);
   const userEmail =
-    JSON.parse(window.localStorage.getItem("userDetails")).email || null;
+    JSON.parse(window.localStorage.getItem("userDetails"))?.email || null;
   window.history.pushState(null, document.title, "/me");
+
   useEffect(() => {
     let access_token = window.localStorage.getItem("access_token");
     let userLS = window.localStorage.getItem("user");
@@ -68,7 +81,6 @@ const User = ({ connection }) => {
     setIsLoggedInWithSpotify(false);
 
     window.location.reload();
-
   };
 
   return (

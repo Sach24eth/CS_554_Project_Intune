@@ -6,7 +6,8 @@ import Spaceship from "./Spaceship";
 import { toast, ToastContainer } from "react-toastify";
 import Spinner from "../Spinner";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setInviteCode } from "../../Redux/Actions/Space";
 
 let socket = null;
 let attempts = 0;
@@ -23,9 +24,9 @@ const Space = ({ hide, hideStatus }) => {
   const playerState =
     JSON.parse(window?.localStorage?.getItem("user"))?.accountType ===
       "premium" || false;
-  let inviteCode = new URLSearchParams(window.location.search).get(
-    "inviteCode"
-  );
+  let inviteCode =
+    new URLSearchParams(window.location.search).get("inviteCode") ||
+    window.localStorage.getItem("code");
 
   const history = useNavigate();
 
@@ -78,18 +79,26 @@ const Space = ({ hide, hideStatus }) => {
     socketConnection();
     return () => {
       hide(false);
+      console.log({
+        username: user.displayName,
+        uid: user.uid,
+        inviteCode: inviteCode,
+      });
       socket.emit(
         "user-space-disconnect",
         {
           username: user.displayName,
           uid: user.uid,
-          inviteCode,
+          inviteCode: inviteCode,
         },
         (err) => {
           toast.error(err.message);
         }
       );
+
       socket.disconnect();
+      // window.localStorage.removeItem("code");
+      // dispatch(setInvCode(null));
       clearInterval(connectionAttempt);
     };
   }, []);
@@ -106,6 +115,8 @@ const Space = ({ hide, hideStatus }) => {
 
   const joinSpace = (code) => {
     if (!playerState) return toast.error("Connect to Spotify to start Space");
+
+    dispatch(setInviteCode(code));
     socket.emit(
       "user-space-connect",
       {
