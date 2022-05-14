@@ -106,7 +106,6 @@ const Space = ({ hide, hideStatus }) => {
   useEffect(() => {
     if (joiningViaInvite) {
       let code = new URLSearchParams(window.location.search).get("inviteCode");
-
       joinSpace(code);
     } else {
       created(false);
