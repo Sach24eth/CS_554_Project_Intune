@@ -109,7 +109,7 @@ const Welcome = (props) => {
           <p>
             A place to chill, relax and enjoy your favorite songs with your
             friends.
-            <br /> Add up-to 6 Spotify Premium users.
+            {/* <br /> Add up-to 6 Spotify Premium users. */}
           </p>
         </div>
         <div className="get-started" onClick={createSpace}>
