@@ -33,7 +33,7 @@ const Home = () => {
 
   const getAccessToken = (refreshToken) => {
     axios
-      .post(`${process.env.REACT_APP_API_URL}/refresh`, { refreshToken })
+      .post(`${process.env.REACT_APP_API_URL}refresh`, { refreshToken })
       .then((res) => {
         console.log("Token refreshed and set.");
         window.localStorage.setItem("access_token", res.data.accessToken);
