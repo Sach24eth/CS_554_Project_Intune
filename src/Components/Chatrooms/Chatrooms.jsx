@@ -225,14 +225,14 @@ function ChatroomMaker() {
     )
   }
   return (
-    <div>
+    <section id="chats">
+      <div className='container'>
       <h1 id="chatTitle">Current room: {room}</h1>
       {/* {state.name && ( */}
       <button id="leaveBtn" onClick={leaveRoom}> Leave Room</button>
-      <div id="cardChat">
+      <div className="cardChat">
         <h1 >Chat Log</h1>
         <div id="render-chat">
-        {/* <Spinner /> */}
             {renderChat()}
           </div>
       </div>
@@ -240,7 +240,7 @@ function ChatroomMaker() {
             <div>
               <input
               name="message"
-              placeholder="Say 'hi!'"
+              placeholder="Say 'Hi!'"
               id="message"
               variant="outlined"
               label="Message"
@@ -250,6 +250,7 @@ function ChatroomMaker() {
           </form>
       {/* )} */}
     </div>
+    </section>
   );
 }
 

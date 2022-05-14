@@ -70,7 +70,7 @@ const Messages = () => {
               // setNoRes('false')
             }
           }
-          console.log("not on state results:", searchResults.length);
+          //console.log("not on state results:", searchResults.length);
           if (searchResults.length > 0) {
             setUsrGenres(searchResults);
           } else if (searchResults.length === 0) {
