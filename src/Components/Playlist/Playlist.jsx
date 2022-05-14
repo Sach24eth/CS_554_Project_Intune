@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { Table } from "../Table/table";
 import "./playlist.css";
+import NoImage from "../../images/no-image-available.jpg";
 
 class Playlist extends Component {
   constructor(props) {
@@ -67,7 +68,7 @@ class Playlist extends Component {
                   <img
                     width={200}
                     height={200}
-                    src={this.state.playlist.images[0].url}
+                    src={this.state.playlist.images[0].url || NoImage}
                     alt={this.state.playlist.name}
                   />
                   <div className="playlist-container">

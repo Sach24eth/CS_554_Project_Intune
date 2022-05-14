@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../Spinner";
+import { useSelector } from "react-redux";
 const Firestore = require("../../Firebase/Firestore");
 
 const GenrePicker = () => {
@@ -21,6 +22,17 @@ const GenrePicker = () => {
   let delay = 0;
   const TOKEN = window.localStorage.getItem("token");
   const URL = "https://api.spotify.com/v1";
+
+  useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 0) {
+      history("/auth/login");
+    }
+  }, []);
+
   useEffect(() => {
     setLoading(true);
 
@@ -88,12 +100,10 @@ const GenrePicker = () => {
 
   const submitGenre = async () => {
     setAdding(true);
-    await Firestore.updateGenre(selected);
-    const uid = JSON.parse(window.localStorage.getItem("userDetails")).uid;
-    const hasGenres = await Firestore.getGenreData(uid);
+    const update = await Firestore.updateGenre(selected);
     setAdding(false);
-    if (hasGenres.hasData) history("/home");
-    else toast.error("Error updating genres.");
+    if (update) history("/home");
+    else toast.error("Error updating genres");
   };
 
   return (

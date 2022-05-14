@@ -79,15 +79,16 @@ const Home = () => {
 
   return (
     <section id="home">
-      <div className="grid">
+      <div className="container">
         <div className="left">
           <SpotifyHome greeting={greeting} username={username} />
         </div>
+      </div>
+      {/* <div className="grid">
         <div className="right">
           <Messages />
         </div>
-        {/* <Player /> */}
-      </div>
+      </div> */}
     </section>
   );
 };

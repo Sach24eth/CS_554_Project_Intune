@@ -1,9 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Spinner from "../../Spinner";
 import { ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import "./password.css";
 const Firebase = require("../../../Firebase/Firebase");
 const ChangePassword = () => {
+  const history = useNavigate();
+  useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 0) {
+      history("/auth/login");
+    }
+
+    return;
+  }, []);
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [err, setErr] = useState(undefined);
@@ -12,10 +25,10 @@ const ChangePassword = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     console.log(formData);
   };
- const resetPassword = async () => {
+  const resetPassword = async () => {
     Firebase.ResetPassword();
     setDisplayReset(false);
- }
+  };
   const onSubmitForm = async (e) => {
     setIsLoading(true);
     console.log("hello");
@@ -26,11 +39,11 @@ const ChangePassword = () => {
     } else if (formData.newPassword !== formData.repeatPassword) {
       setIsLoading(false);
       return setErr("Passwords do not match");
-    }else{
+    } else {
       setIsLoading(false);
-      const checkIfUpdated=Firebase.ChangePassword(formData)
-      console.log("updated?",checkIfUpdated);
-      if(!checkIfUpdated){
+      const checkIfUpdated = Firebase.ChangePassword(formData);
+      console.log("updated?", checkIfUpdated);
+      if (!checkIfUpdated) {
         setDisplayReset(true);
       }
     }
@@ -73,7 +86,9 @@ const ChangePassword = () => {
         <p>{err}</p>
         <br></br>
         {displayReset && (
-          <p className="reset-password" onClick={resetPassword}>Click to reset your password</p>
+          <p className="reset-password" onClick={resetPassword}>
+            Click to reset your password
+          </p>
         )}
       </div>
     </section>

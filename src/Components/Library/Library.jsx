@@ -1,26 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-
 import axios from "axios";
-
 import Card from "../Card/Card";
+import NoImage from "../../images/no-image-available.jpg";
+import { NavLink, useNavigate } from "react-router-dom";
 import likedSongsImage from "../../images/liked-songs-300.png";
-import noImageAvailable from "../../images/no-image-available.jpg";
-
 import "./library.css";
 
-
 const Library = () => {
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [playlists, setPlaylists] = useState(null);
-  const [albums, setAlbums] = useState(null);
+  const [playlists, setPlaylists] = useState(undefined);
+  const [albums, setAlbums] = useState(undefined);
   const [likedSongsCount, setLikedSongsCount] = useState(null);
   const [artists, setArtists] = useState(null);
 
   let access_token = window.localStorage.getItem("access_token");
   let navigate = useNavigate();
-
 
   function fetchData() {
     if (access_token) {
@@ -30,7 +24,6 @@ const Library = () => {
       const URL_USER_LIKED_SONGS = `${apiUrl}/me/tracks`;
       const URL_USER_FOLLOWING = `${apiUrl}/me/following?type=artist`;
 
-      setError(false);
       setLoading(true);
 
       axios
@@ -41,17 +34,9 @@ const Library = () => {
           },
         })
         .then((res) => {
-          setLikedSongsCount(res.data.total ? res.data.total : null);
+          setLikedSongsCount(res.data.total);
         })
-        .catch((e) => {
-          setLoading(false)
-          setError(e.response ?
-              `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
-              : "Error 500: Internal Server Error"
-          );
-          console.log(e)
-        });
-
+        .catch((e) => console.log(e.response));
 
       axios
         .get(URL_USER_PlAYLISTS, {
@@ -61,25 +46,10 @@ const Library = () => {
           },
         })
         .then((res) => {
-
-          setPlaylists(res.data.total ? res.data.items.map((playlist) => {
-            return {
-              id: playlist.id,
-              title: playlist.name,
-              image: playlist.images.length ? playlist.images[0].url : noImageAvailable,
-              owner: playlist.owner.display_name,
-              uri: playlist.uri,
-            }
-          }): null);
+          console.log(res.data);
+          setPlaylists(res.data.items);
         })
-        .catch((e) => {
-          setLoading(false)
-          setError(e.response ?
-              `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
-              : "Error 500: Internal Server Error"
-          );
-          console.log(e)
-        });
+        .catch((e) => console.log(e.response));
 
       axios
         .get(URL_USER_FOLLOWING, {
@@ -89,25 +59,10 @@ const Library = () => {
           },
         })
         .then((res) => {
-
-          setArtists(res.data.artists.total ? res.data.artists.items.map((artist) => {
-            return {
-              id: artist.id,
-              name: artist.name,
-              image: artist.images.length ? artist.images[0].url : noImageAvailable,
-              uri: artist.uri,
-            };
-          }) : null);
-
+          console.log(res.data);
+          setArtists(res.data.artists.items);
         })
-        .catch((e) => {
-          setLoading(false)
-          setError(e.response ?
-              `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
-              : "Error 500: Internal Server Error"
-          );
-          console.log(e)
-        });
+        .catch((e) => console.log(e.response));
 
       axios
         .get(URL_ALBUMS, {
@@ -117,30 +72,11 @@ const Library = () => {
           },
         })
         .then((res) => {
-
-          setAlbums(res.data.total ? res.data.items.map((album) => {
-            return {
-              id: album.album.id,
-              title: album.album.name,
-              image: album.album.images.length ? album.album.images[0].url : noImageAvailable,
-              artists: album.album.artists
-                  .map((artist) => {
-                    return artist.name;
-                  })
-                  .join(","),
-              uri: album.album.uri,
-            };
-          }) : null);
+          console.log(res);
+          setAlbums(res.data.items);
           setLoading(false);
         })
-        .catch((e) => {
-          setLoading(false)
-          setError(e.response ?
-              `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
-              : "Error 500: Internal Server Error"
-          );
-          console.log(e)
-        });
+        .catch((e) => console.log(e.response));
     }
   }
 
@@ -149,12 +85,10 @@ const Library = () => {
     else setLoading(false);
   }, [access_token]);
 
-
   const redirToPlaylist = (e) => {
     const albumId = e.target.parentNode.parentNode.id;
     navigate("/playlist?id=" + albumId.split(":")[2]);
   };
-
 
   const redirToAlbum = (e) => {
     const albumId = e.target.parentNode.parentNode.id;
@@ -165,7 +99,6 @@ const Library = () => {
     const albumId = e.target.id;
     navigate("/artist?id=" + albumId.split(":")[2]);
   };
-
 
   const redirToTracks = () => {
     navigate("/liked-songs");
@@ -181,121 +114,96 @@ const Library = () => {
     );
   }
 
-  if (error) {
-    return (
-        <section id="library">
-          <div className="container">
-            <h1 className="header">{error}</h1>
-          </div>
-        </section>
-    );
-  }
-
-  if (!likedSongsCount && !artists && !playlists && !albums && !error) {
-    return (
-        <section id="library">
-          <div className="container">
-            <h1 className="header">Library</h1>
-            <p className="err-text">Your Library is Empty</p>
-          </div>
-        </section>
-    );
-  }
-
   if (!access_token && !loading) {
     return (
-        <section id="library">
-          <div className="container">
-            <h1 className="header">Library</h1>
-            <p className="err-text">You are Not Connected to Spotify</p>
-            <NavLink to={"/me"} className="connect">
-              Connect to Spotify
-            </NavLink>
-          </div>
-        </section>
+      <section id="library">
+        <div className="container">
+          <h1 className="header">Library</h1>
+          <p className="err-text">You are Not Connected to Spotify</p>
+          <NavLink to={"/me"} className="connect">
+            Connect to Spotify
+          </NavLink>
+        </div>
+      </section>
     );
   }
 
   return (
-      <section id="library">
+    <section id="library">
+      <div className="container">
+        <h1 className="header">Library</h1>
 
-        <div className="container">
+        {likedSongsCount && (
+          <>
+            <p className="title">Liked Songs</p>
+            <div className="card-list" id="albums">
+              <Card
+                id={"liked-songs"}
+                heading={`${likedSongsCount} Liked Songs`}
+                image={likedSongsImage}
+                albumId={"playlist.id"}
+                albumRedir={redirToTracks}
+              />
+            </div>
+          </>
+        )}
 
-          <h1 className="header">Library</h1>
-
-          {likedSongsCount && (
-              <div id="liked-songs">
-                <p className="title">Liked Songs</p>
-                <div className="card-list" id="albums">
-                  <Card
-                      id={"liked-songs"}
-                      heading={`${likedSongsCount} Liked Songs`}
-                      image={likedSongsImage}
-                      albumId={"playlist.id"}
-                      albumRedir={redirToTracks}
-                  />
-                </div>
-              </div>
-          )}
-
-          {playlists && <p className="title">Playlist</p>}
-          <div className="card-list" id="albums">
-            {playlists &&
+        <p className="title">Playlist</p>
+        <div className="card-list" id="albums">
+          {playlists &&
             playlists.map((playlist) => {
               return (
-                  <Card
-                      key={playlist.id}
-                      id={playlist.id}
-                      heading={playlist.title}
-                      image={playlist.image}
-                      // clickHandler={this.props.onPlaySong}
-                      uri={playlist.uri}
-                      albumId={playlist.id}
-                      albumRedir={redirToPlaylist}
-                  />
+                <Card
+                  key={playlist.id}
+                  id={playlist.id}
+                  heading={playlist.name}
+                  image={playlist.images[0].url || NoImage}
+                  // clickHandler={this.props.onPlaySong}
+                  uri={playlist.uri}
+                  albumId={playlist.id}
+                  albumRedir={redirToPlaylist}
+                />
               );
             })}
-          </div>
+        </div>
 
-          {artists && <p className="title">Artists</p>}
-          <div className="card-list" id="albums">
-            {artists &&
+        <p className="title">Artists</p>
+        <div className="card-list" id="albums">
+          {artists &&
             artists.map((artist) => {
               return (
-                  <Card
-                      key={artist.id}
-                      id={artist.id}
-                      heading={artist.name}
-                      image={artist.image}
-                      uri={artist.uri}
-                      clickHandler={redirToArtist}
-                  />
+                <Card
+                  key={artist.id}
+                  id={artist.id}
+                  heading={artist.name}
+                  image={artist.images[0].url || NoImage}
+                  uri={artist.uri}
+                  clickHandler={redirToArtist}
+                />
               );
             })}
-          </div>
+        </div>
 
-          {albums && <p className="title">Albums</p>}
-          <div className="card-list" id="albums">
-            {albums &&
+        <p className="title">Albums</p>
+        <div className="card-list" id="albums">
+          {albums &&
             albums.map((album) => {
               return (
-                  <Card
-                      key={album.id}
-                      id={album.id}
-                      heading={album.name}
-                      image={album.image}
-                      // clickHandler={this.props.onPlaySong}
-                      uri={album.uri}
-                      albumId={album.id}
-                      albumRedir={redirToAlbum}
-                  />
+                <Card
+                  key={album.album.id}
+                  id={album.album.id}
+                  heading={album.album.name}
+                  image={album.album.images[0].url || NoImage}
+                  uri={album.album.uri}
+                  albumId={album.album.id}
+                  albumRedir={redirToAlbum}
+                />
               );
             })}
-          </div>
         </div>
-      </section>
+      </div>
+    </section>
   );
-
 };
 
 export default Library;

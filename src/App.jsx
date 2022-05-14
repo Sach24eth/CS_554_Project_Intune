@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
 import generateToken from "./Services/generateToken";
 import GenrePicker from "./Components/GenrePicker";
 import Navbar from "./Components/Navigation";
@@ -18,11 +23,12 @@ import Player from "./Components/Player";
 import SpacePage from "./Pages/Space";
 import Artist from "./Components/Artist";
 import ChangePassword from "./Components/User/ForgotPassword";
-import Messages from "./Components/Messages"
+import Messages from "./Components/Messages";
 import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
 import { updateSpotifyPlayerState } from "./Redux/Actions/Player";
 import "./app.css";
+import UhOh from "./Components/UhOh/UhOh";
 
 const App = () => {
   const [auth, setAuth] = useState(false);
@@ -140,10 +146,10 @@ const App = () => {
           <Route path="/artist" element={<Artist />} />
           <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/me/forgot-password" element={<ChangePassword />} />
-          <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/album" element={<AlbumPage />} />
           <Route path="/chatrooms" element={<ChatRoom />} />
-          <Route path ="/messages" element={<Messages/>}/>
+          <Route path="/messages" element={<Messages />} />
+          <Route path="*" element={<UhOh />} />
         </Routes>
         {hidePlayer ? (
           <Player connection={connection} hide={hidePlayer} />
