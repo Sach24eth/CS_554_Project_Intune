@@ -30,6 +30,7 @@ const Player = (props) => {
   const [shuffle, setShuffle] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [previous, setPrevious] = useState(0);
   const token = window.localStorage.getItem("access_token");
   const apiUrl = "https://api.spotify.com/v1";
   let previousTime = 100000;
@@ -100,13 +101,15 @@ const Player = (props) => {
         });
         if (data) {
           if (!active) setActive(true);
-          if (data.progress_ms < previousTime || currentUri != data.item.id) {
+          if (data.progress_ms <= previous || currentUri !== data.item.id) {
             getData();
           }
+          console.log(data.progress_ms);
           setSeek(data.progress_ms);
           setProgress(convertToTime(data.progress_ms));
           setPlaying(data.is_playing);
-          previousTime = data.progress_ms;
+          setPrevious(data.progress_ms);
+          // previousTime = data.progress_ms;
           currentUri = data.item.id;
         }
         if (document.fullscreenElement == null) {
