@@ -32,11 +32,7 @@ const App = () => {
   const [connection, setConnection] = useState(false);
   const [hidePlayer, setHidePlayer] = useState(false);
   const refresh_token = window.localStorage.getItem("refresh_token") || null;
-  const accessTokenCreatedTime = window.localStorage.getItem(
-    "accessTokenCreatedTime"
-  );
-  let date = new Date();
-  const currentTime = date.getTime();
+
   const connectionToSpotify = (state) => {
     setConnection((connectionState) => state);
   };
@@ -169,11 +165,7 @@ const App = () => {
           <Route path="/messages" element={<Messages />} />
           <Route path="*" element={<UhOh />} />
         </Routes>
-        {hidePlayer ? (
-          <Player connection={connection} hide={hidePlayer} />
-        ) : (
-          <Player connection={connection} />
-        )}
+        <Player connection={connection} hide={hidePlayer} />
       </Router>
     </>
   );

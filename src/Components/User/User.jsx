@@ -49,7 +49,7 @@ const User = ({ connection }) => {
         return;
       }
       axios
-        .post(`${process.env.REACT_APP_API_URL}/me`, { access_token })
+        .post(`${process.env.REACT_APP_API_URL}me`, { access_token })
         .then((res) => {
           dispatch(updateSpotifyPlayerState(true));
           setUser(res.data);

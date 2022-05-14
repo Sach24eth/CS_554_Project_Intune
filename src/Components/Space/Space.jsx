@@ -12,6 +12,7 @@ import { setInviteCode } from "../../Redux/Actions/Space";
 let socket = null;
 let attempts = 0;
 let maxConnectionAttempts = 5;
+
 const Space = ({ hide, hideStatus }) => {
   const [spaceCreated, setSpaceCreated] = useState(false);
   const user = JSON.parse(window.localStorage.getItem("userDetails"));
@@ -24,6 +25,7 @@ const Space = ({ hide, hideStatus }) => {
   const playerState =
     JSON.parse(window?.localStorage?.getItem("user"))?.accountType ===
       "premium" || false;
+
   let inviteCode =
     new URLSearchParams(window.location.search).get("inviteCode") ||
     window.localStorage.getItem("code");
