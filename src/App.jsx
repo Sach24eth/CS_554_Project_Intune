@@ -169,11 +169,7 @@ const App = () => {
           <Route path="/messages" element={<Messages />} />
           <Route path="*" element={<UhOh />} />
         </Routes>
-        {hidePlayer ? (
-          <Player connection={connection} hide={hidePlayer} />
-        ) : (
-          <Player connection={connection} />
-        )}
+        <Player connection={connection} hide={hidePlayer} />
       </Router>
     </>
   );

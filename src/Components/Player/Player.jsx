@@ -429,7 +429,7 @@ const Player = (props) => {
           <div
             className="bottom-player"
             id="player"
-            style={props.hide && { visibility: "hidden" }}
+            style={{ visibility: props.hide ? "hidden" : "" }}
           >
             <div className="track-img">
               <img

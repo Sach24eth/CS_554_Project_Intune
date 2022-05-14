@@ -22,6 +22,7 @@ const User = ({ connection }) => {
 
     return;
   }, []);
+
   const auth = getAuth();
   const [user, setUser] = useState({});
   const [userAuth, setUserAuth] = useState([]);
@@ -49,7 +50,7 @@ const User = ({ connection }) => {
         return;
       }
       axios
-        .post(`${process.env.REACT_APP_API_URL}/me`, { access_token })
+        .post(`${process.env.REACT_APP_API_URL}me`, { access_token })
         .then((res) => {
           dispatch(updateSpotifyPlayerState(true));
           setUser(res.data);
