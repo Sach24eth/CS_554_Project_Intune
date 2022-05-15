@@ -40,7 +40,10 @@ const Space = ({ hide, hideStatus }) => {
     let connectionAttempt;
     let socketConnected = false;
     const socketConnection = async () => {
-      if (!socket) socket = io(process.env.REACT_APP_API_URL);
+      if (!socket)
+        socket = io(process.env.REACT_APP_API_URL, {
+          path: "/socket",
+        });
 
       socket.on("connect", () => {
         if (socket.id) {
