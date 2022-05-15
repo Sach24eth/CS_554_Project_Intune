@@ -101,7 +101,7 @@ function ChatroomMaker() {
         console.log("Room check:", room);
         setLoading(false);
         await axios
-          .get(`http://localhost:5001/chatHistory/${room}`)
+          .get(`${process.env.REACT_APP_API_URL}chatHistory/${room}`)
           .then((res) => {
             let msgs = res.data.chatHistory.msg;
             //console.log("chatHistory", msgs);
@@ -136,8 +136,7 @@ function ChatroomMaker() {
         //socketRef.current.off("receiveMsg");
         socket.off("receiveMsg");
       };
-    }
-    else {
+    } else {
       setError(true);
     }
   };
@@ -231,9 +230,9 @@ function ChatroomMaker() {
 
   if (error === true) {
     return (
-      <section id='errorCont'>
-        <div className='errorDiv'>
-          <h1 id='errorMsg'> Oops! Something went wrong! </h1>
+      <section id="errorCont">
+        <div className="errorDiv">
+          <h1 id="errorMsg"> Oops! Something went wrong! </h1>
         </div>
       </section>
     );
@@ -258,32 +257,30 @@ function ChatroomMaker() {
   }
   return (
     <section id="chats">
-      <div className='container'>
-      <h1 id="chatTitle">Current room: {room}</h1>
-      {/* {state.name && ( */}
-      <button id="leaveBtn" onClick={leaveRoom}>
-        {" "}
-        Leave Room
-      </button>
-      <div id="cardChat">
-        <h1 id='chatLog'>Chat Log</h1>
-        <div id="render-chat">
-          {renderChat()}
+      <div className="container">
+        <h1 id="chatTitle">Current room: {room}</h1>
+        {/* {state.name && ( */}
+        <button id="leaveBtn" onClick={leaveRoom}>
+          {" "}
+          Leave Room
+        </button>
+        <div id="cardChat">
+          <h1 id="chatLog">Chat Log</h1>
+          <div id="render-chat">{renderChat()}</div>
         </div>
+        <form id="messageSubmit" onSubmit={onMessageSubmit}>
+          <div>
+            <input
+              name="message"
+              placeholder="Say 'Hi!'"
+              id="message"
+              variant="outlined"
+              label="Message"
+            />
+          </div>
+          <button id="msgBtn">Send Message</button>
+        </form>
       </div>
-      <form id="messageSubmit" onSubmit={onMessageSubmit}>
-        <div>
-          <input
-            name="message"
-            placeholder="Say 'Hi!'"
-            id="message"
-            variant="outlined"
-            label="Message"
-          />
-        </div>
-        <button id="msgBtn">Send Message</button>
-      </form>
-    </div>
     </section>
   );
 }
