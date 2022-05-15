@@ -34,6 +34,10 @@
   user-select: none;
 }
 
+#user .container .spotify-btn .text {
+  color: white;
+}
+
 #user .container .connected {
   justify-content: center;
   text-align: center;
