@@ -1,26 +1,31 @@
 #home {
   width: 100vw;
-  height: calc(100vh - 75px);
+  max-height: calc(100vh - 75px - 100px);
   overflow-x: hidden;
+  overflow-y: scroll;
 }
 
-#home .grid {
+#home::-webkit-scrollbar {
+  display: none;
+}
+
+#home .container {
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-columns: 3fr 1fr;
 }
 
 #home .grid .right {
   padding: 1rem 1rem 0 1rem;
-  height: calc(100% - 100px);
+  height: 50%;
   background-color: var(--card-bg);
   border-radius: 6px;
+  position: sticky;
+  top: 0;
 }
 
 #home .grid .right .header {
   margin: 0;
-  height: 100%;
+  height: 60%;
 }
 
 #home .grid .right .header h1 {
@@ -52,6 +57,7 @@
 
 #home .grid .left {
   position: relative;
+  width: 100%;
   height: calc(100% - 75px);
   margin-bottom: 1rem;
   overflow: scroll;

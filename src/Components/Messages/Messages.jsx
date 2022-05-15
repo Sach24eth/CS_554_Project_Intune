@@ -6,9 +6,8 @@ import axios from "axios";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const firestore = require("../../Firebase/Firestore");
-const TOKEN = window.localStorage.getItem("token");
-
 const URL = "https://api.spotify.com/v1";
+
 const Messages = () => {
   const auth = getAuth();
   const history = useNavigate();
@@ -18,11 +17,10 @@ const Messages = () => {
   const [searchTerm, setSearchTerm] = useState();
   const [genres, setGenres] = useState([]);
   const [noRes, setNoRes] = useState("false");
-
+  const TOKEN = window.localStorage.getItem("token");
+  //console.log("TOKEN:", TOKEN)
   useEffect(() => {
     async function getGenre() {
-      // const id =JSON.parse(window.localStorage.getItem("userDetails")).uid || null;
-      // console.log(id)
       let id = null;
       axios
         .get(URL + "/recommendations/available-genre-seeds", {
@@ -32,13 +30,11 @@ const Messages = () => {
           },
         })
         .then((res) => {
-          //console.log("All Genres data",res.data.genres);
           setGenres(res.data.genres);
         })
         .catch((err) => console.log(err.response));
       onAuthStateChanged(auth, (user) => {
         if (user.uid || user) {
-          //console.log("userData:", user.displayName);
           setUsrData(user.displayName);
           firestore
             .getGenreData(user.uid)
@@ -54,26 +50,26 @@ const Messages = () => {
       });
     }
     getGenre();
-  }, []);
+  }, [TOKEN]); 
 
   useEffect(() => {
     async function searchRooms() {
       try {
         let searchResults = [];
-        if (searchTerm.length !== 0) {
-          console.log("Searching this:", searchTerm.length);
+        if (!searchTerm || searchTerm.length !== 0) {
+        
           for (let i = 0; i < genres.length; i++) {
-            //console.log("Genre:", genres[i], "searchTerm", searchTerm.toLowerCase())
+            
             let tfFlag = genres[i].includes(searchTerm.toLowerCase());
-            //console.log("TF Flag:", tfFlag);
+            
             if (tfFlag === true) {
-              // console.log("True vals", genres[i]);
+              
               let objRoom = { id: i, title: genres[i].toUpperCase() };
               searchResults.push(objRoom);
-              // setNoRes('false')
+        
             }
           }
-          console.log("not on state results:", searchResults.length);
+          
           if (searchResults.length > 0) {
             setUsrGenres(searchResults);
           } else if (searchResults.length === 0) {
@@ -82,7 +78,7 @@ const Messages = () => {
             const auth = getAuth();
             onAuthStateChanged(auth, (user) => {
               if (user.uid || user) {
-                //console.log("userData:", user.displayName);
+                
                 setUsrData(user.displayName);
                 firestore
                   .getGenreData(user.uid)
@@ -91,7 +87,6 @@ const Messages = () => {
                       tempMessagesRoom[i] = { id: i, title: res.genres[i] };
                     }
                     setUsrGenres(tempMessagesRoom);
-                    //console.log("Genre data",tempMessagesRoom);
                     if (!res.hasData) history("/genres");
                   })
                   .catch((err) => console.log(err));
@@ -99,13 +94,11 @@ const Messages = () => {
             });
           }
         }
-        //console.log("if searchTerm", searchTerm,":",searchTerm.length);
-        if (searchTerm.length === 0) {
+        if (!searchTerm || searchTerm.length === 0) {
           console.log("clear Triggers");
           searchResults = [];
           onAuthStateChanged(auth, (user) => {
             if (user.uid || user) {
-              //console.log("userData:", user.displayName);
               setUsrData(user.displayName);
               firestore
                 .getGenreData(user.uid)
@@ -114,7 +107,6 @@ const Messages = () => {
                     tempMessagesRoom[i] = { id: i, title: res.genres[i] };
                   }
                   setUsrGenres(tempMessagesRoom);
-                  //console.log("Genre data",tempMessagesRoom);
                   if (!res.hasData) history("/genres");
                 })
                 .catch((err) => console.log(err));
@@ -127,10 +119,6 @@ const Messages = () => {
     }
     searchRooms();
   }, [searchTerm]);
-  //console.log("Results:", searchRes);
-  //console.log("flag: ",noRes);
-  //console.log("All Genres:", genres);
-  //console.log("Outside: ", usrgenres)
   const resultText = (noResFlag) => {
     console.log("Functions", noResFlag);
     if (noRes === false) {
@@ -140,28 +128,32 @@ const Messages = () => {
   };
 
   return (
-    <div className="header">
-      <h1>Messages</h1>
-      <div className="search-chat">
-        <label>
-          <input
-            type={"text"}
-            placeholder="Search chatroom..."
-            name="search-chat"
-            onChange={(event) => {
-              setSearchTerm(event.target.value);
-            }}
-          />
-        </label>
+    <section id="rooms">
+      <div className="header">
+        <div className="container">
+          <h1>Chatrooms</h1>
+          <div className="search-chat">
+            <label>
+              <input
+                type={"text"}
+                placeholder="Search chatroom..."
+                name="search-chat"
+                onChange={(event) => {
+                  setSearchTerm(event.target.value);
+                }}
+              />
+            </label>
+          </div>
+          <br></br>
+          <div className="messageContainer">
+            {/* need to figure out how to display No results found in the window itself */}
+            {usrgenres.map((room, i) => {
+              return <MessageChatCard key={i} chat={room} userName={usrData} />;
+            })}
+          </div>
+        </div>
       </div>
-      <br></br>
-      <div className="messageContainer">
-        {/* need to figure out how to display No results found in the window itself */}
-        {usrgenres.map((room, i) => {
-          return <MessageChatCard key={i} chat={room} userName={usrData} />;
-        })}
-      </div>
-    </div>
+    </section>
   );
 };
 

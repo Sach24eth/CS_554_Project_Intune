@@ -13,6 +13,7 @@ import { BsBroadcast } from "react-icons/bs";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
+import NoImage from "../../images/no-image-available.jpg";
 
 const Player = (props) => {
   const history = useNavigate();
@@ -29,6 +30,7 @@ const Player = (props) => {
   const [shuffle, setShuffle] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [previous, setPrevious] = useState(0);
   const token = window.localStorage.getItem("access_token");
   const apiUrl = "https://api.spotify.com/v1";
   let previousTime = 100000;
@@ -99,13 +101,15 @@ const Player = (props) => {
         });
         if (data) {
           if (!active) setActive(true);
-          if (data.progress_ms < previousTime || currentUri != data.item.id) {
+          if (data.progress_ms <= previous || currentUri !== data.item.id) {
             getData();
           }
+          console.log(data.progress_ms);
           setSeek(data.progress_ms);
           setProgress(convertToTime(data.progress_ms));
           setPlaying(data.is_playing);
-          previousTime = data.progress_ms;
+          setPrevious(data.progress_ms);
+          // previousTime = data.progress_ms;
           currentUri = data.item.id;
         }
         if (document.fullscreenElement == null) {
@@ -425,10 +429,13 @@ const Player = (props) => {
           <div
             className="bottom-player"
             id="player"
-            style={props.hide && { visibility: "hidden" }}
+            style={{ visibility: props.hide ? "hidden" : "" }}
           >
             <div className="track-img">
-              <img src={currentSong.album.images[0].url} alt="track" />{" "}
+              <img
+                src={currentSong.album.images[0].url || NoImage}
+                alt="track"
+              />{" "}
               <div className="track-name">
                 <p className="song">{currentSong.name}</p>
                 <p className="artistName">

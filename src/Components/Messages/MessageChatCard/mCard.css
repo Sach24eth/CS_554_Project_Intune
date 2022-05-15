@@ -1,9 +1,7 @@
 .chat-info-card {
   width: calc(100% - 10px);
   background-color: var(--card-hover);
-  margin-bottom: 1rem;
-  padding: 10px 0 10px 10px;
-  padding-right: -20px;
+  padding: 0.5rem;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -13,6 +11,7 @@
   transition: background-color 0.1s ease-in-out;
   user-select: none;
 }
+
 .chat-info-card:hover {
   background-color: var(--accent-hover);
 }

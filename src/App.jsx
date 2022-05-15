@@ -18,6 +18,9 @@ import Player from "./Components/Player";
 import SpacePage from "./Pages/Space";
 import Artist from "./Components/Artist";
 import ChangePassword from "./Components/User/ForgotPassword";
+import Messages from "./Components/Messages";
+import UhOh from "./Components/UhOh/UhOh";
+import axios from "axios";
 import { useDispatch } from "react-redux";
 import { authLogin } from "./Redux/Actions/Auth";
 import { updateSpotifyPlayerState } from "./Redux/Actions/Player";
@@ -28,7 +31,12 @@ const App = () => {
   const dispatch = useDispatch();
   const [connection, setConnection] = useState(false);
   const [hidePlayer, setHidePlayer] = useState(false);
-
+  const refresh_token = window.localStorage.getItem("refresh_token") || null;
+  const accessTokenCreatedTime = window.localStorage.getItem(
+    "accessTokenCreatedTime"
+  );
+  let date = new Date();
+  const currentTime = date.getTime();
   const connectionToSpotify = (state) => {
     setConnection((connectionState) => state);
   };
@@ -36,6 +44,23 @@ const App = () => {
   const hideSpotifyPlayer = (status) => {
     console.log(status);
     setHidePlayer(status);
+  };
+
+  useEffect(() => {
+    if (!refresh_token) return;
+
+    getAccessToken(refresh_token);
+  });
+
+  const getAccessToken = (refreshToken) => {
+    axios
+      .post(`${process.env.REACT_APP_API_URL}refresh`, { refreshToken })
+      .then((res) => {
+        window.localStorage.setItem("access_token", res.data.accessToken);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
   };
 
   useEffect(() => {
@@ -101,11 +126,11 @@ const App = () => {
       window.localStorage.setItem("token", token);
       window.localStorage.setItem("tokenSetTime", dTime);
     }
-    if (
-      Number(currentTime) - Number(creationTime) >
-        Number(3600 * 1000) - 10000 ||
-      !window.localStorage.getItem("token")
-    )
+    // if (
+    //   Number(currentTime) - Number(creationTime) >
+    //     Number(3600 * 1000) - 10000 ||
+    //   !window.localStorage.getItem("token")
+    // )
       getToken();
   }, []);
 
@@ -139,15 +164,12 @@ const App = () => {
           <Route path="/artist" element={<Artist />} />
           <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/me/forgot-password" element={<ChangePassword />} />
-          <Route path="/liked-songs" element={<LikedSongsPage />} />
           <Route path="/album" element={<AlbumPage />} />
           <Route path="/chatrooms" element={<ChatRoom />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="*" element={<UhOh />} />
         </Routes>
-        {hidePlayer ? (
-          <Player connection={connection} hide={hidePlayer} />
-        ) : (
-          <Player connection={connection} />
-        )}
+        <Player connection={connection} hide={hidePlayer} />
       </Router>
     </>
   );

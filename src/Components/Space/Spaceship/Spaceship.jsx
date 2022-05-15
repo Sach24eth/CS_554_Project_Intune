@@ -29,6 +29,18 @@ const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
   useEffect(() => {
     socket.on("user-space-disconnected", (data) => {
       toast(`${data.username} left.`);
+      return;
+    });
+  });
+
+  useEffect(() => {
+    socket.on("user-space-owner-disconnected", (data) => {
+      console.log("Owner left");
+      toast.info("The owner of this space has disconnected");
+      toast.info(
+        "After this track, no more songs will be synced but songs already existing in the queue will continue to play until you leave"
+      );
+      return;
     });
   });
 
@@ -72,12 +84,6 @@ const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
           console.log(e);
         }
       }
-      // if (songPlaying.data.name !== song.name && spaceOwner) {
-      //   socket.emit("user-space-play", {
-      //     uri: song.data.uri,
-      //     inviteCode,
-      //   });
-      // }
     }
 
     const interval = setInterval(() => {

@@ -47,6 +47,7 @@ const Auth = (props) => {
     if (type === "Login") {
       if (email === "" || password === "") {
         toast.error("Please enter all the fields");
+        setLoading(false);
       } else {
         Firebase.AppUserLogin({ email, password })
           .then((status) => {
@@ -72,11 +73,13 @@ const Auth = (props) => {
           })
           .catch((err) => {
             toast.error(err);
+            setLoading(false);
           });
       }
     } else {
       if (email === "" || password === "" || repeat === "") {
         toast.error("Please enter all the fields");
+        setLoading(false);
       } else {
         if (password !== repeat) {
           toast.error("Passwords do not match");
@@ -109,7 +112,7 @@ const Auth = (props) => {
           }
         }
       }
-      setLoading(false);
+      // /setLoading(false);
     }
   };
   const googleLogin = async () => {

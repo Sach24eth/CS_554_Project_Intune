@@ -71,27 +71,49 @@ async function updateGenre(genreList) {
   const user = auth.currentUser;
   console.log("user", user);
   const querySnapshot = await getDocs(collection(db, "users"));
-  querySnapshot.forEach(async (docm) => {
-    if (docm.data().id === user.uid) {
-      console.log("doc", docm);
-      const userRef = doc(db, "users", docm.id);
-      const update = await updateDoc(userRef, {
+  console.log(querySnapshot.size);
+  let updateRes = {};
+  for (let i = 0; i < querySnapshot.size; i++) {
+    if (querySnapshot.docs[i].data().id === user.uid) {
+      const userRef = doc(db, "users", querySnapshot.docs[i].id);
+      updateDoc(userRef, {
         genres: genreList,
-      });
+      })
+        .then((res) => {
+          console.log(res);
+          console.log("Updated");
+          updateRes.updated = true;
+        })
+        .catch((err) => {
+          updateRes.updated = true;
+        });
 
-      console.log("Update");
-      console.log(update);
-      // .then(() => {
-      //   console.log("genre updated");
-      //   return { status: 200, updated: true };
-      // })
-      // .catch((error) => {
-      //   console.log("error", error);
-      //   updated = false;
-      //   return { status: 200, updated: false };
-      // });
+      return updateRes;
     }
-  });
+  }
+  // querySnapshot.forEach(async (docm) => {
+  //   if (docm.data().id === user.uid) {
+  //     console.log("doc", docm);
+  //     const userRef = doc(db, "users", docm.id);
+  //     const update = await updateDoc(userRef, {
+  //       genres: genreList,
+  //     });
+
+  //     console.log("Update");
+  //     console.log(update);
+  //     // .then(() => {
+  //     //   console.log("genre updated");
+  //     //   return { status: 200, updated: true };
+  //     // })
+  //     // .catch((error) => {
+  //     //   console.log("error", error);
+  //     //   updated = false;
+  //     //   return { status: 200, updated: false };
+  //     // });
+  //   }
+  // });
+  console.log(updateRes);
+  return updateRes;
 }
 
 async function getGenreData(uid) {
@@ -113,4 +135,47 @@ async function getGenreData(uid) {
   return hasGenre;
 }
 
-export { createUsersInFirestore, updateGenre, getGenreData };
+async function addGenreToList(genre) {
+  console.log("hit the addGenreToList", genre);
+  const auth = getAuth(app);
+  const user = auth.currentUser;
+  const querySnapshot = await getDocs(collection(db, "users"));
+  querySnapshot.forEach(async (docm) => {
+    if (docm.data().id === user.uid) {
+      const userRef = doc(db, "users", docm.id);
+      if(docm.data().genres.includes(genre)){
+        console.log("already exists");
+      }else{
+      const update = await updateDoc(userRef, {
+        genres: [...docm.data().genres, genre],
+      });
+      console.log("Update");
+      console.log(update);
+    }
+    }
+  });
+}
+
+async function removeGenreFromList(genre) {
+  console.log("hit the removeGenreFromList", genre);
+  const auth = getAuth(app);
+  const user = auth.currentUser;
+  const querySnapshot = await getDocs(collection(db, "users"));
+  querySnapshot.forEach(async (docm) => {
+    if (docm.data().id === user.uid) {
+      const userRef = doc(db, "users", docm.id);
+      if(docm.data().genres.includes(genre)){
+        const update = await updateDoc(userRef, {
+          genres: docm.data().genres.filter((item) => item !== genre),
+        });
+        console.log("Update");
+        console.log(update);
+      }else{
+        console.log("genre not found");
+      }
+    }
+  });
+}
+
+
+export { createUsersInFirestore, updateGenre, getGenreData, addGenreToList, removeGenreFromList };

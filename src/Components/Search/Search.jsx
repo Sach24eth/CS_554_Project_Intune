@@ -1,29 +1,32 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
 import { storePrevSearchRes } from "../../Redux/Actions/Search";
+
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+
 import "./search.css";
 import noImageAvailable from "../../images/no-image-available.jpg";
 
 const Search = () => {
   const searchRedux = useSelector((state) => state.searchResults);
+  const dispatch = useDispatch();
+
   const [search, setSearch] = useState(undefined);
-  const [searchTracks, setsearchTracks] = useState(null);
+  const [searchTracks, setSearchTracks] = useState(null);
   const [searchAlbums, setSearchAlbums] = useState(null);
   const [searchPlaylist, setSearchPlaylist] = useState(null);
   const [searchArtists, setSearchArtists] = useState(null);
   const [noSearchResult, setNoSearchResult] = useState(null);
   const [loading, setLoading] = useState(null);
   const [error, setError] = useState(null);
-  const dispatch = useDispatch();
 
   const SEARCH_LIMIT = 10;
 
   useEffect(() => {
     if (searchRedux) {
-      setsearchTracks(searchRedux.tracks);
+      setSearchTracks(searchRedux.tracks);
       setSearchAlbums(searchRedux.album);
       setSearchArtists(searchRedux.artist);
       setSearchPlaylist(searchRedux.playlist);
@@ -31,19 +34,26 @@ const Search = () => {
   }, []);
 
   useEffect(() => {
+    const user_access_token =
+      window.localStorage.getItem("access_token") || null;
     const genricToken = window.localStorage.getItem("token");
+    const token = user_access_token ? user_access_token : genricToken;
 
     if (!search) return;
-    if (!genricToken) return;
+    if (!token) {
+      setError("Error 500: Internal Server Error");
+      return;
+    }
 
     let cancel = false;
     const apiUrl = "https://api.spotify.com/v1";
-    const SEARCH = `${apiUrl}/search?q=${search}&type=track%2Cartist%2Calbum%2Cplaylist`;
+    const type = ["track", "artist", "album", "playlist"].join("%2C");
+    const SEARCH = `${apiUrl}/search?q=${search}&type=${type}`;
 
     /* Clear results while searching */
     setSearchPlaylist(null);
     setSearchAlbums(null);
-    setsearchTracks(null);
+    setSearchTracks(null);
     setSearchArtists(null);
     setError(null);
     setLoading(true);
@@ -51,7 +61,7 @@ const Search = () => {
     axios
       .get(SEARCH, {
         headers: {
-          Authorization: "Bearer " + genricToken,
+          Authorization: "Bearer " + token,
           "Content-Type": "application/json",
         },
         params: {
@@ -59,7 +69,6 @@ const Search = () => {
         },
       })
       .then((res) => {
-        console.log(res);
         setLoading(null);
         setNoSearchResult(
           !res.data["tracks"].total &&
@@ -132,7 +141,7 @@ const Search = () => {
             })
           : null;
 
-        setsearchTracks((prev) => tracks);
+        setSearchTracks((prev) => tracks);
         setSearchAlbums((prev) => album);
         setSearchArtists((prev) => artist);
         setSearchPlaylist((prev) => playlist);
@@ -147,12 +156,16 @@ const Search = () => {
         );
       })
       .catch((e) => {
-        console.log("here");
-        setLoading(null);
         console.log(e);
-        setError(
-          `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
-        );
+        setLoading(null);
+
+        if (e.response) {
+          setError(
+            `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
+          );
+          return;
+        }
+        setError("Error 500: Internal Server Error");
       });
 
     return () => (cancel = true);
@@ -210,8 +223,8 @@ const Search = () => {
         </div>
 
         <div className="small-cont" id="no-results-found">
-          {noSearchResult && !loading && (
-            <h1 className="title">Sorry, No Results Found !</h1>
+          {noSearchResult && !loading && !error && (
+            <h2 className="title">Sorry, No Results Found !</h2>
           )}
         </div>
 

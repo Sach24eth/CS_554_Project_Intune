@@ -6,11 +6,13 @@ import Spaceship from "./Spaceship";
 import { toast, ToastContainer } from "react-toastify";
 import Spinner from "../Spinner";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setInviteCode } from "../../Redux/Actions/Space";
 
 let socket = null;
 let attempts = 0;
 let maxConnectionAttempts = 5;
+
 const Space = ({ hide, hideStatus }) => {
   const [spaceCreated, setSpaceCreated] = useState(false);
   const user = JSON.parse(window.localStorage.getItem("userDetails"));
@@ -23,9 +25,9 @@ const Space = ({ hide, hideStatus }) => {
   const playerState =
     JSON.parse(window?.localStorage?.getItem("user"))?.accountType ===
       "premium" || false;
-  let inviteCode = new URLSearchParams(window.location.search).get(
-    "inviteCode"
-  );
+  let inviteCode =
+    new URLSearchParams(window.location.search).get("inviteCode") ||
+    window.localStorage.getItem("code");
 
   const history = useNavigate();
 
@@ -78,34 +80,59 @@ const Space = ({ hide, hideStatus }) => {
     socketConnection();
     return () => {
       hide(false);
-      socket.emit(
-        "user-space-disconnect",
-        {
+      if (spaceOwner) {
+        const code = window.localStorage.getItem("code");
+        console.log("User leaving");
+        socket.emit(
+          "user-space-owner-disconnect",
+          {
+            inviteCode: code,
+          },
+          (err) => {
+            console.log(err);
+            toast.error(err.message);
+            return;
+          }
+        );
+      } else {
+        const code = window.localStorage.getItem("code");
+        console.log({
           username: user.displayName,
           uid: user.uid,
-          inviteCode,
-        },
-        (err) => {
-          toast.error(err.message);
-        }
-      );
+          inviteCode: code,
+        });
+        socket.emit(
+          "user-space-disconnect",
+          {
+            username: user.displayName,
+            uid: user.uid,
+            inviteCode: code,
+          },
+          (err) => {
+            toast.error(err.message);
+            return;
+          }
+        );
+      }
+
       socket.disconnect();
+      window.localStorage.removeItem("code");
       clearInterval(connectionAttempt);
     };
   }, []);
 
   useEffect(() => {
     if (joiningViaInvite) {
+      setSpaceOwner((prev) => false);
       let code = new URLSearchParams(window.location.search).get("inviteCode");
-
       joinSpace(code);
-    } else {
-      created(false);
     }
   }, [joiningViaInvite]);
 
   const joinSpace = (code) => {
     if (!playerState) return toast.error("Connect to Spotify to start Space");
+
+    dispatch(setInviteCode(code));
     socket.emit(
       "user-space-connect",
       {
@@ -121,11 +148,12 @@ const Space = ({ hide, hideStatus }) => {
         return toast.error(err.message);
       }
     );
+
     if (!joinErr) {
-      setSpaceOwner(false);
-      created(false);
-    } else {
+      setSpaceOwner((prev) => false);
       created(true);
+    } else {
+      created(false);
     }
   };
 
@@ -175,7 +203,6 @@ const Space = ({ hide, hideStatus }) => {
             spaceOwner={spaceOwner}
           />
         )}
-        {/* <div>Test</div> */}
       </section>
     );
 };

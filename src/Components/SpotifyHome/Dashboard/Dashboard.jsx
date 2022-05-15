@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Card from "../../Card/Card";
+import NoImage from "../../../images/no-image-available.jpg";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -43,7 +44,6 @@ class Dashboard extends Component {
   fetchData(genricToken, user_access_token) {
     const apiUrl = "https://api.spotify.com/v1";
     const URL_RELEASES = `${apiUrl}/browse/new-releases?country=US`;
-    const URL_CATEGORY = `${apiUrl}/browse/categories`;
     const URL_USER_TOP = `${apiUrl}/me/top/tracks`;
     const URL_USER_FOLLOWING = `${apiUrl}/me/following?type=artist`;
 
@@ -55,7 +55,6 @@ class Dashboard extends Component {
         },
       })
       .then((res) => {
-        console.log(res);
         this.setState({
           albums: res.data.albums.items,
         });
@@ -204,7 +203,7 @@ class Dashboard extends Component {
                   <Card
                     key={album.id}
                     heading={album.name}
-                    image={album.images[1].url}
+                    image={album.images[1].url || NoImage}
                     clickHandler={this.playSong}
                     uri={album.uri}
                     albumId={album.id}
@@ -227,7 +226,7 @@ class Dashboard extends Component {
                       key={playlist.id}
                       id={playlist.id}
                       heading={playlist.name}
-                      image={playlist.images[0].url}
+                      image={playlist.images[0].url || NoImage}
                       uri={playlist.uri}
                       albumId={playlist.id}
                       albumRedir={this.redirToPlaylist}
@@ -252,7 +251,7 @@ class Dashboard extends Component {
                       key={songs.id}
                       id={songs.id}
                       heading={songs.name}
-                      image={songs.album.images[1].url}
+                      image={songs.album.images[1].url || NoImage}
                       clickHandler={this.playSong}
                       uri={songs.uri}
                     />
@@ -276,7 +275,7 @@ class Dashboard extends Component {
                       key={follow.id}
                       id={follow.id}
                       heading={follow.name}
-                      image={follow.images[1].url}
+                      image={follow.images[1].url || NoImage}
                       clickHandler={this.redirToArtist}
                       uri={follow.uri}
                     />

@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Bubble from "../ArtistGenreBubble/buble";
 import "./album.css";
@@ -11,6 +11,17 @@ const Album = () => {
   const [album, setAlbum] = useState({});
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(false);
+  const history = useNavigate();
+
+  useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 0) {
+      history("/auth/login");
+    }
+  }, []);
 
   useEffect(() => {
     const apiUrl = "https://api.spotify.com/v1/albums/";

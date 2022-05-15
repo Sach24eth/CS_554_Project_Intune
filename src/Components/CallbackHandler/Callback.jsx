@@ -8,10 +8,22 @@ const Callback = () => {
   const history = useNavigate();
 
   useEffect(() => {
+    const authLocalStorage = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authLocalStorage === 0) {
+      history("/auth/login");
+    }
+
+    return;
+  }, []);
+
+  useEffect(() => {
     const code = new URLSearchParams(window.location.search).get("code");
     async function getAccessToken() {
       axios
-        .post(`${process.env.REACT_APP_API_URL}/login`, {
+        .post(`${process.env.REACT_APP_API_URL}login`, {
           code: code,
         })
         .then((res) => {

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import Spinner from "../../Spinner";
 import { toast, ToastContainer } from "react-toastify";
 import { generateCode } from "../../../Services/generateCode";
 import { GrFormClose } from "react-icons/gr";
-import Spinner from "../../Spinner";
-import "./welcome.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setInviteCode } from "../../../Redux/Actions/Space";
+import "./welcome.css";
 
 const Welcome = (props) => {
   const typography = [
@@ -19,6 +21,7 @@ const Welcome = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [code, setCode] = useState(undefined);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const setModalState = () => {
@@ -32,8 +35,10 @@ const Welcome = (props) => {
   const onJoin = (e) => {
     if (!code) return toast.error("Code cannot be empty");
 
+    dispatch(setInviteCode(code));
     setModalState();
     props.joiningViaInvite(true);
+    props.setSpaceOwner(false);
     navigate(`/space?inviteCode=${code}`);
   };
 
@@ -48,7 +53,6 @@ const Welcome = (props) => {
     const typoInterval = setInterval(() => {
       index += 1;
       if (index >= length) {
-        console.log("hey");
         clearInterval(typoInterval);
         setCreate(false);
         props.onCreated(true);
@@ -57,6 +61,7 @@ const Welcome = (props) => {
     }, 2000);
 
     const inviteCode = generateCode();
+    dispatch(setInviteCode(inviteCode));
     window.localStorage.setItem("code", inviteCode);
     props.socket.emit(
       "user-space-create",
@@ -67,6 +72,7 @@ const Welcome = (props) => {
       },
       (err) => {
         toast.error(err.message);
+        return;
       }
     );
   };
@@ -104,7 +110,7 @@ const Welcome = (props) => {
           <p>
             A place to chill, relax and enjoy your favorite songs with your
             friends.
-            <br /> Add up-to 6 Spotify Premium users.
+            {/* <br /> Add up-to 6 Spotify Premium users. */}
           </p>
         </div>
         <div className="get-started" onClick={createSpace}>
