@@ -41,7 +41,7 @@ const Space = ({ hide, hideStatus }) => {
     let socketConnected = false;
     const socketConnection = async () => {
       if (!socket)
-        socket = io(`${process.env.REACT_APP_API_URL}socket`, {
+        socket = io(`${process.env.REACT_APP_API_URL}`, {
           reconnectionDelay: 1000,
           reconnection: true,
           reconnectionAttemps: 10,
