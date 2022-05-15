@@ -6,7 +6,7 @@ import Spaceship from "./Spaceship";
 import { toast, ToastContainer } from "react-toastify";
 import Spinner from "../Spinner";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setInviteCode } from "../../Redux/Actions/Space";
 
 let socket = null;

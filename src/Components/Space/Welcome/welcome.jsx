@@ -109,16 +109,15 @@ const Welcome = (props) => {
           <p>
             A place to chill, relax and enjoy your favorite songs with your
             friends.
-            {/* <br /> Add up-to 6 Spotify Premium users. */}
           </p>
         </div>
         <div className="get-started" onClick={createSpace}>
           {create ? (
             <div className="row">
               <Spinner />
-              <span className="typo" key={typo}>
+              {/* <span className="typo" key={typo}>
                 {typo}
-              </span>
+              </span> */}
             </div>
           ) : (
             <p className="btn-start">Understood, create my space!</p>
