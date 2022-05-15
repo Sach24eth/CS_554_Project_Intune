@@ -227,7 +227,7 @@ function ChatroomMaker() {
     await Firestore.removeGenreFromList(room);
     socket.emit("room-disconnect", { uid: state.uid, room: room });
     socket.disconnect();
-    history(`/home`);
+    history(`/messages`);
   };
 
   if (error === true) {

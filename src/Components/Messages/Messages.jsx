@@ -20,6 +20,14 @@ const Messages = () => {
   const [noRes, setNoRes] = useState("false");
 
   useEffect(() => {
+    const authentication = parseInt(
+      window.localStorage.getItem("authentication")
+    );
+
+    if (authentication === 0) history("/auth/login");
+  }, []);
+
+  useEffect(() => {
     async function getGenre() {
       let id = null;
       axios
