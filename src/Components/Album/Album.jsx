@@ -100,7 +100,11 @@ const Album = () => {
           </Link>
 
           <div className="album-cover">
-            <img src={album.images[1].url || NoImage} alt={album.name} />
+            <img
+              aria-label="Album cover"
+              src={album.images[1].url || NoImage}
+              alt={album.name}
+            />
             <div className="album-info">
               <p className="type">{album.type}</p>
               <h1>{album.name}</h1>
