@@ -177,10 +177,16 @@ async function removeGenreFromList(genre) {
   });
 }
 
+async function dropDB() {
+  const res = db.collection("users").delete();
+  console.log(res);
+}
+
 export {
   createUsersInFirestore,
   updateGenre,
   getGenreData,
   addGenreToList,
   removeGenreFromList,
+  dropDB,
 };

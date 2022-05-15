@@ -1,11 +1,11 @@
 const dbConnection = require("../server/config/mongoConnection");
 const data = require("../server/data");
 const chatroom = data.chatroom;
+
 const main = async () => {
   let genreList = [];
   try {
     const db = await dbConnection.connectToDb();
-    //console.log(db);
     await db.dropDatabase();
     genreList = [
       "acoustic",
@@ -143,6 +143,7 @@ const main = async () => {
   }
   dbConnection.closeConnection();
 };
+
 main().catch((e) => {
   console.log(e);
 });
