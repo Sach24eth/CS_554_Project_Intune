@@ -1,68 +1,103 @@
-#cardChat {
-	padding: 1rem 1rem 0 1rem;
-	height: calc(100% - 200px);
-	background-color: var(--card-bg);
-	border-radius: 6px;
+#chatroom {
+  width: 100vw;
+  height: calc(100vh - 75px - 100px);
+  overflow-x: hidden;
+  overflow-y: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-#msgBtn{
-    color: white;
-	background-color:#179643 ;
-	margin-top: 30px;
-	padding: 10px;
-	border-radius: 20px;
-	position:relative;
-	font-weight: bold;
-}
-#leaveBtn{
-	font-weight: bold;
-	float: right;
-	color: white;
-	background-color:#179643 ;
-	border-radius: 20px;
-	margin: 0 auto;
-	padding: 10px;
-}
-#chatTitle{
-	display: inline;
-}
-#render-chat {
-	padding: 1rem 1rem 0 1rem;
-	height: 550px;
-	width: 100%;
-	overflow-y: scroll;
-	overflow-x: hidden;
-	background-color: var(--card-bg);
-	border-radius: 2px;
-}
-.messageBox{
-	width: auto;
-  	height: 35px;
-  	margin-top: 1rem;
-	position: relative;
+#chatroom .container {
+  width: 90%;
+  height: 100%;
 }
 
-#message{
-	width: 100%;
-  	height: 2%;
-  	border-radius: 6px;
-  	background-color: var(--card-hover);
-  	border: none;
-  	color: var(--text-color);
-  	padding-left: 10px;
-  	margin-left: -5px;
-	margin-top: 5px;
-  	font-size: var(--link-font);
-	position:absolute;
-}
-h3 {
-	color: #179643;
+#chatroom .container .header {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
-h4{
-	color: rgba(20, 20, 223, 0.795)
+#chatroom .container .header .title {
+  text-transform: capitalize !important;
+}
+
+#chatroom .container .header .leave {
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  background-color: #ee0000;
+  color: white;
+  cursor: pointer;
+}
+
+#chatroom .container .cardChat {
+  margin-top: 1rem;
+  height: 90%;
+}
+
+#chatroom .container .cardChat .top {
+  height: 90%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+#chatroom .container .cardChat .top::-webkit-scrollbar {
+  display: none;
+}
+
+#chatroom .container .cardChat .bottom {
+  height: 10%;
+  margin-top: 1rem;
+}
+#chatroom .container .cardChat .bottom form {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#chatroom .container .cardChat .bottom form label,
+#chatroom .container .cardChat .bottom form label input {
+  width: 95%;
+  height: 100%;
+}
+
+#chatroom .container .cardChat .bottom form label input {
+  background-color: var(--card-bg);
+  color: white;
+  border-radius: 6px;
+  border: none;
+  padding: 0 0.5rem;
+  font-size: 18px;
+}
+
+#chatroom .container .cardChat .bottom form button {
+  cursor: pointer;
+  width: 15%;
+  background-color: #008a00;
+  color: white;
+  font-weight: bolder;
+  border-radius: 6px;
+  border: none;
+  padding: 0 0.5rem;
+  font-size: 18px;
 }
 
 span {
-	color: white;
+  color: var(--accent);
+}
+
+@media (max-width: 1000px) {
+  #chatroom {
+    height: calc(100vh - 75px - 150px);
+  }
+  #chatroom .container .cardChat .bottom {
+    margin-top: 0.5rem;
+  }
 }

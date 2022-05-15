@@ -5,6 +5,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import axios from "axios";
 import Spinner from "../Spinner";
 import "./Chatrooms.css";
+import { toast, ToastContainer } from "react-toastify";
 const Firestore = require("../../Firebase/Firestore");
 const TOKEN = window.localStorage.getItem("token");
 //console.log(TOKEN);
@@ -65,7 +66,11 @@ function ChatroomMaker() {
             setRoom(roomnumber);
           }
         })
-        .catch((err) => console.log(err.response));
+        .catch((err) => {
+          toast.error(err.message);
+          return;
+        });
+
       onAuthStateChanged(auth, (user) => {
         if (user.uid || user) {
           console.log("Set user data:", user.displayName, roomnumber);
@@ -211,7 +216,7 @@ function ChatroomMaker() {
     return chat.map(({ name, message }, index) => (
       <div ref={scrollRef} key={index}>
         <h3>
-          {name}: <span>{message}</span>
+          <span>{name}</span> : {message}
         </h3>
       </div>
     ));
@@ -228,57 +233,44 @@ function ChatroomMaker() {
   if (error === true) {
     return (
       <div>
-        <h1> Error: User not logged in</h1>
+        <h1>Oops something went wrong!</h1>
       </div>
     );
   }
-  //console.log(room);
-  if (loading === true) {
-    return (
-      <div>
-        <h1 id="chatTitle">Current room: {room}</h1>
-        <button id="leaveBtn" onClick={leaveRoom}>
-          {" "}
-          Leave Room
-        </button>
-        <div id="cardChat">
-          <h1>Chat Log</h1>
-          <div id="render-chat">
-            <Spinner />
+
+  return (
+    <section id="chatroom">
+      <div className="container">
+        <ToastContainer aria-label="Toast" />
+        <div className="header">
+          <h1 className="title" id="chatTitle">
+            {room}
+          </h1>
+          <button className="leave" id="leaveBtn" onClick={leaveRoom}>
+            Leave Room
+          </button>
+        </div>
+        <div className="cardChat">
+          <div className="top">
+            <div id="render-chat">{loading ? <Spinner /> : renderChat()}</div>
+          </div>
+          <div className="bottom">
+            <form id="messageSubmit" onSubmit={onMessageSubmit}>
+              <label>
+                <input
+                  name="message"
+                  placeholder="Say 'hi!'"
+                  id="message"
+                  variant="outlined"
+                  label="Message"
+                />
+              </label>
+              <button id="msgBtn">Send</button>
+            </form>
           </div>
         </div>
       </div>
-    );
-  }
-  return (
-    <div>
-      <h1 id="chatTitle">Current room: {room}</h1>
-      {/* {state.name && ( */}
-      <button id="leaveBtn" onClick={leaveRoom}>
-        {" "}
-        Leave Room
-      </button>
-      <div id="cardChat">
-        <h1>Chat Log</h1>
-        <div id="render-chat">
-          {/* <Spinner /> */}
-          {renderChat()}
-        </div>
-      </div>
-      <form id="messageSubmit" onSubmit={onMessageSubmit}>
-        <div>
-          <input
-            name="message"
-            placeholder="Say 'hi!'"
-            id="message"
-            variant="outlined"
-            label="Message"
-          />
-        </div>
-        <button id="msgBtn">Send Message</button>
-      </form>
-      {/* )} */}
-    </div>
+    </section>
   );
 }
 
