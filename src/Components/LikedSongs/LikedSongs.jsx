@@ -38,11 +38,10 @@ class LikedSongs extends Component {
         },
       })
       .then((res) => {
-        this.setState(
-            {
-              playlist: res.data,
-              loading: false
-            });
+        this.setState({
+          playlist: res.data,
+          loading: false,
+        });
       })
       .catch((e) => {
         console.log(e.response);
@@ -69,7 +68,7 @@ class LikedSongs extends Component {
                   width={200}
                   height={200}
                   src={likedSongsImage}
-                  alt={this.state.playlist.name}
+                  alt={"Liked Songs"}
                 />
                 <div className="playlist-container">
                   <p className="type">{this.state.playlist.type}</p>
