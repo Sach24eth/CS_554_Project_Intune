@@ -54,7 +54,7 @@ const Space = ({ hide, hideStatus }) => {
       if (!socketConnected && !error) {
         if (attempts === maxConnectionAttempts) {
           clearInterval(connectionAttempt);
-          setError("Unable to establish socket connection.");
+          setError("Unable to establish socket connection. Please Refresh.");
         }
         connectionAttempt = setInterval(async () => {
           attempts++;

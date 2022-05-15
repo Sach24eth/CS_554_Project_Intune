@@ -41,51 +41,45 @@ const Spaceship = ({ socket, hideStatus, spaceOwner }) => {
     });
   }, []);
 
-  useEffect(() => {
-    async function playerStatus() {
-      let songPlaying;
-      const URL_STATUS = `${apiUrl}/me/player`;
-      let { data } = await axios({
-        method: "GET",
-        url: URL_STATUS,
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-      });
+  // useEffect(() => {
+  //   async function playerStatus() {
+  //     let songPlaying;
+  //     const URL_STATUS = `${apiUrl}/me/player`;
+  //     let { data } = await axios({
+  //       method: "GET",
+  //       url: URL_STATUS,
+  //       headers: {
+  //         Authorization: "Bearer " + token,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
 
-      if (data) {
-        const URL_SONG = `${apiUrl}/tracks/`;
-        const url = URL_SONG + data.item.id;
+  //     if (data) {
+  //       const URL_SONG = `${apiUrl}/tracks/`;
+  //       const url = URL_SONG + data.item.id;
 
-        try {
-          songPlaying = await axios({
-            method: "GET",
-            url: url,
-            headers: {
-              Authorization: "Bearer " + token,
-              "Content-Type": "application/json",
-            },
-          });
-          setSong((prev) => songPlaying.data);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-      // if (songPlaying.data.name !== song.name && spaceOwner) {
-      //   socket.emit("user-space-play", {
-      //     uri: song.data.uri,
-      //     inviteCode,
-      //   });
-      // }
-    }
+  //       try {
+  //         songPlaying = await axios({
+  //           method: "GET",
+  //           url: url,
+  //           headers: {
+  //             Authorization: "Bearer " + token,
+  //             "Content-Type": "application/json",
+  //           },
+  //         });
+  //         setSong((prev) => songPlaying.data);
+  //       } catch (e) {
+  //         console.log(e);
+  //       }
+  //     }
+  //   }
 
-    const interval = setInterval(() => {
-      playerStatus();
-    }, 1000);
+  //   const interval = setInterval(() => {
+  //     playerStatus();
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, [token]);
+  //   return () => clearInterval(interval);
+  // }, [token]);
 
   useEffect(() => {
     socket.on("add-to-queue", ({ uri }) => {
