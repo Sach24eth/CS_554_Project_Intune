@@ -29,7 +29,7 @@
 }
 
 .chat-info-card .chat-icon .icon {
-  color: var(--text-color);
+  color: black;
 }
 
 .chat-info-card .chat-title {

@@ -38,7 +38,7 @@
   justify-content: center;
   text-align: center;
   cursor: pointer;
-  background-color: var(--error);
+  background-color: #e81f25;
 }
 
 #user .container .connected:hover {

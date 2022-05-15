@@ -27,7 +27,7 @@
 
 #auth .container .dividers .text {
   font-family: "Prompt", sans-serif;
-  color: rgba(211, 211, 211, 0.5);
+  color: #7d7d7d;
   letter-spacing: 1px;
   text-align: center;
 }
@@ -117,7 +117,7 @@
   margin-top: 0.5rem;
   text-align: center;
   font-weight: bolder;
-  background-color: var(--accent);
+  background-color: #008a00;
   border-radius: 6px;
   cursor: pointer;
   transition: all 100ms ease-in-out;

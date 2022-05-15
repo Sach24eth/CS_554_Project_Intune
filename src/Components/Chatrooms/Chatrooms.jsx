@@ -24,40 +24,40 @@ function ChatroomMaker() {
   const [state, setState] = useState({ message: "", name: "" });
   const [chat, setChat] = useState([]);
   //const socketRef = useRef();
-  let userData=JSON.parse(window.localStorage.getItem("userDetails"));
+  let userData = JSON.parse(window.localStorage.getItem("userDetails"));
 
   //Server setup
   useEffect(() => {
     socket = io(process.env.REACT_APP_API_URL);
-    console.log("Socket:", socket)
+    console.log("Socket:", socket);
     async function getGenre() {
-          //let id = null;
-          await axios
-            .get(URL + "/recommendations/available-genre-seeds", {
-              headers: {
-                Authorization: "Bearer " + TOKEN,
-                "Content-Type": "application/json",
-              },
-            })
-            .then((res) => {
-              console.log("Setting rooms and doing genre check");
-              let genreList = res.data.genres;
-              if (genreList.includes(roomnumber.toLowerCase())) {
-                console.log("Set room:",roomnumber)
-                setRoom(roomnumber);
-              }
-            })
-        .catch((err) => console.log(err.response));
-        onAuthStateChanged(auth, (user) => {
-          if (user.uid || user) {
-            console.log("Set user data:", user.displayName, roomnumber);
-            setUsrData(user.displayName)
-            setState({ name: user.displayName,room: roomnumber})
-            console.log("Display statements")
-            userjoin(user.displayName,roomnumber)
-            // userjoin(user.displayName,roomnumber);
+      //let id = null;
+      await axios
+        .get(URL + "/recommendations/available-genre-seeds", {
+          headers: {
+            Authorization: "Bearer " + TOKEN,
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          console.log("Setting rooms and doing genre check");
+          let genreList = res.data.genres;
+          if (genreList.includes(roomnumber.toLowerCase())) {
+            console.log("Set room:", roomnumber);
+            setRoom(roomnumber);
           }
-        });
+        })
+        .catch((err) => console.log(err.response));
+      onAuthStateChanged(auth, (user) => {
+        if (user.uid || user) {
+          console.log("Set user data:", user.displayName, roomnumber);
+          setUsrData(user.displayName);
+          setState({ name: user.displayName, room: roomnumber });
+          console.log("Display statements");
+          userjoin(user.displayName, roomnumber);
+          // userjoin(user.displayName,roomnumber);
+        }
+      });
     }
     getGenre();
     // console.log("UsrData: ", usrData)
@@ -65,11 +65,11 @@ function ChatroomMaker() {
     return () => {
       socket.disconnect();
     };
-  }, [auth,roomnumber]);
-  
-  const userjoin = (name,room) => {
-    if (name !== undefined ||name) {
-      console.log("defined:",name);
+  }, [auth, roomnumber]);
+
+  const userjoin = (name, room) => {
+    if (name !== undefined || name) {
+      console.log("defined:", name);
       socket.emit("user_join", { name, room });
       return () => {
         //socketRef.current.off("receiveMsg");
@@ -88,9 +88,9 @@ function ChatroomMaker() {
   }, []);
 
   useEffect(() => {
-    console.log("is this firing")
+    console.log("is this firing");
     socket.on("user_join", function (data) {
-      console.log("user_join",data)
+      console.log("user_join", data);
       setChat((chat) => [
         ...chat,
         {
@@ -99,9 +99,9 @@ function ChatroomMaker() {
           room: data.room,
         },
       ]);
-      console.log("Chat stuff", chat)
+      console.log("Chat stuff", chat);
     });
-  },[])
+  }, []);
   // console.log("Chat:", chat);
   // console.log("state outside:", state)
   // console.log("Room:", room);
@@ -109,10 +109,17 @@ function ChatroomMaker() {
   const onMessageSubmit = (e) => {
     let msgEle = document.getElementById("message");
     console.log([msgEle.name], msgEle.value);
-    
+
     setState({ ...state, [msgEle.name]: msgEle.value });
     //socketRef.current
-    console.log('state name', state.name, "message elem: ", msgEle.value, "room:", room)
+    console.log(
+      "state name",
+      state.name,
+      "message elem: ",
+      msgEle.value,
+      "room:",
+      room
+    );
     socket.emit("message", {
       name: state.name,
       message: msgEle.value,
@@ -130,9 +137,9 @@ function ChatroomMaker() {
   const renderChat = () => {
     return chat.map(({ name, message }, index) => (
       <div key={index}>
-        <h3>
+        <h2>
           {name}: <span>{message}</span>
-        </h3>
+        </h2>
       </div>
     ));
   };
@@ -142,13 +149,14 @@ function ChatroomMaker() {
     <div>
       <h1>Current room: {room}</h1>
       {/* {state.name && ( */}
-        <div id="cardChat">
-          <div id="render-chat">
-            <h1>Chat Log</h1>
-            {renderChat()}
-          </div>
-          <form id="messageSubmit" onSubmit={onMessageSubmit}>
-            <div>
+      <div id="cardChat">
+        <div id="render-chat">
+          <h1>Chat Log</h1>
+          {renderChat()}
+        </div>
+        <form id="messageSubmit" onSubmit={onMessageSubmit}>
+          <div>
+            <label>
               <input
                 name="message"
                 placeholder="Say 'hi!'"
@@ -156,10 +164,11 @@ function ChatroomMaker() {
                 variant="outlined"
                 label="Message"
               />
-            </div>
-            <button id="msgBtn">Send Message</button>
-          </form>
-        </div>
+            </label>
+          </div>
+          <button id="msgBtn">Send Message</button>
+        </form>
+      </div>
       {/* )} */}
     </div>
   );

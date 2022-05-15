@@ -59,7 +59,7 @@ const Search = () => {
         },
       })
       .then((res) => {
-        console.log(res)
+        console.log(res);
         setLoading(null);
         setNoSearchResult(
           !res.data["tracks"].total &&
@@ -74,7 +74,9 @@ const Search = () => {
           ? res.data["tracks"].items.map((track) => {
               return {
                 title: track.name,
-                image: track.album.images.length ? track.album.images[0].url : noImageAvailable,
+                image: track.album.images.length
+                  ? track.album.images[0].url
+                  : noImageAvailable,
                 artists: track.artists
                   .map((artist) => {
                     return artist.name;
@@ -90,7 +92,9 @@ const Search = () => {
               return {
                 id: album.id,
                 title: album.name,
-                image: album.images.length ? album.images[0].url : noImageAvailable,
+                image: album.images.length
+                  ? album.images[0].url
+                  : noImageAvailable,
                 artists: album.artists
                   .map((artist) => {
                     return artist.name;
@@ -106,7 +110,9 @@ const Search = () => {
               return {
                 id: artist.id,
                 name: artist.name,
-                image: artist.images.length ? artist.images[0].url : noImageAvailable,
+                image: artist.images.length
+                  ? artist.images[0].url
+                  : noImageAvailable,
                 uri: artist.uri,
               };
             })
@@ -117,7 +123,9 @@ const Search = () => {
               return {
                 id: playlist.id,
                 title: playlist.name,
-                image: playlist.images.length ? playlist.images[0].url : noImageAvailable,
+                image: playlist.images.length
+                  ? playlist.images[0].url
+                  : noImageAvailable,
                 owner: playlist.owner.display_name,
                 uri: playlist.uri,
               };
@@ -139,9 +147,9 @@ const Search = () => {
         );
       })
       .catch((e) => {
-        console.log('here');
+        console.log("here");
         setLoading(null);
-        console.log(e)
+        console.log(e);
         setError(
           `Error ${e.response.data.error.status}: ${e.response.data.error.message}`
         );
@@ -194,24 +202,25 @@ const Search = () => {
         </div>
 
         <div className="small-cont" id="no-results-found">
-          {loading && <h2 className="title">Loading ...</h2>}
+          {loading && <h1 className="title">Loading ...</h1>}
         </div>
 
         <div className="small-cont" id="no-results-found">
-          {error && <h2 className="title">{error}</h2>}
+          {error && <h1 className="title">{error}</h1>}
         </div>
 
         <div className="small-cont" id="no-results-found">
           {noSearchResult && !loading && (
-            <h2 className="title">Sorry, No Results Found !</h2>
+            <h1 className="title">Sorry, No Results Found !</h1>
           )}
         </div>
 
         <div className="small-cont">
           <div id="tracks-result">
-            {searchTracks && <h2 className="title">Tracks</h2>}
+            {searchTracks && <h1 className="title">Tracks</h1>}
             {searchTracks &&
               searchTracks.map((track) => {
+                console.log(track);
                 return (
                   <div
                     className="search-card"
@@ -221,7 +230,7 @@ const Search = () => {
                   >
                     <img
                       src={track.image}
-                      alt={track.name}
+                      alt={track.title}
                       style={{ height: "64px", width: "64px" }}
                     />
                     <div className="info">
@@ -233,14 +242,14 @@ const Search = () => {
               })}
           </div>
           <div id="albums-result">
-            {searchAlbums && <h2 className="title">Albums</h2>}
+            {searchAlbums && <h1 className="title">Albums</h1>}
             {searchAlbums &&
               searchAlbums.map((album) => {
                 return (
                   <Link className="search-card" to={`/album?id=${album.id}`}>
                     <img
                       src={album.image}
-                      alt={album.name}
+                      alt={album.title}
                       style={{ height: "64px", width: "64px" }}
                     />
                     <div className="info">
@@ -252,7 +261,7 @@ const Search = () => {
               })}
           </div>
           <div id="artists-result">
-            {searchArtists && <h2 className="title">Artists</h2>}
+            {searchArtists && <h1 className="title">Artists</h1>}
             {searchArtists &&
               searchArtists.map((artist) => {
                 return (
@@ -270,9 +279,10 @@ const Search = () => {
               })}
           </div>
           <div id="playlist-result">
-            {searchPlaylist && <h2 className="title">Playlists</h2>}
+            {searchPlaylist && <h1 className="title">Playlists</h1>}
             {searchPlaylist &&
               searchPlaylist.map((playlist) => {
+                console.log(playlist);
                 return (
                   <Link
                     className="search-card"
@@ -281,7 +291,7 @@ const Search = () => {
                     <img
                       src={playlist.image}
                       style={{ height: "64px", width: "64px" }}
-                      alt={playlist.name}
+                      alt={playlist.title}
                     />
                     <div className="info">
                       <div className="track-title">{playlist.title}</div>
