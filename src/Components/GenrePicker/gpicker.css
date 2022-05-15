@@ -111,7 +111,7 @@
   height: 50px;
   opacity: 0;
   background-color: var(--error);
-  color: var(--text-color);
+  color: var(white) !important;
   border-radius: 6px;
   display: flex;
   justify-content: center;
