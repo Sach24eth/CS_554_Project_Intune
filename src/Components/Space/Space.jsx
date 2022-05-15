@@ -136,8 +136,6 @@ const Space = ({ hide, hideStatus }) => {
     );
     if (!joinErr) {
       setSpaceOwner(false);
-      created(false);
-    } else {
       created(true);
     }
   };
