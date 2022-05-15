@@ -122,12 +122,7 @@ const App = () => {
       window.localStorage.setItem("token", token);
       window.localStorage.setItem("tokenSetTime", dTime);
     }
-    if (
-      Number(currentTime) - Number(creationTime) >
-        Number(3600 * 1000) - 10000 ||
-      !window.localStorage.getItem("token")
-    )
-      getToken();
+    getToken();
   }, []);
 
   return (

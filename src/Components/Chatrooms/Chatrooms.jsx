@@ -97,7 +97,7 @@ function ChatroomMaker() {
         console.log("Room check:", room);
         setLoading(false);
         await axios
-          .get(`http://localhost:5001/chatHistory/${room}`)
+          .get(`${process.env.REACT_APP_API_URL}chatHistory/${room}`)
           .then((res) => {
             let msgs = res.data.chatHistory.msg;
             console.log("chatHistory", msgs);
