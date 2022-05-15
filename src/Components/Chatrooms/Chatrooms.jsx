@@ -214,9 +214,9 @@ function ChatroomMaker() {
   const renderChat = () => {
     return chat.map(({ name, message }, index) => (
       <div ref={scrollRef} key={index}>
-        <h3>
+        <h2>
           {name}: <span>{message}</span>
-        </h3>
+        </h2>
       </div>
     ));
   };
@@ -270,13 +270,15 @@ function ChatroomMaker() {
         </div>
         <form id="messageSubmit" onSubmit={onMessageSubmit}>
           <div>
-            <input
-              name="message"
-              placeholder="Say 'Hi!'"
-              id="message"
-              variant="outlined"
-              label="Message"
-            />
+            <label>
+              <input
+                name="message"
+                placeholder="Say 'Hi!'"
+                id="message"
+                variant="outlined"
+                label="Message"
+              />
+            </label>
           </div>
           <button id="msgBtn">Send Message</button>
         </form>

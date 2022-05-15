@@ -476,7 +476,7 @@ const Player = (props) => {
               </div>
               <div className="slider">
                 <p className="time-playing font-sm">{progress}</p>
-                <p className="slider-control">
+                <label className="slider-control">
                   <input
                     type={"range"}
                     width={"100%"}
@@ -486,12 +486,12 @@ const Player = (props) => {
                     onChange={seekSong}
                     onMouseUp={seekTrack}
                   />
-                </p>
+                </label>
                 <p className="time-total font-sm">{convertToTime(duration)}</p>
               </div>
             </div>
             <div className="volume">
-              <p className="slider-control">
+              <label className="slider-control">
                 <input
                   type={"range"}
                   width={"100%"}
@@ -501,7 +501,7 @@ const Player = (props) => {
                   onChange={moveVolume}
                   onMouseUp={changeVolume}
                 />
-              </p>
+              </label>
               {!muted && (
                 <FaVolumeUp
                   className="icon"
@@ -553,7 +553,7 @@ const Player = (props) => {
                 />
               )}
               <NavLink to={"/space"}>
-                <BsBroadcast className="icon" />
+                <BsBroadcast className="icon" alt="Spotify Space" />
               </NavLink>
               {/* <BsBroadcast
                 onClick={() => {
