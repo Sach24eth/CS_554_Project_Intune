@@ -9,7 +9,6 @@ const data = require("./data");
 const space = data.space;
 
 const chat = data.chatroom;
-const users = data.users;
 const constructor = require("./routes");
 
 app.use(cors({ origin: "*" }));
@@ -100,9 +99,9 @@ io.on("connection", (socket) => {
       socket.join(room);
       io.to(room).emit("user_join", { name, uid, room });
       const userJoin = await chat.addUsertoRoom(uid, room);
-      const addUsr = await users.addUser(uid);
+      //const addUsr = await users.addUser(uid);
       console.log("userjoin:", userJoin);
-      console.log("userDB add:", addUsr);
+      //console.log("userDB add:", addUsr);
     } catch (e) {
       console.log(e);
     }
@@ -114,8 +113,8 @@ io.on("connection", (socket) => {
       io.to(room).emit("message", { name, uid, message, room });
       const addMsg = await chat.addMessagesToRoom(name, uid, message, room);
       console.log("message add:", addMsg);
-      const addRoom = await users.addRoomWithMsg(uid, room);
-      console.log("user db room add:", addRoom);
+      //const addRoom = await users.addRoomWithMsg(uid, room);
+      //console.log("user db room add:", addRoom);
     } catch (e) {
       console.log(e);
     }
@@ -126,8 +125,8 @@ io.on("connection", (socket) => {
       io.to(room).emit("room-disconnect", { uid, room });
       const delUsr = await chat.leaveChatroom(uid, room);
       console.log("delUsr:", delUsr);
-      const delRooom = await users.delRoomwithMessage(uid, room);
-      console.log("del Room:", delRooom);
+      //const delRooom = await users.delRoomwithMessage(uid, room);
+      //console.log("del Room:", delRooom);
     } catch (e) {
       console.log(e);
     }

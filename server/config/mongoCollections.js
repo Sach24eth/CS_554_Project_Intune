@@ -19,5 +19,4 @@ const getCollectionFn = (collection) => {
 module.exports = {
   space: getCollectionFn("space"),
   chatroom: getCollectionFn("chatroom"),
-  users: getCollectionFn("users"),
 };

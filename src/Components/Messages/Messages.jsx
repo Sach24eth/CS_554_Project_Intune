@@ -6,7 +6,6 @@ import axios from "axios";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const firestore = require("../../Firebase/Firestore");
-const TOKEN = window.localStorage.getItem("token");
 const URL = "https://api.spotify.com/v1";
 
 const Messages = () => {
@@ -18,7 +17,8 @@ const Messages = () => {
   const [searchTerm, setSearchTerm] = useState();
   const [genres, setGenres] = useState([]);
   const [noRes, setNoRes] = useState("false");
-
+  const TOKEN = window.localStorage.getItem("token");
+  //console.log("TOKEN:", TOKEN)
   useEffect(() => {
     async function getGenre() {
       let id = null;
@@ -50,7 +50,7 @@ const Messages = () => {
       });
     }
     getGenre();
-  }, [TOKEN]); //
+  }, [TOKEN]); 
 
   useEffect(() => {
     async function searchRooms() {
