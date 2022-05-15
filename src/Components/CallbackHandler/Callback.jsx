@@ -38,7 +38,7 @@ const Callback = () => {
             accessTokenCreatedTime
           );
           console.log("res", res);
-          Firebase.SpotifyFbLogin(res.data);
+          // Firebase.SpotifyFbLogin(res.data);
           history(`/me`);
         })
         .catch((err) => console.log(err.response));
