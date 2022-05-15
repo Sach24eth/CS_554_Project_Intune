@@ -216,9 +216,10 @@ function ChatroomMaker() {
       </div>
     ));
   };
-  const leaveRoom = () => {
+  const leaveRoom = async () => {
     console.log("leaving..");
     //console.log("args",state);
+    await Firestore.removeGenreFromList(room);
     socket.emit("room-disconnect", { uid: state.uid, room: room });
     socket.disconnect();
     history(`/home`);
