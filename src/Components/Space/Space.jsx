@@ -79,28 +79,25 @@ const Space = ({ hide, hideStatus }) => {
     };
 
     socketConnection();
+
     return () => {
       hide(false);
-      console.log({
-        username: user.displayName,
-        uid: user.uid,
-        inviteCode: inviteCode,
-      });
+      const code = window.localStorage.getItem("code");
       socket.emit(
         "user-space-disconnect",
         {
           username: user.displayName,
           uid: user.uid,
-          inviteCode: inviteCode,
+          inviteCode: code,
         },
         (err) => {
           toast.error(err.message);
+          return;
         }
       );
 
+      window.localStorage.removeItem("code");
       socket.disconnect();
-      // window.localStorage.removeItem("code");
-      // dispatch(setInvCode(null));
       clearInterval(connectionAttempt);
     };
   }, []);
