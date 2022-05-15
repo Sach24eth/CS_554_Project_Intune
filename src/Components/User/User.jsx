@@ -5,7 +5,7 @@ import "./user.css";
 import axios from "axios";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { NavLink } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateSpotifyPlayerState } from "../../Redux/Actions/Player";
 
@@ -27,6 +27,7 @@ const User = ({ connection }) => {
   const [userAuth, setUserAuth] = useState([]);
   const dispatch = useDispatch();
   const [isLoggedInWithSpotify, setIsLoggedInWithSpotify] = useState(undefined);
+  const username = useSelector((state) => state.auth.displayName) || null;
   const userEmail =
     JSON.parse(window.localStorage.getItem("userDetails"))?.email || null;
   window.history.pushState(null, document.title, "/me");
@@ -109,7 +110,7 @@ const User = ({ connection }) => {
               <input
                 type={"text"}
                 placeholder="Name"
-                value={user.displayName ? user.displayName : "Test"}
+                value={username ? username : "No Username"}
                 contentEditable={false}
                 disabled={true}
               />
