@@ -156,4 +156,26 @@ async function addGenreToList(genre) {
   });
 }
 
-export { createUsersInFirestore, updateGenre, getGenreData, addGenreToList };
+async function removeGenreFromList(genre) {
+  console.log("hit the removeGenreFromList", genre);
+  const auth = getAuth(app);
+  const user = auth.currentUser;
+  const querySnapshot = await getDocs(collection(db, "users"));
+  querySnapshot.forEach(async (docm) => {
+    if (docm.data().id === user.uid) {
+      const userRef = doc(db, "users", docm.id);
+      if(docm.data().genres.includes(genre)){
+        const update = await updateDoc(userRef, {
+          genres: docm.data().genres.filter((item) => item !== genre),
+        });
+        console.log("Update");
+        console.log(update);
+      }else{
+        console.log("genre not found");
+      }
+    }
+  });
+}
+
+
+export { createUsersInFirestore, updateGenre, getGenreData, addGenreToList, removeGenreFromList };

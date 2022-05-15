@@ -6,7 +6,6 @@ import axios from "axios";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const firestore = require("../../Firebase/Firestore");
-const TOKEN = window.localStorage.getItem("token");
 const URL = "https://api.spotify.com/v1";
 
 const Messages = () => {
@@ -18,7 +17,8 @@ const Messages = () => {
   const [searchTerm, setSearchTerm] = useState();
   const [genres, setGenres] = useState([]);
   const [noRes, setNoRes] = useState("false");
-
+  const TOKEN = window.localStorage.getItem("token");
+  //console.log("TOKEN:", TOKEN)
   useEffect(() => {
     async function getGenre() {
       let id = null;
@@ -50,26 +50,26 @@ const Messages = () => {
       });
     }
     getGenre();
-  }, []);
+  }, [TOKEN]); 
 
   useEffect(() => {
     async function searchRooms() {
       try {
         let searchResults = [];
         if (!searchTerm || searchTerm.length !== 0) {
-          //console.log("Searching this:", searchTerm.length);
+        
           for (let i = 0; i < genres.length; i++) {
-            //console.log("Genre:", genres[i], "searchTerm", searchTerm.toLowerCase())
+            
             let tfFlag = genres[i].includes(searchTerm.toLowerCase());
-            //console.log("TF Flag:", tfFlag);
+            
             if (tfFlag === true) {
-              // console.log("True vals", genres[i]);
+              
               let objRoom = { id: i, title: genres[i].toUpperCase() };
               searchResults.push(objRoom);
-              // setNoRes('false')
+        
             }
           }
-          console.log("not on state results:", searchResults.length);
+          
           if (searchResults.length > 0) {
             setUsrGenres(searchResults);
           } else if (searchResults.length === 0) {
@@ -78,7 +78,7 @@ const Messages = () => {
             const auth = getAuth();
             onAuthStateChanged(auth, (user) => {
               if (user.uid || user) {
-                //console.log("userData:", user.displayName);
+                
                 setUsrData(user.displayName);
                 firestore
                   .getGenreData(user.uid)

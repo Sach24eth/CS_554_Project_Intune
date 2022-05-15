@@ -6,12 +6,13 @@ import axios from "axios";
 import Spinner from "../Spinner";
 import "./Chatrooms.css";
 const Firestore = require("../../Firebase/Firestore");
-const TOKEN = window.localStorage.getItem("token");
+
 //console.log(TOKEN);
 const URL = "https://api.spotify.com/v1";
 
 let socket;
 function ChatroomMaker() {
+  const TOKEN = window.localStorage.getItem("token");
   const auth = getAuth();
   const history = useNavigate();
   let scrollRef = useRef();
@@ -63,6 +64,9 @@ function ChatroomMaker() {
           if (genreList.includes(roomnumber.toLowerCase())) {
             console.log("Set room:", roomnumber);
             setRoom(roomnumber);
+          } else {
+            setError(true);
+            return;
           }
         })
         .catch((err) => console.log(err.response));
@@ -100,13 +104,13 @@ function ChatroomMaker() {
           .get(`http://localhost:5001/chatHistory/${room}`)
           .then((res) => {
             let msgs = res.data.chatHistory.msg;
-            console.log("chatHistory", msgs);
+            //console.log("chatHistory", msgs);
             for (let i = 0; i < msgs.length; i++) {
               let tempName = msgs[i].userName;
               let tempUid = msgs[i].userId;
               let tempMessage = msgs[i].messageText;
               let tempRoom = room;
-              console.log("Message:", tempName, tempMessage, tempRoom);
+              //console.log("Message:", tempName, tempMessage, tempRoom);
               setChat((prev) => [
                 ...prev,
                 {
@@ -132,7 +136,8 @@ function ChatroomMaker() {
         //socketRef.current.off("receiveMsg");
         socket.off("receiveMsg");
       };
-    } else {
+    }
+    else {
       setError(true);
     }
   };
@@ -165,7 +170,7 @@ function ChatroomMaker() {
           room: data.room,
         },
       ]);
-      console.log("Chat stuff", chat);
+      //console.log("Chat stuff", chat);
     });
   }, []);
   //console.log("Chat:", chat);
@@ -226,9 +231,11 @@ function ChatroomMaker() {
 
   if (error === true) {
     return (
-      <div>
-        <h1> Error: User not logged in</h1>
-      </div>
+      <section id='errorCont'>
+        <div className='errorDiv'>
+          <h1 id='errorMsg'> Oops! Something went wrong! </h1>
+        </div>
+      </section>
     );
   }
   //console.log(room);
@@ -250,7 +257,8 @@ function ChatroomMaker() {
     );
   }
   return (
-    <div>
+    <section id="chats">
+      <div className='container'>
       <h1 id="chatTitle">Current room: {room}</h1>
       {/* {state.name && ( */}
       <button id="leaveBtn" onClick={leaveRoom}>
@@ -258,9 +266,8 @@ function ChatroomMaker() {
         Leave Room
       </button>
       <div id="cardChat">
-        <h1>Chat Log</h1>
+        <h1 id='chatLog'>Chat Log</h1>
         <div id="render-chat">
-          {/* <Spinner /> */}
           {renderChat()}
         </div>
       </div>
@@ -268,7 +275,7 @@ function ChatroomMaker() {
         <div>
           <input
             name="message"
-            placeholder="Say 'hi!'"
+            placeholder="Say 'Hi!'"
             id="message"
             variant="outlined"
             label="Message"
@@ -276,8 +283,8 @@ function ChatroomMaker() {
         </div>
         <button id="msgBtn">Send Message</button>
       </form>
-      {/* )} */}
     </div>
+    </section>
   );
 }
 

@@ -1,6 +1,6 @@
 {
   "mongoConfig": {
-    "serverUrl": "mongodb://localhost:27017/",
+    "serverUrl": "mongodb+srv://admin:Cs554webwiz@cluster0.4rwtl.mongodb.net",
     "database": "CS554_Final"
   }
 }
