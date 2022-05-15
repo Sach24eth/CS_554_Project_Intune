@@ -45,7 +45,7 @@ function ChatroomMaker() {
   let socketFlag = false;
   //Server setup
   useEffect(() => {
-    socket = io(process.env.REACT_APP_API_URL);
+    socket = io(process.env.REACT_APP_SOCKET_URL);
     console.log("Socket:", socket);
     async function getGenre() {
       //let id = null;
