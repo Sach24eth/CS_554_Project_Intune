@@ -216,7 +216,7 @@ function ChatroomMaker() {
     return chat.map(({ name, message }, index) => (
       <div ref={scrollRef} key={index}>
         <h3>
-          <span>{name}</span> : {message}
+          <span className="chat-user">{name}</span> : {message}
         </h3>
       </div>
     ));

@@ -89,7 +89,7 @@
   font-size: 18px;
 }
 
-span {
+.chat-user {
   color: var(--accent);
 }
 
