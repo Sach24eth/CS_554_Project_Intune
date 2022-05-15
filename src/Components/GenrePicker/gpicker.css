@@ -121,6 +121,10 @@
   transition: all 0.2s ease-in;
 }
 
+.err span {
+  color: white;
+}
+
 .fadeOut {
   animation: fadeOut 0.2s ease-in forwards;
 }
