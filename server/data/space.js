@@ -2,6 +2,13 @@ const mongoCollections = require("../config/mongoCollections");
 const space = mongoCollections.space;
 
 const createSpace = async (spaceId, username, uid) => {
+  // eslint-disable-next-line no-throw-literal
+  if (!spaceId) throw { status: 400, message: "Missing space id" };
+  // eslint-disable-next-line no-throw-literal
+  if (!username) throw { status: 400, message: "Missing username" };
+  // eslint-disable-next-line no-throw-literal
+  if (!uid) throw { status: 400, message: "Missing user id" };
+
   let spaceCol = await space();
   const spaceRoom = {
     _id: spaceId,
@@ -23,6 +30,13 @@ const createSpace = async (spaceId, username, uid) => {
 };
 
 const addUserToSpace = async (spaceId, username, uid) => {
+  // eslint-disable-next-line no-throw-literal
+  if (!spaceId) throw { status: 400, message: "Missing space id" };
+  // eslint-disable-next-line no-throw-literal
+  if (!username) throw { status: 400, message: "Missing username" };
+  // eslint-disable-next-line no-throw-literal
+  if (!uid) throw { status: 400, message: "Missing user id" };
+
   let spaceCol = await space();
   const user = {
     uid,
@@ -41,7 +55,7 @@ const addUserToSpace = async (spaceId, username, uid) => {
   if (add.modifiedCount === 0)
     // eslint-disable-next-line no-throw-literal
     throw {
-      status: 404,
+      status: 400,
       message: "Please check the invite code and try again",
     };
 
@@ -49,12 +63,18 @@ const addUserToSpace = async (spaceId, username, uid) => {
 };
 
 const removeUserFromSpace = async (spaceId, username, uid) => {
+  // eslint-disable-next-line no-throw-literal
+  if (!spaceId) throw { status: 400, message: "Missing space id" };
+  // eslint-disable-next-line no-throw-literal
+  if (!username) throw { status: 400, message: "Missing username" };
+  // eslint-disable-next-line no-throw-literal
+  if (!uid) throw { status: 400, message: "Missing user id" };
+
   let spaceCol = await space();
   const userToRemove = {
     uid,
     username,
   };
-  console.log(userToRemove);
   const remove = await spaceCol.updateOne(
     {
       _id: spaceId,
@@ -71,8 +91,23 @@ const removeUserFromSpace = async (spaceId, username, uid) => {
   return { status: 200, message: `User left from space` };
 };
 
+const removeSpace = async (spaceId) => {
+  // eslint-disable-next-line no-throw-literal
+  if (!spaceId) throw { status: 400, message: "Missing space id" };
+
+  let spaceCol = await space();
+  const deleteSpace = await spaceCol.deleteOne({ _id: spaceId });
+
+  if (deleteSpace.deletedCount === 0)
+    // eslint-disable-next-line no-throw-literal
+    throw { status: 404, message: "Could not delete the space" };
+
+  return { status: 200, message: "Room deleted successfully" };
+};
+
 module.exports = {
   createSpace,
   addUserToSpace,
   removeUserFromSpace,
+  removeSpace,
 };

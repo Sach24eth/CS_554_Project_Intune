@@ -12,6 +12,7 @@ import { setInviteCode } from "../../Redux/Actions/Space";
 let socket = null;
 let attempts = 0;
 let maxConnectionAttempts = 5;
+
 const Space = ({ hide, hideStatus }) => {
   const [spaceCreated, setSpaceCreated] = useState(false);
   const user = JSON.parse(window.localStorage.getItem("userDetails"));
@@ -79,36 +80,52 @@ const Space = ({ hide, hideStatus }) => {
     socketConnection();
     return () => {
       hide(false);
-      console.log({
-        username: user.displayName,
-        uid: user.uid,
-        inviteCode: inviteCode,
-      });
-      socket.emit(
-        "user-space-disconnect",
-        {
+      if (spaceOwner) {
+        const code = window.localStorage.getItem("code");
+        console.log("User leaving");
+        socket.emit(
+          "user-space-owner-disconnect",
+          {
+            inviteCode: code,
+          },
+          (err) => {
+            console.log(err);
+            toast.error(err.message);
+            return;
+          }
+        );
+      } else {
+        const code = window.localStorage.getItem("code");
+        console.log({
           username: user.displayName,
           uid: user.uid,
-          inviteCode: inviteCode,
-        },
-        (err) => {
-          toast.error(err.message);
-        }
-      );
+          inviteCode: code,
+        });
+        socket.emit(
+          "user-space-disconnect",
+          {
+            username: user.displayName,
+            uid: user.uid,
+            inviteCode: code,
+          },
+          (err) => {
+            toast.error(err.message);
+            return;
+          }
+        );
+      }
 
       socket.disconnect();
-      // window.localStorage.removeItem("code");
-      // dispatch(setInvCode(null));
+      window.localStorage.removeItem("code");
       clearInterval(connectionAttempt);
     };
   }, []);
 
   useEffect(() => {
     if (joiningViaInvite) {
+      setSpaceOwner((prev) => false);
       let code = new URLSearchParams(window.location.search).get("inviteCode");
       joinSpace(code);
-    } else {
-      created(false);
     }
   }, [joiningViaInvite]);
 
@@ -131,11 +148,12 @@ const Space = ({ hide, hideStatus }) => {
         return toast.error(err.message);
       }
     );
+
     if (!joinErr) {
-      setSpaceOwner(false);
-      created(false);
-    } else {
+      setSpaceOwner((prev) => false);
       created(true);
+    } else {
+      created(false);
     }
   };
 
@@ -185,7 +203,6 @@ const Space = ({ hide, hideStatus }) => {
             spaceOwner={spaceOwner}
           />
         )}
-        {/* <div>Test</div> */}
       </section>
     );
 };
