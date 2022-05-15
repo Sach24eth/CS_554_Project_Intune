@@ -39,10 +39,12 @@ app.post("/login", async (req, res) => {
 
   const code = req.body.code;
 
+  if (!code)
+    return res.status(400).json({ status: 400, message: "Code required" });
+
   spotifyApi
     .authorizationCodeGrant(code)
     .then((data) => {
-      // Returning the User's AccessToken in the json formate
       res.json({
         accessToken: data.body.access_token,
         refreshToken: data.body.refresh_token,
@@ -58,14 +60,18 @@ app.post("/login", async (req, res) => {
 app.post("/refresh", async (req, res) => {
   const refreshToken = req.body.refreshToken;
 
+  if (!refreshToken)
+    return res
+      .status(400)
+      .json({ status: 400, message: "Missing refresh token." });
+
   credentials.refreshToken = refreshToken;
   const spotifyApi = new spotifyWebApi(credentials);
 
   spotifyApi
     .refreshAccessToken()
     .then((data) => {
-      console.log("Data is here");
-      res.json({
+      return res.json({
         accessToken: data.body.access_token,
         expiresIn: data.body.expires_in,
       });
@@ -74,13 +80,16 @@ app.post("/refresh", async (req, res) => {
 });
 
 app.post("/me", async (req, res) => {
+  if (!req.body.access_token)
+    return res
+      .status(400)
+      .json({ status: 400, message: "Missing access token" });
   credentials.accessToken = req.body.access_token;
   let spotifyApi = new spotifyWebApi(credentials);
 
   spotifyApi
     .getMe()
     .then((data) => {
-      console.log(data);
       return res.json({
         id: data.body.id,
         displayName: data.body.display_name,
@@ -91,7 +100,9 @@ app.post("/me", async (req, res) => {
     })
     .catch((err) => res.status(400).json({ err: err }));
 });
+
 constructor(app);
+
 io.on("connection", (socket) => {
   console.log("new client connected", socket.id);
   socket.on("user_join", async ({ name, uid, room }) => {
@@ -136,17 +147,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("user-space-create", async (data, callback) => {
-    //Add user into db first
     try {
       const { username, uid, inviteCode } = data;
-      const createSpace = await space.createSpace(inviteCode, username, uid);
-      //Join the socket room
+      await space.createSpace(inviteCode, username, uid);
+
       socket.join(inviteCode);
     } catch (error) {
       callback(error);
     }
-    //Notify the client
-    // io.to(inviteCode).emit("user-space-connected", { username, inviteCode });
   });
 
   socket.on("user-space-connect", async (data, callback) => {
@@ -166,14 +174,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("user-space-disconnect", async (data, callback) => {
-    const { username, uid, inviteCode } = data;
-    //Remove user from the socket db collection
-
-    console.log(username, uid, inviteCode);
     try {
+      const { username, uid, inviteCode } = data;
       const remove = await space.removeUserFromSpace(inviteCode, username, uid);
+      console.log(remove);
       if (remove.status !== 200) return;
-      //Remove user from room
       socket.leave(inviteCode);
       //Notify client
       io.to(inviteCode).emit("user-space-disconnected", {
@@ -186,14 +191,24 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("user-space-owner-disconnect", ({ inviteCode, uid }) => {
-    //Remove the entire document from db
-    //Remove users from room
-    socket.leave(inviteCode);
-    //Notify client
-    io.to(inviteCode).emit("user-space-owner-disconnected", {
-      inviteCode,
-    });
+  socket.on("user-space-owner-disconnect", async (data, callback) => {
+    try {
+      const { inviteCode, uid } = data;
+      console.log(inviteCode);
+      console.log("user leaving");
+      //Notify client
+      io.to(inviteCode).emit("user-space-owner-disconnected", {
+        inviteCode,
+      });
+      //Remove the entire document from db
+      const remove = await space.removeSpace(inviteCode);
+      console.log(remove);
+      //Remove user from room
+      socket.leave(inviteCode);
+    } catch (error) {
+      console.log(error);
+      callback(error);
+    }
   });
 
   socket.on("spotify-space-queue", ({ uri, room }) => {

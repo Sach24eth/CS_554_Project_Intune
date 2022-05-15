@@ -38,6 +38,7 @@ const Welcome = (props) => {
     dispatch(setInviteCode(code));
     setModalState();
     props.joiningViaInvite(true);
+    props.setSpaceOwner(false);
     navigate(`/space?inviteCode=${code}`);
   };
 
@@ -52,7 +53,6 @@ const Welcome = (props) => {
     const typoInterval = setInterval(() => {
       index += 1;
       if (index >= length) {
-        console.log("hey");
         clearInterval(typoInterval);
         setCreate(false);
         props.onCreated(true);
@@ -72,6 +72,7 @@ const Welcome = (props) => {
       },
       (err) => {
         toast.error(err.message);
+        return;
       }
     );
   };
