@@ -552,9 +552,11 @@ const Player = (props) => {
                   }}
                 />
               )}
-              <NavLink to={"/space"}>
-                <BsBroadcast className="icon" />
-              </NavLink>
+              <div>
+                <NavLink to={"/space"} alt="space" aria-label="Spotify Space">
+                  <BsBroadcast className="icon" alt="Spotify Space" />
+                </NavLink>
+              </div>
               {/* <BsBroadcast
                 onClick={() => {
                   history("/space");

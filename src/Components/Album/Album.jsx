@@ -95,11 +95,8 @@ const Album = () => {
         </div>
       ) : (
         <div className="container">
-          <Link to={"/me"}>
-            <ToastContainer />
-          </Link>
-
-          <div className="album-cover">
+          <ToastContainer alt="Toast" aria-label="toast" />
+          <div className="album-cover" alt="Album cover">
             <img
               aria-label="Album cover"
               src={album.images[1].url || NoImage}

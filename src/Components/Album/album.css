@@ -83,7 +83,12 @@
 
 #album .container .tracks .track:hover {
   background-color: var(--card-hover);
+
   border-radius: 6px;
+}
+
+#album .container .tracks .track:hover .left .row .artist {
+  color: #9b9b9b;
 }
 
 @media (max-width: 768px) {

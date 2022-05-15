@@ -28,7 +28,8 @@
 }
 
 .chat-info-card .chat-icon .icon {
-  color: var(--text-color);
+  color: var(--bg-color);
+  font-weight: bolder;
 }
 
 .chat-info-card .chat-title {
