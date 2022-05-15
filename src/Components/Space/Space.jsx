@@ -40,7 +40,16 @@ const Space = ({ hide, hideStatus }) => {
     let connectionAttempt;
     let socketConnected = false;
     const socketConnection = async () => {
-      if (!socket) socket = io(`${process.env.REACT_APP_API_URL}socket`);
+      if (!socket)
+        socket = io(`${process.env.REACT_APP_API_URL}socket`, {
+          reconnectionDelay: 1000,
+          reconnection: true,
+          reconnectionAttemps: 10,
+          transports: ["websocket"],
+          agent: false,
+          upgrade: false,
+          rejectUnauthorized: false,
+        });
 
       socket.on("connect", () => {
         if (socket.id) {
