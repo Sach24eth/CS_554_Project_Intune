@@ -1,11 +1,17 @@
-## Note
+# ⚠️ Note
+### Please refer "live" branch as main
 The website is hosted on the follwing links:
 - [Frontend](https://spotify-ten-wine.vercel.app/)
 - [Backend](https://sync-music-s.herokuapp.com/)
 
+For contributions please refer to main branch, as live branch was created on the day of submission.
+Rest assures everyone on the team has contributed their best to complete the project.
+
 Please allow couple minutes for heroku server to restart
 
-## If running on localhost please follow the steps below, all required .env files are pushed to github
+<hr />
+
+### If running on localhost please follow the steps below, all required .env files are pushed to github
 
 ## Installing all dependencies:
 
