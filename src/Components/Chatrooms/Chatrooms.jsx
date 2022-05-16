@@ -7,7 +7,6 @@ import Spinner from "../Spinner";
 import "./Chatrooms.css";
 import { toast, ToastContainer } from "react-toastify";
 const Firestore = require("../../Firebase/Firestore");
-const TOKEN = window.localStorage.getItem("token");
 //console.log(TOKEN);
 const URL = "https://api.spotify.com/v1";
 
@@ -17,6 +16,7 @@ function ChatroomMaker() {
   const history = useNavigate();
   let scrollRef = useRef();
   //console.log(auth)
+  const TOKEN = window.localStorage.getItem("token");
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const roomnumber = urlParams.get("room");
@@ -92,7 +92,7 @@ function ChatroomMaker() {
     return () => {
       socket.disconnect();
     };
-  }, [auth, roomnumber]);
+  }, [auth, roomnumber,TOKEN ]);
 
   useEffect(() => {
     console.log("chat history Triggers");
