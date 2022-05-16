@@ -7,7 +7,7 @@ The website is hosted on the follwing links:
 For contributions please refer to main branch, as live branch was created on the day of submission.
 Rest assures everyone on the team has contributed their best to complete the project.
 
-Please allow couple minutes for heroku server to restart
+Please allow couple minutes for heroku server to start
 
 <hr />
 
