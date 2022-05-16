@@ -1,3 +1,12 @@
+## Note
+The website is hosted on the follwing links:
+- [Frontend](https://spotify-ten-wine.vercel.app/)
+- [Backend](https://sync-music-s.herokuapp.com/)
+
+Please allow couple minutes for heroku server to restart
+
+## If running on localhost please follow the steps below, all required .env files are pushed to github
+
 ## Installing all dependencies:
 
 - In the root directory type the following :
