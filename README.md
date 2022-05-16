@@ -27,6 +27,14 @@ Please allow couple minutes for heroku server to restart
 npm run seed
 ```
 
+If for some reason the above fails, please follow these set
+```jsx
+  make sure you are in the root directory
+  
+  cd /tasks
+  node seed.js
+```
+
 The above command will seed all required data for smooth functioning of the website.
 
 Seed file will create the following
