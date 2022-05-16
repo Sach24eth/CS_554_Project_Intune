@@ -33,7 +33,7 @@ Please allow couple minutes for heroku server to start
 npm run seed
 ```
 
-If for some reason the above fails, please follow these set
+If for some reason the above fails, please follow these steps
 ```jsx
   make sure you are in the root directory
   
